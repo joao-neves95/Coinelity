@@ -1,0 +1,9 @@
+{
+  "name": "coinelity.node-server",
+  "version": "0.0.0",
+  "description": "Coinelity.NodeServer",
+  "main": "app.js",
+  "author": {
+    "name": "Utilizador"
+  }
+}

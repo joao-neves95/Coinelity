@@ -1,0 +1,13 @@
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.0\Coinelity.AspServer.deps.json
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.0\Coinelity.AspServer.runtimeconfig.json
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.0\Coinelity.AspServer.runtimeconfig.dev.json
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.0\Coinelity.AspServer.dll
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.0\Coinelity.AspServer.pdb
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csprojAssemblyReference.cache
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csproj.CoreCompileInputs.cache
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.AssemblyInfoInputs.cache
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.AssemblyInfo.cs
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.dll
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.pdb
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.Properties.Resources.resources
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csproj.GenerateResource.cache
