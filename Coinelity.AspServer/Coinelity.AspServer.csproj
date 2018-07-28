@@ -8,7 +8,7 @@
   <ItemGroup>
     <Folder Include="Middleware\" />
     <Folder Include="Private\css\src\" />
-    <Folder Include="Private\js\src\" />
+    <Folder Include="Private\js\src\components\" />
   </ItemGroup>
 
   <ItemGroup>

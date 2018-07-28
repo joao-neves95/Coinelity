@@ -1,0 +1,27 @@
+{
+	"mergerJsLinks": {
+		"npm": "https://www.npmjs.com/package/merger-js",
+		"github": "https://github.com/joao-neves95/merger-js",
+		"readme": "https://github.com/joao-neves95/merger-js/blob/master/README.md",
+		"changelog": "https://github.com/joao-neves95/merger-js/blob/master/CHANGELOG.md"
+	},
+	"uglify": false,
+	"autoBuild": true,
+	"notifications": true,
+	"sourceFiles": [
+		{
+			"source": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\src\\traderPage.header.js",
+			"output": {
+				"path": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\",
+				"name": "trader.js"
+			}
+		},
+		{
+			"source": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\src\\adminPage.header.js",
+			"output": {
+				"path": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\",
+				"name": "admin.js"
+			}
+		}
+	]
+}

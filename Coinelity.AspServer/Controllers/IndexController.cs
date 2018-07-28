@@ -27,5 +27,22 @@ namespace Coinelity.AspServer.Controllers
                 return NotFound();
             }
         }
+
+        // TODO: Authorization.
+        [HttpGet]
+        public IActionResult GetPrivate()
+        {
+            try
+            {
+                Response.ContentType = "text/html";
+                string index = Path.Combine(Directory.GetCurrentDirectory(), "Private", "dashboard.html");
+                return PhysicalFile(index, "text/html");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return NotFound();
+            }
+        }
     }
 }
