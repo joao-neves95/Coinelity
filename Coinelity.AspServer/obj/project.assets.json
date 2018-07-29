@@ -2,6 +2,18 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.0": {
+      "DotNetEnv/1.2.0": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.3/DotNetEnv.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/DotNetEnv.dll": {}
+        }
+      },
       "Libuv/1.10.0": {
         "type": "package",
         "dependencies": {
@@ -4750,6 +4762,16 @@
     }
   },
   "libraries": {
+    "DotNetEnv/1.2.0": {
+      "sha512": "TT7pY8szkPDptJPDt/Uct/rgrkpfx2TdzFprDjU1Il3h6lRhG1xI3spw58CbtcFF68XTSGlaoydMRiFi92GLyw==",
+      "type": "package",
+      "path": "dotnetenv/1.2.0",
+      "files": [
+        "dotnetenv.1.2.0.nupkg.sha512",
+        "dotnetenv.nuspec",
+        "lib/netstandard1.3/DotNetEnv.dll"
+      ]
+    },
     "Libuv/1.10.0": {
       "sha512": "GsCf4q+eyaI49rCPlgYxdxa1SQCysXFFdSJWdstrwxytg4+VPYLYrXD4AT2rjHVJ+UF7SSWX9CapWEYaU4ejVQ==",
       "type": "package",
@@ -12658,6 +12680,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.0": [
+      "DotNetEnv >= 1.2.0",
       "Microsoft.AspNetCore.All >= 2.0.9",
       "Microsoft.NETCore.App >= 2.0.0"
     ]
@@ -12704,6 +12727,10 @@
     "frameworks": {
       "netcoreapp2.0": {
         "dependencies": {
+          "DotNetEnv": {
+            "target": "Package",
+            "version": "[1.2.0, )"
+          },
           "Microsoft.AspNetCore.All": {
             "target": "Package",
             "version": "[2.0.9, )"

@@ -40,6 +40,8 @@ namespace Coinelity.AspServer
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            DotNetEnv.Env.Load();
+
             app.UseCors(policyBuilder => {
                 policyBuilder.WithOrigins("http://localhost:3000", "http://localhost:5000", "http://localhost:33620", "http://localhost")
                              .AllowAnyHeader()

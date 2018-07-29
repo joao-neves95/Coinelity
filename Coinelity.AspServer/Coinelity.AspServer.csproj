@@ -7,11 +7,12 @@
 
   <ItemGroup>
     <Folder Include="Middleware\" />
-    <Folder Include="Private\css\src\" />
-    <Folder Include="Private\js\src\components\" />
+    <Folder Include="Client\css\src\" />
+    <Folder Include="Client\js\src\components\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
   </ItemGroup>
 

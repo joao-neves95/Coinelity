@@ -1,0 +1,9 @@
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\bin\Debug\netcoreapp2.0\Coinelity.Core.deps.json
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\bin\Debug\netcoreapp2.0\Coinelity.Core.dll
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\bin\Debug\netcoreapp2.0\Coinelity.Core.pdb
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\obj\Debug\netcoreapp2.0\Coinelity.Core.csprojAssemblyReference.cache
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\obj\Debug\netcoreapp2.0\Coinelity.Core.csproj.CoreCompileInputs.cache
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\obj\Debug\netcoreapp2.0\Coinelity.Core.AssemblyInfoInputs.cache
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\obj\Debug\netcoreapp2.0\Coinelity.Core.AssemblyInfo.cs
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\obj\Debug\netcoreapp2.0\Coinelity.Core.dll
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.Core\obj\Debug\netcoreapp2.0\Coinelity.Core.pdb
