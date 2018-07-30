@@ -36,7 +36,7 @@ namespace Coinelity.AspServer.Controllers
             try
             {
                 Response.ContentType = "text/html";
-                string index = Path.Combine(Directory.GetCurrentDirectory(), "Client", "dashboard.html");
+                string index = Path.Combine(Directory.GetCurrentDirectory(), "WebClient", "dashboard.html");
                 return PhysicalFile(index, "text/html");
             }
             catch (Exception e)

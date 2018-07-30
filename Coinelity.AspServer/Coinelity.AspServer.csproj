@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Client\css\src\" />
-    <Folder Include="Client\js\src\components\" />
+    <Folder Include="WebClient\css\src\" />
+    <Folder Include="WebClient\js\src\components\" />
   </ItemGroup>
 
   <ItemGroup>
