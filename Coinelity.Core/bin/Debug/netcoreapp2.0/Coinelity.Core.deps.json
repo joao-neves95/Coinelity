@@ -1,17 +1,23 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "42bd22f2407c9cfb6c25dc179da8d202d27e578c"
+    "signature": "fabd991fe7ed6f50c05ae272228ba81f32a8bcfa"
   },
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.0": {
       "Coinelity.Core/1.0.0": {
         "dependencies": {
+          "DotNetEnv": "1.2.0",
           "System.Data.SqlClient": "4.5.1"
         },
         "runtime": {
           "Coinelity.Core.dll": {}
+        }
+      },
+      "DotNetEnv/1.2.0": {
+        "runtime": {
+          "lib/netstandard1.3/DotNetEnv.dll": {}
         }
       },
       "Microsoft.Win32.Registry/4.5.0": {
@@ -156,6 +162,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "DotNetEnv/1.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TT7pY8szkPDptJPDt/Uct/rgrkpfx2TdzFprDjU1Il3h6lRhG1xI3spw58CbtcFF68XTSGlaoydMRiFi92GLyw==",
+      "path": "dotnetenv/1.2.0",
+      "hashPath": "dotnetenv.1.2.0.nupkg.sha512"
     },
     "Microsoft.Win32.Registry/4.5.0": {
       "type": "package",

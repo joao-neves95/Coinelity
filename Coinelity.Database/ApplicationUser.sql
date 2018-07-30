@@ -4,14 +4,12 @@
 	Email NVARCHAR(50) NOT NULL,
     EmailConfirmed BIT NOT NULL DEFAULT 0,
 	Password NVARCHAR(150) NOT NULL,
-    GoogleCode NVARCHAR(100) NULL,
-    PhoneNumber NVARCHAR(40) NULL,
+    GoogleCode NVARCHAR(100) NULL DEFAULT '',
+    PhoneNumber NVARCHAR(40) NULL DEFAULT '',
     PhoneNumberConfirmed BIT NOT NULL DEFAULT 0,
-    TwoFactorEnabled BIT NOT NULL DEFAULT 0,
     LockoutEnabledEnabled BIT NOT NULL DEFAULT 0,
     LockoutEnd DATETIME NULL,
-    IsAffiliate BIT NOT NULL DEFAULT 0,
-    CreateDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    CreateDate DATETIME NOT NULL DEFAULT GETUTCDATE()
 )
 
 GO;

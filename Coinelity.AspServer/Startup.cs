@@ -12,6 +12,11 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using System.IO;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Coinelity.AspServer.Middleware;
+using Coinelity.AspServer.DataAccess;
+using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer
 {
@@ -27,6 +32,12 @@ namespace Coinelity.AspServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IUserStore<ApplicationUser>, UserStore>();
+            services.AddScoped<IPasswordHasher<ApplicationUser>, AppPasswordHasher<ApplicationUser>>();
+            // TODO: Change IdentityRole to a custom one.
+            services.AddIdentity<ApplicationUser, IdentityRole>();
+                    //.AddDefaultTokenProviders();
+
             services.AddCors();
 
             services.AddMvc()
@@ -35,6 +46,8 @@ namespace Coinelity.AspServer
                         options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

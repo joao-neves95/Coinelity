@@ -11,3 +11,7 @@ C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\net
 C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.pdb
 C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.Properties.Resources.resources
 C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csproj.GenerateResource.cache
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.0\Coinelity.Core.dll
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.0\Coinelity.Core.pdb
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csproj.CopyComplete
+C:\Users\Utilizador\odrive\ISTEC\DEV\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs

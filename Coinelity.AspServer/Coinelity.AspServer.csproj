@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <Version>0.1.0</Version>
+    <UserSecretsId>1b6e824e-ae0a-48f7-93a3-2e24fe81f2b8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\" />
     <Folder Include="Client\css\src\" />
     <Folder Include="Client\js\src\components\" />
   </ItemGroup>
@@ -14,10 +14,16 @@
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Coinelity.Core\Coinelity.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
