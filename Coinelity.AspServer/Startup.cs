@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Identity;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.AspServer.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Coinelity.AspServer
 {
@@ -33,12 +36,54 @@ namespace Coinelity.AspServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IUserStore<ApplicationUser>, UserStore>();
+            services.AddTransient<IRoleStore<ApplicationRole>, RoleStore>();
             services.AddScoped<IPasswordHasher<ApplicationUser>, AppPasswordHasher<ApplicationUser>>();
-            // TODO: Change IdentityRole to a custom one.
-            services.AddIdentity<ApplicationUser, IdentityRole>();
-                    //.AddDefaultTokenProviders();
+
+            // TODO: Alter password configuration.
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            });
+            //.AddDefaultTokenProviders();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false; // For development.
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    SaveSigninToken = true,
+                    // Clock skew compensates for server time drift.
+                    ClockSkew = TimeSpan.FromMinutes(1),
+                    //Specify the key used to sign the token:
+                    //IssuerSigningKey = SecurityKey,
+                    RequireSignedTokens = true,
+                    //Ensure the token hasn't expired:
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true,
+                    //Ensure the token audience matches our audience value(default true):
+                    ValidateAudience = true,
+                    ValidAudience = DotNetEnv.Env.GetString( "JWT_ISSUER" ),
+                    //Ensure the token was issued by a trusted authorization server(default true):
+                    ValidateIssuer = true,
+                    IssuerSigningKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(DotNetEnv.Env.GetString("JWT_KEY")) ),
+                    ValidIssuer = DotNetEnv.Env.GetString("JWT_ISSUER")
+                };
+            });
 
             services.AddCors();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddMvc()
                     .AddJsonOptions(options =>
@@ -47,7 +92,6 @@ namespace Coinelity.AspServer
                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +110,8 @@ namespace Coinelity.AspServer
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthentication();
 
             app.UseMvc();
         }

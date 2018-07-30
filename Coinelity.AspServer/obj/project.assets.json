@@ -14,6 +14,48 @@
           "lib/netstandard1.3/DotNetEnv.dll": {}
         }
       },
+      "Isopoh.Cryptography.Argon2/1.0.8": {
+        "type": "package",
+        "dependencies": {
+          "Isopoh.Cryptography.Blake2b": "1.0.8",
+          "Isopoh.Cryptography.SecureArray": "1.0.8",
+          "NETStandard.Library": "1.6.1",
+          "System.Threading.Thread": "4.3.0"
+        },
+        "compile": {
+          "lib/netstandard1.3/Isopoh.Cryptography.Argon2.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Isopoh.Cryptography.Argon2.dll": {}
+        }
+      },
+      "Isopoh.Cryptography.Blake2b/1.0.8": {
+        "type": "package",
+        "dependencies": {
+          "Isopoh.Cryptography.SecureArray": "1.0.8",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.3/Isopoh.Cryptography.Blake2b.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Isopoh.Cryptography.Blake2b.dll": {}
+        }
+      },
+      "Isopoh.Cryptography.SecureArray/1.0.8": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "System.IO.FileSystem": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0"
+        },
+        "compile": {
+          "lib/netstandard1.3/Isopoh.Cryptography.SecureArray.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Isopoh.Cryptography.SecureArray.dll": {}
+        }
+      },
       "Libuv/1.10.0": {
         "type": "package",
         "dependencies": {
@@ -5057,6 +5099,7 @@
         "framework": ".NETCoreApp,Version=v2.0",
         "dependencies": {
           "DotNetEnv": "1.2.0",
+          "Isopoh.Cryptography.Argon2": "1.0.8",
           "System.Data.SqlClient": "4.5.1"
         },
         "compile": {
@@ -5077,6 +5120,39 @@
         "dotnetenv.1.2.0.nupkg.sha512",
         "dotnetenv.nuspec",
         "lib/netstandard1.3/DotNetEnv.dll"
+      ]
+    },
+    "Isopoh.Cryptography.Argon2/1.0.8": {
+      "sha512": "PeDHkg4QTyWo3HFajB62shI//DVTnUX9ZarlyGqT1HJ51WTAkNDhrJhwi3kmd0JDvrbvqFLk3aKleHeLlxBDpQ==",
+      "type": "package",
+      "path": "isopoh.cryptography.argon2/1.0.8",
+      "files": [
+        "isopoh.cryptography.argon2.1.0.8.nupkg.sha512",
+        "isopoh.cryptography.argon2.nuspec",
+        "lib/netstandard1.3/Isopoh.Cryptography.Argon2.dll",
+        "lib/netstandard1.3/Isopoh.Cryptography.Argon2.xml"
+      ]
+    },
+    "Isopoh.Cryptography.Blake2b/1.0.8": {
+      "sha512": "ezd7sUy+K/b5UCWkjxBYHh6uLWAIrxFfm25K8kA47mACn4qmx/Xdx/6XBS15s4MOGpoyyEpyMDH2bvQkLL5sDw==",
+      "type": "package",
+      "path": "isopoh.cryptography.blake2b/1.0.8",
+      "files": [
+        "isopoh.cryptography.blake2b.1.0.8.nupkg.sha512",
+        "isopoh.cryptography.blake2b.nuspec",
+        "lib/netstandard1.3/Isopoh.Cryptography.Blake2b.dll",
+        "lib/netstandard1.3/Isopoh.Cryptography.Blake2b.xml"
+      ]
+    },
+    "Isopoh.Cryptography.SecureArray/1.0.8": {
+      "sha512": "HgsU04CpHwGkk1OcPNxvo3BmbKMJ8CbNLuJjtXKxvlzOGKmElyMjFRfx1p+EhzSCsRn8FzoJSSlc6lypbIMuLg==",
+      "type": "package",
+      "path": "isopoh.cryptography.securearray/1.0.8",
+      "files": [
+        "isopoh.cryptography.securearray.1.0.8.nupkg.sha512",
+        "isopoh.cryptography.securearray.nuspec",
+        "lib/netstandard1.3/Isopoh.Cryptography.SecureArray.dll",
+        "lib/netstandard1.3/Isopoh.Cryptography.SecureArray.xml"
       ]
     },
     "Libuv/1.10.0": {

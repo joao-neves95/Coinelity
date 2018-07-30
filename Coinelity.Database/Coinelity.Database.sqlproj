@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{c9b7e13c-27fe-4975-875a-67ac3443af8e}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql140DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -66,5 +66,10 @@
     <Build Include="EventType.sql" />
     <Build Include="AuditLog.sql" />
     <None Include="Inserts\EventType_Inserts.sql" />
+    <Build Include="ApplicationUserRoles.sql" />
+    <Build Include="ApplicationUserAccount.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Inserts\ApplicationRole_Inserts.sql" />
   </ItemGroup>
 </Project>

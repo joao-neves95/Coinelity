@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Coinelity.AspServer.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
+using Coinelity.AspServer.Middleware;
+using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer.Controllers
 {
@@ -27,20 +28,26 @@ namespace Coinelity.AspServer.Controllers
             _signInManager = signInManager;
         }
 
+        [Produces("application/json")]
         [HttpPost("register")]
-        public async Task Register([FromBody]RegisterDTO registerDTO)
+        public async Task<IActionResult> Register([FromBody]RegisterDTO registerDTO)
         {
             if (!ModelState.IsValid)
-                return;
+                return BadRequest(Json(Utils.GetErrorsFromModelState(ModelState)));
 
             // TODO: Check if email already exists.
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
+            // TODO: Fix IP Address (returning "::1").
             user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-            IdentityResult registerSuccess = await _userManager.CreateAsync(user);
+            IdentityResult registerSuccess = await _userManager.CreateAsync(user, user.Password);
+
             if (!registerSuccess.Succeeded)
                 // TODO: Error handling.
-                return;
+                // return StatusCode( 500 );
+                return StatusCode(500, registerSuccess.Errors.ToList());
+
+            return Ok();
         }
     }
 }

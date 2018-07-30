@@ -130,7 +130,6 @@ namespace Coinelity.Core.Data
                         {
                             sqlCommands[i].Transaction = transaction;
                             await sqlCommands[i].ExecuteNonQueryAsync();
-                            sqlCommands[i].Dispose();
                         }
 
                         transaction.Commit();
@@ -160,6 +159,11 @@ namespace Coinelity.Core.Data
                     }
                     finally
                     {
+                        for (int i = 0; i < sqlCommands.Length; ++i)
+                        {
+                            sqlCommands[i].Dispose();
+                        }
+
                         transaction.Dispose();
                     }
                 }
