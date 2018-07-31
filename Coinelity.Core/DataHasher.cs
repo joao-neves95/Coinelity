@@ -12,28 +12,32 @@ namespace Coinelity.Core
     {
         private static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
 
+        // TODO: Less time hash time.
+        // Currently taking 3s/4s.
+        private static readonly Argon2Config _config = new Argon2Config
+        {
+            Type = Argon2Type.DataIndependentAddressing,
+            Version = Argon2Version.Nineteen,
+            TimeCost = 9,
+            MemoryCost = 22768,
+            Lanes = 5,
+            Threads = 2,
+            // Temporary.
+            // TODO: Store secret in .env
+            Secret = Encoding.UTF8.GetBytes("Ph+j=N!6Q%a9BX"),
+            // AssociatedData = associatedData,
+            HashLength = 20
+        };
+
         public static string HashData(string data)
         {
             byte[] passwordBytes = Encoding.UTF8.GetBytes( data );
             byte[] salt = new byte[16];
-            Rng.GetBytes(salt);
+            Rng.GetBytes( salt );
 
-            Argon2Config config = new Argon2Config
-            {
-                Type = Argon2Type.DataIndependentAddressing,
-                Version = Argon2Version.Nineteen,
-                TimeCost = 10,
-                MemoryCost = 32768,
-                Lanes = 5,
-                Threads = Environment.ProcessorCount,
-                Password = passwordBytes,
-                Salt = salt,
-                // Temporary.
-                // TODO: Store secret in .env
-                Secret = Encoding.UTF8.GetBytes( "Ph+j=N!6Q%a9BX" ),
-                // AssociatedData = associatedData,
-                HashLength = 20 // >= 4
-            };
+            Argon2Config config = _config;
+            config.Salt = salt;
+            config.Password = passwordBytes;
 
             Argon2 argon2 = new Argon2( config );
 
@@ -48,21 +52,18 @@ namespace Coinelity.Core
 
         public static bool Compare(string dataToVerify, string hashedData)
         {
-            var configOfPasswordToVerify = new Argon2Config { Password = Encoding.UTF8.GetBytes( dataToVerify ), Threads = 1 };
+            Argon2Config configOfPasswordToVerify = _config;
+            configOfPasswordToVerify.Password = Encoding.UTF8.GetBytes( dataToVerify );
+
             SecureArray<byte> hash = null;
             try
             {
                 if (configOfPasswordToVerify.DecodeString(hashedData, out hash) && hash != null)
                 {
-                    Argon2 argon2ToVerify = new Argon2( configOfPasswordToVerify );
+                    var argon2ToVerify = new Argon2( configOfPasswordToVerify );
                     using (var hashToVerify = argon2ToVerify.Hash())
                     {
-                        if (!hash.Buffer.Where((b, i) => b != hashToVerify[i]).Any())
-                        {
-                            return true;
-                        }
-
-                        return false;
+                        return !hash.Buffer.Where((b, i) => b != hashToVerify[i]).Any();
                     }
                 }
 

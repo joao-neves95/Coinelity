@@ -20,6 +20,7 @@ using Coinelity.AspServer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Coinelity.AspServer
 {
@@ -28,6 +29,7 @@ namespace Coinelity.AspServer
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            DotNetEnv.Env.Load();
         }
 
         public IConfiguration Configuration { get; }
@@ -49,6 +51,7 @@ namespace Coinelity.AspServer
                 options.Password.RequireLowercase = false;
             });
             //.AddDefaultTokenProviders();
+            //services.AddScoped<SignInManager<ApplicationUser>, AppSignInManager>();
 
             services.AddAuthentication(options =>
             {
@@ -59,15 +62,15 @@ namespace Coinelity.AspServer
             .AddJwtBearer(options =>
             {
                 // TODO: (Production) Change to true. HTTPS.
+                // https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-2.1&tabs=visual-studio
                 options.RequireHttpsMetadata = false; // For development.
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    SaveSigninToken = true,
+                    SaveSigninToken = false,
                     // Clock skew compensates for server time drift.
                     ClockSkew = TimeSpan.FromMinutes(1),
                     //Specify the key used to sign the token:
-                    //IssuerSigningKey = SecurityKey,
                     RequireSignedTokens = true,
                     //Ensure the token hasn't expired:
                     RequireExpirationTime = true,
@@ -80,6 +83,12 @@ namespace Coinelity.AspServer
                     IssuerSigningKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(DotNetEnv.Env.GetString("JWT_KEY")) ),
                     ValidIssuer = DotNetEnv.Env.GetString("JWT_ISSUER")
                 };
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "AuthToken";
+                options.LoginPath = "/";
             });
 
             services.AddCors();
@@ -104,13 +113,17 @@ namespace Coinelity.AspServer
                 app.UseDatabaseErrorPage();
             }
 
-            DotNetEnv.Env.Load();
-
             app.UseCors(policyBuilder => {
                 policyBuilder.WithOrigins("http://localhost:3000", "http://localhost:5000", "http://localhost:33620", "http://localhost")
                              .AllowAnyHeader()
                              .AllowAnyMethod()
                              .AllowCredentials();
+            });
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                ForwardedHostHeaderName = "PHP"
             });
 
             app.UseAuthentication();

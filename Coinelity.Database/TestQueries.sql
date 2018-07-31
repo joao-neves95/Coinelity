@@ -23,10 +23,22 @@ SELECT *
 FROM dbo.AuditLog;
 GO
 
+-- DELETES:
 DELETE TOP (10)
-FROM table
-
-SELECT  
+FROM dbo.ApplicationUserRoles;
+GO
+DELETE TOP (10)
+FROM dbo.ApplicationUser;
+GO
+DELETE TOP (10)
+FROM dbo.ApplicationUserSettings;
+GO
+DELETE TOP (10)
+FROM dbo.ApplicationUserAccount;
+GO
+DELETE TOP (10)
+FROM dbo.AuditLog;
+--
 
 SELECT dbo.ApplicationRole.Name AS RoleName
 FROM dbo.ApplicationRole

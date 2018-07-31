@@ -147,7 +147,12 @@ namespace Coinelity.AspServer.DataAccess
             return FindByEmailAsync(normalizedUserName, cancellationToken);
         }
 
-        public async Task<UserIdDTO> GetUserIdByEmailAsync(string userEmail)
+        /// <summary>
+        /// Returns the user id as [string] or [null] if there is no user with the provided email.
+        /// </summary>
+        /// <param name="userEmail"></param>
+        /// <returns></returns>
+        public async Task<string> GetUserIdByEmailAsync(string userEmail)
         {
             IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(
                 _connection,
@@ -160,7 +165,34 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.ToObject<UserIdDTO>( userListDictionaries );
+            if (userListDictionaries.Count <= 0)
+                return null;
+
+            return userListDictionaries[0]["Id"].ToString();
+        }
+
+        /// <summary>
+        /// Returns the user password as [string] or [null] if there is no user with the provided email.
+        /// </summary>
+        /// <param name="userEmail"></param>
+        /// <returns></returns>
+        public async Task<string> GetUserPasswordByEmailAsync(string userEmail)
+        {
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(
+                _connection,
+                @"SELECT Password
+                  FROM dbo.ApplicationUser
+                  WHERE Email = @Email",
+                new Dictionary<string, object>
+                {
+                    { "@Email", userEmail }
+                }
+            );
+
+            if (userListDictionaries.Count <= 0)
+                return null;
+
+            return userListDictionaries[0]["Password"].ToString();
         }
 
         public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)

@@ -9,6 +9,16 @@ namespace Coinelity.AspServer.Middleware
 {
     public class AppPasswordHasher<TUser> : PasswordHasher<TUser> where TUser : class
     {
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
+
+        ~AppPasswordHasher()
+        {
+            Dispose();
+        }
+
         public override string HashPassword(TUser user, string password)
         {
             return DataHasher.HashData( password );
@@ -16,10 +26,15 @@ namespace Coinelity.AspServer.Middleware
 
         public override PasswordVerificationResult VerifyHashedPassword(TUser user, string hashedPassword, string providedPassword)
         {
-            if ( DataHasher.Compare(providedPassword, hashedPassword) )
+            if ( VerifyHashedPassword(hashedPassword, providedPassword) )
                 return PasswordVerificationResult.Success;
 
             return PasswordVerificationResult.Failed;
+        }
+
+        public static bool VerifyHashedPassword(string hashedPassword, string providedPassword)
+        {
+            return DataHasher.Compare(providedPassword, hashedPassword);
         }
     }
 }

@@ -29,6 +29,7 @@ namespace Coinelity.AspServer.Models
 
         public DateTime CreateDate { get; set; }
 
+        // This is used for the AuditLog table.
         public string IpAddress { get; set; }
     }
 }

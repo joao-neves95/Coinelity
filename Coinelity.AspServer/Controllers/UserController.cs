@@ -6,31 +6,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.Models;
-using Microsoft.AspNetCore.Authorization;
 using Coinelity.AspServer.DataAccess;
 
 namespace Coinelity.AspServer.Controllers
 {
-    // [Produces("application/json")]
     [Route("api/user")]
+    [Produces("application/json")]
     public class UserController : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public UserController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public UserController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
-        [Produces("application/json")]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterDTO registerDTO)
         {
@@ -47,9 +45,8 @@ namespace Coinelity.AspServer.Controllers
                 return BadRequest(Json( new ErrorMessage(ErrorType.EmailAlreadyInUse) ));
 
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
-            // TODO: Fix IP Address (returning "::1").
+            // When in localhost it returns "::1".
             user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            // this.Request.HttpContext.Connection.RemoteIpAddress;
 
             IdentityResult registerSuccess = await _userManager.CreateAsync(user, user.Password);
 
@@ -61,7 +58,27 @@ namespace Coinelity.AspServer.Controllers
             return Ok();
         }
 
-        [Produces("application/json")]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]LoginDTO loginDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ));
+
+            string userEmail = loginDTO.Email;
+            UserStore userStore = new UserStore();
+
+            // TODO: Set lockoutOnFailure based on the user settings.
+            Microsoft.AspNetCore.Identity.SignInResult signInResult = await AppSignInManager.PasswordSignInAsync(userEmail, loginDTO.Password, false, false);
+
+            if (!signInResult.Succeeded)
+                return BadRequest(Json( new ErrorMessage(ErrorType.LoginError) ));
+
+            string userId = await userStore.GetUserIdByEmailAsync( userEmail );
+            userStore.Dispose();
+
+            return Ok(Json( JWTTokens.Generate(userEmail, userId) ));
+        }
+
         [Authorize]
         [HttpGet("roles")]
         public async Task<IActionResult> Roles()
@@ -71,7 +88,8 @@ namespace Coinelity.AspServer.Controllers
             try
             {
                 // TODO: Get user roles by user id instead of by email (faster).
-                applicationUserRoles = await roleStore.GetUserRolesByUserEmailAsync( User.Identity.Name );
+                string userIdClaim = User.Claims.Where(c => c.Type == "id").First().Value;
+                applicationUserRoles = await roleStore.GetUserRolesByUserIdAsync( userIdClaim );
 
                 return Ok(Json( applicationUserRoles ));
             }

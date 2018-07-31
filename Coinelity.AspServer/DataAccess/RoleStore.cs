@@ -54,13 +54,13 @@ namespace Coinelity.AspServer.DataAccess
         public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserEmailAsync(string userEmail)
         {
             UserStore userStore = new UserStore();
-            UserIdDTO userIdDTO = await userStore.GetUserIdByEmailAsync( userEmail );
-            string userId = userIdDTO.Id.ToString();
+            string userId = await userStore.GetUserIdByEmailAsync( userEmail );
             userStore.Dispose();
 
             return await GetUserRolesByUserIdAsync( userId );
         }
 
+        // TODO: Change to string.
         public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserIdAsync(string userId)
         {
             IList<Dictionary<string, object>> userRolesDictionaryList = await MSSQLClient.QueryAsync(
