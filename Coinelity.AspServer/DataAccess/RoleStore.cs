@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Data.SqlClient;
 using Coinelity.AspServer.Models;
 using System.Threading;
+using Coinelity.AspServer.DataAccess;
+using Coinelity.Core;
 using Coinelity.Core.Data;
 
 namespace Coinelity.AspServer.DataAccess
@@ -33,8 +35,9 @@ namespace Coinelity.AspServer.DataAccess
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            int success = await MSSQLClient.CommandAsync(_connection,
-                $@"INSERT INTO dbo.ApplicationRole (Name)
+            int success = await MSSQLClient.CommandAsync(
+                _connection,
+                @"INSERT INTO dbo.ApplicationRole (Name)
                    VALUES (@RoleName)",
                 new Dictionary<string, object>
                 {
@@ -48,12 +51,32 @@ namespace Coinelity.AspServer.DataAccess
             return IdentityResult.Success;
         }
 
-        public Task<IList<Dictionary<string, object>>> GetUserRoles(string userId)
+        public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserEmailAsync(string userEmail)
         {
-            //return await MSSQLClient.QueryAsync(_connection,
-            //    $@"SELECT dbo.ApplicationRole.Name"
-            //);
-            throw new NotImplementedException();
+            UserStore userStore = new UserStore();
+            UserIdDTO userIdDTO = await userStore.GetUserIdByEmailAsync( userEmail );
+            string userId = userIdDTO.Id.ToString();
+            userStore.Dispose();
+
+            return await GetUserRolesByUserIdAsync( userId );
+        }
+
+        public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserIdAsync(string userId)
+        {
+            IList<Dictionary<string, object>> userRolesDictionaryList = await MSSQLClient.QueryAsync(
+                _connection,
+                @"SELECT dbo.ApplicationRole.Name AS RoleName
+                  FROM dbo.ApplicationRole
+                      INNER JOIN dbo.ApplicationUserRoles
+                      ON dbo.ApplicationRole.Id = dbo.ApplicationUserRoles.RoleId
+                      WHERE dbo.ApplicationUserRoles.UserId = @UserId",
+                new Dictionary<string, object>
+                {
+                    { "@UserId", userId }
+                }
+            );
+
+            return Utils.ToObjectList<ApplicationRoleDTO>( userRolesDictionaryList );
         }
 
         public Task<IdentityResult> DeleteAsync(ApplicationRole role, CancellationToken cancellationToken)

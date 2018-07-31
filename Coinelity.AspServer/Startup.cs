@@ -58,6 +58,7 @@ namespace Coinelity.AspServer
             })
             .AddJwtBearer(options =>
             {
+                // TODO: (Production) Change to true. HTTPS.
                 options.RequireHttpsMetadata = false; // For development.
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -91,12 +92,18 @@ namespace Coinelity.AspServer
                         options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
+                app.UseDatabaseErrorPage();
+            }
+
             DotNetEnv.Env.Load();
 
             app.UseCors(policyBuilder => {
@@ -105,11 +112,6 @@ namespace Coinelity.AspServer
                              .AllowAnyMethod()
                              .AllowCredentials();
             });
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
 
             app.UseAuthentication();
 

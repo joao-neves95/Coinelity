@@ -12,6 +12,9 @@ namespace Coinelity.AspServer.Controllers
     [Route("/")]
     public class PagesController : Controller
     {
+        [Route("/")]
+        [Route("/home")]
+        [Route("/index.html")]
         [HttpGet]
         public IActionResult Get()
         {

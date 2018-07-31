@@ -7,7 +7,19 @@ namespace Coinelity.Core
 {
     public static class Utils
     {
-        public static T GetObject<T>(IList<Dictionary<string, object>> listDictionaries) where T : class
+        public static List<T> ToObjectList<T>(IList<Dictionary<string, object>> listDictionaries) where T : class
+        {
+            List<T> objectList = new List<T>();
+
+            for (byte i = 0; i < listDictionaries.Count; ++i)
+            {
+                objectList.Add( ToObject<T>(listDictionaries[i]) );
+            }
+
+            return objectList;
+        }
+
+        public static T ToObject<T>(IList<Dictionary<string, object>> listDictionaries) where T : class
         {
             Type type = typeof(T);
             T obj = Activator.CreateInstance( type ) as T;
@@ -35,7 +47,7 @@ namespace Coinelity.Core
             return (T)obj;
         }
 
-        public static T GetObject<T>(Dictionary<string, object> dictionary)
+        public static T ToObject<T>(Dictionary<string, object> dictionary)
         {
             Type type = typeof(T);
             var obj = Activator.CreateInstance(type);

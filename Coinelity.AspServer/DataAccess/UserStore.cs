@@ -36,6 +36,7 @@ namespace Coinelity.AspServer.DataAccess
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            // TODO: Test if the query is right (see the UserId's).
             const string userIdQuery = "SELECT max(Id) FROM dbo.ApplicationUser";
             SqlConnection connection = Env.GetMSSQLConnection();
 
@@ -86,6 +87,24 @@ namespace Coinelity.AspServer.DataAccess
             throw new NotImplementedException();
         }
 
+        public async Task<bool> ExistsByEmailAsync(string userEmail)
+        {
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(_connection,
+                $@"SELECT 1
+                   FROM dbo.ApplicationUser
+                   WHERE Email = @Email",
+                new Dictionary<string, object>
+                {
+                    { "@Email", userEmail }
+                }
+            );
+
+            if (userListDictionaries.Count <= 0)
+                return false;
+
+            return true;
+        }
+
         public async Task<ApplicationUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -100,7 +119,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.GetObject<ApplicationUser>(userListDictionaries);
+            return Utils.ToObject<ApplicationUser>( userListDictionaries );
         }
 
         public async Task<ApplicationUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
@@ -117,7 +136,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.GetObject<ApplicationUser>( userListDictionaries );
+            return Utils.ToObject<ApplicationUser>( userListDictionaries );
         }
 
         public Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
@@ -126,6 +145,22 @@ namespace Coinelity.AspServer.DataAccess
 
             // The (normalized) email serves as the username.
             return FindByEmailAsync(normalizedUserName, cancellationToken);
+        }
+
+        public async Task<UserIdDTO> GetUserIdByEmailAsync(string userEmail)
+        {
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(
+                _connection,
+                $@"SELECT Id
+                   FROM dbo.ApplicationUser
+                   WHERE Email = @Email",
+                new Dictionary<string, object>
+                {
+                    { "@Email", userEmail }
+                }
+            );
+
+            return Utils.ToObject<UserIdDTO>( userListDictionaries );
         }
 
         public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)
