@@ -11,6 +11,7 @@ using System.Security.Claims;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.Models;
 using Coinelity.AspServer.DataAccess;
+using Coinelity.Core.Errors;
 
 namespace Coinelity.AspServer.Controllers
 {
@@ -33,7 +34,7 @@ namespace Coinelity.AspServer.Controllers
         public async Task<IActionResult> Register([FromBody]RegisterDTO registerDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ));
+                return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ).Value);
 
             // I need to create a new UserStore instance here becouse if I user _userManager MSSQLClient will dispose of everything.
             // (and I would not be able to use it again)
@@ -42,7 +43,7 @@ namespace Coinelity.AspServer.Controllers
             userStore.Dispose();
 
             if (userExists)
-                return BadRequest(Json( new ErrorMessage(ErrorType.EmailAlreadyInUse) ));
+                return BadRequest(Json( new ErrorMessage(ErrorType.EmailAlreadyInUse) ).Value);
 
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
             // When in localhost it returns "::1".
@@ -71,12 +72,12 @@ namespace Coinelity.AspServer.Controllers
             Microsoft.AspNetCore.Identity.SignInResult signInResult = await AppSignInManager.PasswordSignInAsync(userEmail, loginDTO.Password, false, false);
 
             if (!signInResult.Succeeded)
-                return BadRequest(Json( new ErrorMessage(ErrorType.LoginError) ));
+                return BadRequest(Json( new ErrorMessage(ErrorType.LoginError) ).Value);
 
             string userId = await userStore.GetUserIdByEmailAsync( userEmail );
             userStore.Dispose();
 
-            return Ok(Json( JWTTokens.Generate(userEmail, userId) ));
+            return Ok(Json( new jwtDTO { AccessToken = JWTTokens.Generate(userEmail, userId) } ).Value);
         }
 
         [Authorize]
@@ -87,17 +88,16 @@ namespace Coinelity.AspServer.Controllers
             List<ApplicationRoleDTO> applicationUserRoles = new List<ApplicationRoleDTO>();
             try
             {
-                // TODO: Get user roles by user id instead of by email (faster).
                 string userIdClaim = User.Claims.Where(c => c.Type == "id").First().Value;
                 applicationUserRoles = await roleStore.GetUserRolesByUserIdAsync( userIdClaim );
 
-                return Ok(Json( applicationUserRoles ));
+                return Ok(Json( applicationUserRoles ).Value);
             }
             catch (Exception e)
             {
                 // TODO: Exception handling.
                 Console.WriteLine($"ERROR:\nOn: api/users/roles\n{ e.Message }");
-                return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError )));
+                return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
             }
             finally
             {

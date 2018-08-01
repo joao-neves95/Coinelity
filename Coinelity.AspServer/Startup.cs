@@ -45,7 +45,7 @@ namespace Coinelity.AspServer
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 8;
+                options.Password.RequiredLength = Env.MinPasswordLen;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
@@ -81,7 +81,7 @@ namespace Coinelity.AspServer
                     //Ensure the token was issued by a trusted authorization server(default true):
                     ValidateIssuer = true,
                     IssuerSigningKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(DotNetEnv.Env.GetString("JWT_KEY")) ),
-                    ValidIssuer = DotNetEnv.Env.GetString("JWT_ISSUER")
+                    ValidIssuer = DotNetEnv.Env.GetString( "JWT_ISSUER" )
                 };
             });
 
