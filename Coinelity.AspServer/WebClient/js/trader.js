@@ -97,7 +97,6 @@ class Dictionary extends Collection {
   }
 
   add(key, value) {
-    console.log(this.findIndexOfKey(key))
     if (this.uniqueKeys && this.findIndexOfKey(key) !== false)
       throw new Error(Errors.existingKey);
 
@@ -214,20 +213,76 @@ class List extends Collection {
     return value % 1 !== 0;
   }
 }
-﻿﻿﻿class DashoardController {
+﻿// https://developer.mozilla.org/en-US/docs/Web/API/History
+// https://developer.mozilla.org/en-US/docs/Web/API/History_API
+// Examples: https://html5demos.com/history/, http://krasimirtsonev.com/blog/article/deep-dive-into-client-side-routing-navigo-pushstate-hash
+// .pushState()
+
+/**
+ * This stores the Router instance.
+ * Do not use this variable directly. Use Router._ instead.
+ * */
+let router = null;
+
+/**
+ * The Router singleton.
+ * */
+class Router {
+  constructor() {
+    if (router)
+      throw new Error("There can only be one instance of Router.")
+
+    router = this;
+    Object.freeze( router );
+  }
+
+  /**
+ * Return the current Router instance.
+ * Same as using router, but don't use it a more secure code.
+ * @returns { NavbarController }
+ */
+  static get _() { return navbarController };
+
+  setTile(title) {
+
+  }
+
+  on(path, callback) {
+
+  }
+
+  notFound() {
+
+  }
+
+  addStyleSheet(url) {
+
+  }
+
+  addScript(url) {
+
+  }
+
+}
+
+﻿﻿class DashoardController {
   constructor() {
 
   }
-}﻿﻿// Singleton.
-// This is a hack because there can be no static properties in JavaScript...
+}﻿// This variable is a hack because there can be no static properties in JavaScript classes...
 /**
- * Do not use this directly. Use NavbarController.instance instead
+ * This stores the NavbarController instance.
+ * Do not use this variable directly. Use NavbarController._ instead.
+ * @type {NavbarController}
  * */
-let navBarController = null;
+let navbarController = null;
 
+/**
+ * The NavbarController singleton. Access it with NavbarController._
+ * */
 class NavbarController {
   constructor() {
-    if (navBarController)
+    if (navbarController)
       throw new Error("There can only be one instance of NavBarController.")
 
     /**
@@ -237,26 +292,30 @@ class NavbarController {
      */
     this.items = new Dictionary( true );
 
-    navBarController = this;
-    Object.freeze( navBarController );
+    navbarController = this;
+    Object.freeze( navbarController );
   }
 
   /**
-   * Return the current NavbarController instance.
-   * Same as using navBarController, but don't use it.
+   * Returns the current NavbarController instance.
+   * Same as using navbarController, but don't use it for a more secure code.
    * @returns { NavbarController }
    */
-  static get instance() { return navBarController };
+  static get _() { return navbarController };
 
   /**
   * Map a page ID to its instance.
   * key: string (unique id of the page/component. To be used by the router)
   * value: object (instance of the page/component)
+  * @returns {void}
   */
   mapItem(key, value) {
     this.items.add(key, value);
   }
 
+  /**
+  * @returns {void}
+  */
   init() {
     // Initialize all items.
   }
@@ -266,7 +325,7 @@ new NavbarController();
 ﻿whenDomReady(() => {
   console.log("The DOM is ready");
 
-  NavbarController.instance.mapItem("dashboard", new DashoardController());
+  NavbarController._.mapItem("dashboard", new DashoardController());
 
-  NavbarController.instance.init();
+  NavbarController._.init();
 });

@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,36 @@ namespace Coinelity.AspServer.Middleware
             }
 
             return errors;
+        }
+
+        /// <summary>
+        /// 
+        /// Get the response content-type (MIME_type) based on the file to send.
+        /// 
+        /// </summary>
+        /// <param name="fileType"> js/css/json/img </param>
+        /// <param name="fileName"> The file name. </param>
+        /// <returns>MIME_type</returns>
+        /// <see cref="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types"/>
+        public static string ContentTypeResolver(string fileType, string fileName)
+        {
+            switch (fileType)
+            {
+                case "js":
+                    return "application/javascript";
+                case "css":
+                    return "text/css";
+                case "json":
+                    return "application/json";
+                case "img":
+                    string extension = Path.GetExtension( fileName );
+                    if (extension == "svg")
+                        extension += "+xml";
+
+                    return $"image/{ extension }";
+                default:
+                    return null;
+            }
         }
     }
 }

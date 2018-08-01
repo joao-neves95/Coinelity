@@ -80,6 +80,7 @@ namespace Coinelity.AspServer
                     ValidAudience = DotNetEnv.Env.GetString( "JWT_ISSUER" ),
                     //Ensure the token was issued by a trusted authorization server(default true):
                     ValidateIssuer = true,
+                    // TODO: Change IssuerSigningKey with a cron job.
                     IssuerSigningKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(DotNetEnv.Env.GetString("JWT_KEY")) ),
                     ValidIssuer = DotNetEnv.Env.GetString( "JWT_ISSUER" )
                 };

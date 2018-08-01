@@ -19,13 +19,11 @@ namespace Coinelity.AspServer.Controllers
     [Produces("application/json")]
     public class UserController : Controller
     {
-        private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserController(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
+        public UserController(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager)
         {
-            _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
         }
@@ -96,7 +94,7 @@ namespace Coinelity.AspServer.Controllers
             catch (Exception e)
             {
                 // TODO: Exception handling.
-                Console.WriteLine($"ERROR:\nOn: api/users/roles\n{ e.Message }");
+                Console.WriteLine($"ERROR:\nIn: api/users/roles\n{ e.Message }");
                 return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
             }
             finally

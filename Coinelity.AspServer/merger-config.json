@@ -10,16 +10,16 @@
 	"notifications": true,
 	"sourceFiles": [
 		{
-			"source": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\src\\traderPage.header.js",
+			"source": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\WebClient\\js\\src\\traderPage.header.js",
 			"output": {
-				"path": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\",
+				"path": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\WebClient\\js\\",
 				"name": "trader.js"
 			}
 		},
 		{
-			"source": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\src\\adminPage.header.js",
+			"source": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\WebClient\\js\\src\\adminPage.header.js",
 			"output": {
-				"path": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\Private\\js\\",
+				"path": "C:\\Users\\Utilizador\\odrive\\ISTEC\\DEV\\coinelity\\Coinelity.AspServer\\WebClient\\js\\",
 				"name": "admin.js"
 			}
 		}
