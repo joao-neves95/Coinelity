@@ -1,6 +1,6 @@
 ﻿class DashboardController extends PageBase {
-  constructor() {
-    super(navIcon, content, targetElement)
+  constructor(title) {
+    super(title, DashboardTemplates.iconURL, content, targetElement);
   }
 
   onSetActive() { };

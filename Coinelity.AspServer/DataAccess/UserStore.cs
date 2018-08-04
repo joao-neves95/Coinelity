@@ -82,11 +82,24 @@ namespace Coinelity.AspServer.DataAccess
             return IdentityResult.Success;
         }
 
+        /// <summary>
+        /// 
+        /// NOT IMPLEMENTED.
+        /// 
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task<IdentityResult> DeleteAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// (Extra) Optimized (SELECT 1) way of knowing if the provided email exists on the database.
+        /// </summary>
+        /// <param name="userEmail"></param>
+        /// <returns></returns>
         public async Task<bool> ExistsByEmailAsync(string userEmail)
         {
             IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(_connection,
@@ -172,7 +185,7 @@ namespace Coinelity.AspServer.DataAccess
         }
 
         /// <summary>
-        /// Returns the user password as [string] or [null] if there is no user with the provided email.
+        /// (Extra) Returns the user password as [string] or [null] if there is no user with the provided email.
         /// </summary>
         /// <param name="userEmail"></param>
         /// <returns></returns>
