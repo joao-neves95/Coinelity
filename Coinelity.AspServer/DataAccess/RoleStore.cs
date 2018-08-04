@@ -35,7 +35,7 @@ namespace Coinelity.AspServer.DataAccess
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            int success = await MSSQLClient.CommandAsync(
+            int success = await MSSQLClient.CommandOnceAsync(
                 _connection,
                 @"INSERT INTO dbo.ApplicationRole (Name)
                    VALUES (@RoleName)",
@@ -63,7 +63,7 @@ namespace Coinelity.AspServer.DataAccess
         // TODO: Change to string.
         public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserIdAsync(string userId)
         {
-            IList<Dictionary<string, object>> userRolesDictionaryList = await MSSQLClient.QueryAsync(
+            IList<Dictionary<string, object>> userRolesDictionaryList = await MSSQLClient.QueryOnceAsync(
                 _connection,
                 @"SELECT dbo.ApplicationRole.Name AS RoleName
                   FROM dbo.ApplicationRole

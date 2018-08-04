@@ -49,3 +49,7 @@ FROM dbo.ApplicationRole
 SELECT 1
 FROM dbo.ApplicationUser
 WHERE Email = 'joaopedro.neves@gmail.com';
+
+-- Add admin role
+-- INSERT INTO dbo.ApplicationUserRoles ()
+-- VALUES ();

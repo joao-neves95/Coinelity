@@ -36,7 +36,7 @@ namespace Coinelity.AspServer.DataAccess
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            // TODO: Test if the query is right (see the UserId's).
+
             const string userIdQuery = "SELECT max(Id) FROM dbo.ApplicationUser";
             SqlConnection connection = Env.GetMSSQLConnection();
 
@@ -74,7 +74,7 @@ namespace Coinelity.AspServer.DataAccess
                     })
             };
 
-            bool success = await MSSQLClient.NonQueryTransactionAsync(connection, commands);
+            bool success = await MSSQLClient.NonQueryTransactionOnceAsync(connection, commands);
 
             if (!success)
                 return IdentityResult.Failed();
@@ -89,7 +89,7 @@ namespace Coinelity.AspServer.DataAccess
 
         public async Task<bool> ExistsByEmailAsync(string userEmail)
         {
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(_connection,
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(_connection,
                 $@"SELECT 1
                    FROM dbo.ApplicationUser
                    WHERE Email = @Email",
@@ -109,7 +109,7 @@ namespace Coinelity.AspServer.DataAccess
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(_connection,
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(_connection,
                 $@"SELECT *
                    FROM dbo.ApplicationUser
                    WHERE Id = @ID",
@@ -126,7 +126,7 @@ namespace Coinelity.AspServer.DataAccess
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(_connection,
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(_connection,
                 $@"SELECT *
                    FROM dbo.ApplicationUser
                    WHERE NormalizedEmail = @NormalizedEmail",
@@ -154,7 +154,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public async Task<string> GetUserIdByEmailAsync(string userEmail)
         {
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(
                 _connection,
                 $@"SELECT Id
                    FROM dbo.ApplicationUser
@@ -178,7 +178,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public async Task<string> GetUserPasswordByEmailAsync(string userEmail)
         {
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryAsync(
+            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(
                 _connection,
                 @"SELECT Password
                   FROM dbo.ApplicationUser

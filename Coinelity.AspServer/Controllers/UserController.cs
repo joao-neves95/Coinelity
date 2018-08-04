@@ -34,7 +34,7 @@ namespace Coinelity.AspServer.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ).Value);
 
-            // I need to create a new UserStore instance here becouse if I user _userManager MSSQLClient will dispose of everything.
+            // I need to create a new UserStore instance here because when _userManager is used the connection string gets disposed.
             // (and I would not be able to use it again)
             UserStore userStore = new UserStore();
             bool userExists = await userStore.ExistsByEmailAsync( registerDTO.Email );

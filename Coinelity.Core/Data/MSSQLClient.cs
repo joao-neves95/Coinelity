@@ -20,24 +20,32 @@ namespace Coinelity.Core.Data
 
         #region QUERY
 
-        public static IList<Dictionary<string, object>> Query(SqlConnection connection, SqlCommand cmd)
+        /// <summary>
+        /// 
+        /// Makes a query on the provided DB connection. NOTE: It opens and closes the connection when finished.
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public static IList<Dictionary<string, object>> QueryOnce(SqlConnection connection, SqlCommand cmd)
         {
-            return ExecuteQuery(connection, cmd);
+            return ExecuteQueryOnce(connection, cmd);
         }
 
-        public static IList<Dictionary<string, object>> Query(SqlConnection connection, string queryString)
+        public static IList<Dictionary<string, object>> QueryOnce(SqlConnection connection, string queryString)
         {
             SqlCommand cmd = new SqlCommand(queryString, connection);
-            return ExecuteQuery(connection, cmd);
+            return ExecuteQueryOnce(connection, cmd);
         }
 
-        public static IList<Dictionary<string, object>> Query(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
+        public static IList<Dictionary<string, object>> QueryOnce(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
         {
             SqlCommand parameterizedCmd = ParameterizeCommand(connection, queryString, parameters);
-            return ExecuteQuery(connection, parameterizedCmd);
+            return ExecuteQueryOnce(connection, parameterizedCmd);
         }
 
-        private static IList<Dictionary<string, object>> ExecuteQuery(SqlConnection connection, SqlCommand cmd)
+        private static IList<Dictionary<string, object>> ExecuteQueryOnce(SqlConnection connection, SqlCommand cmd)
         {
             try
             {
@@ -45,32 +53,64 @@ namespace Coinelity.Core.Data
 
                 using (connection)
                 {
-                    SqlDataReader dataReader = cmd.ExecuteReader();
-                    IList<Dictionary<string, object>> recordSet = new List<Dictionary<string, object>>();
-
-                    while(dataReader.Read())
-                    {
-                        recordSet.Add( GetRowAsDictionary(dataReader) );
-                    }
-
-                    return recordSet;
+                    return ExecuteQuery( cmd );
                 }
 
             }
             catch (Exception e)
             {
-                return new List<Dictionary<string, object>>
-                {
-                    new Dictionary<string, object>
-                    {
-                        { "Error", e.Message }
-                    }
-                };
+                return ReturnErrorMessageObject( e );
             }
             finally
             {
                 cmd.Dispose();
                 connection.Close();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// Executes a query on the provided opened connection async. NOTE: The method doesn't open or close the connection (no disposing control).
+        /// 
+        /// </summary>
+        /// <param name="connection"> Opened connection </param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public static IList<Dictionary<string, object>> Query(SqlCommand cmd)
+        {
+            return ExecuteQuery( cmd );
+        }
+
+        public static IList<Dictionary<string, object>> Query(SqlConnection connection, string queryString)
+        {
+            SqlCommand cmd = new SqlCommand(queryString, connection);
+            return ExecuteQuery( cmd );
+        }
+
+        public static IList<Dictionary<string, object>> Query(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
+        {
+            SqlCommand parameterizedCmd = ParameterizeCommand(connection, queryString, parameters);
+            return ExecuteQuery( parameterizedCmd );
+        }
+
+        private static IList<Dictionary<string, object>> ExecuteQuery(SqlCommand cmd)
+        {
+            try
+            {
+                SqlDataReader dataReader = cmd.ExecuteReader();
+                IList<Dictionary<string, object>> recordSet = new List<Dictionary<string, object>>();
+
+                while (dataReader.Read())
+                {
+                    recordSet.Add( GetRowAsDictionary(dataReader) );
+                }
+
+                return recordSet;
+
+            }
+            catch (Exception e)
+            {
+                return ReturnErrorMessageObject( e );
             }
         }
 
@@ -86,34 +126,55 @@ namespace Coinelity.Core.Data
             return row;
         }
 
+        private static IList<Dictionary<string, object>> ReturnErrorMessageObject(Exception e)
+        {
+            return new List<Dictionary<string, object>>
+                {
+                    new Dictionary<string, object>
+                    {
+                        { "Error", e.Message }
+                    }
+                };
+        }
+
         #endregion
 
         #region COMMAND
-        public static int Command(SqlConnection connection, SqlCommand sqlCommand)
+
+        /// <summary>
+        /// 
+        /// Executes a query once on the provided DB connection. NOTE: In the end it closes the connection.
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public static int CommandOnce(SqlConnection connection, SqlCommand sqlCommand)
         {
-            return ExecuteCommand(connection, sqlCommand);
+            return ExecuteCommandOnce(connection, sqlCommand);
         }
 
-        public static int Command(SqlConnection connection, string commandString)
+        public static int CommandOnce(SqlConnection connection, string commandString)
         {
             SqlCommand cmd = new SqlCommand(commandString, connection);
-            return ExecuteCommand(connection, cmd);
+            return ExecuteCommandOnce(connection, cmd);
         }
 
-        public static int Command(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
+        public static int CommandOnce(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
         {
             SqlCommand parameterizedCmd = ParameterizeCommand(connection, commandString, parameters);
-            return ExecuteCommand(connection, parameterizedCmd);
+            return ExecuteCommandOnce(connection, parameterizedCmd);
         }
 
-        private static int ExecuteCommand(SqlConnection connection, SqlCommand cmd)
+        private static int ExecuteCommandOnce(SqlConnection connection, SqlCommand cmd)
         {
             try
             {
                 connection.Open();
+
                 using (connection)
                 {
-                    return cmd.ExecuteNonQuery();
+                    return ExecuteCommand( cmd );
                 }
             }
             catch (Exception e)
@@ -127,6 +188,46 @@ namespace Coinelity.Core.Data
                 connection.Close();
             }
         }
+
+        /// <summary>
+        /// 
+        /// Executes a query on the provided DB connection. NOTE: The method doesn't open or close the connection (no disposing control).
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public static int Command(SqlCommand sqlCommand)
+        {
+            return ExecuteCommand( sqlCommand );
+        }
+
+        public static int Command(SqlConnection connection, string commandString)
+        {
+            SqlCommand cmd = new SqlCommand(commandString, connection);
+            return ExecuteCommand( cmd );
+        }
+
+        public static int Command(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
+        {
+            SqlCommand parameterizedCmd = ParameterizeCommand(connection, commandString, parameters);
+            return ExecuteCommand( parameterizedCmd );
+        }
+
+        private static int ExecuteCommand(SqlCommand cmd)
+        {
+            try
+            {
+                return cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return -1;
+            }
+        }
+
         #endregion
 
         public static SqlCommand ParameterizeCommand(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
@@ -140,6 +241,12 @@ namespace Coinelity.Core.Data
             }
 
             return cmd;
+        }
+
+        public static object GetLastInsertedIDOnce(SqlConnection _connection)
+        {
+            IList<Dictionary<string, object>> userIdResponse = MSSQLClient.QueryOnce(_connection, "SELECT SCOPE_IDENTITY()");
+            return userIdResponse[0].First().Value;
         }
 
         public static object GetLastInsertedID(SqlConnection _connection)
