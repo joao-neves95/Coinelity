@@ -28,6 +28,7 @@ class NavbarView {
 
   injectIcon(iconURL) {
     // Inject.
-    this.element.innerHTML += NavbarTemplates.navIcon( iconURL );
+    // this.element.innerHTML += NavbarTemplates.navIcon( iconURL );
+    return;
   }
 }

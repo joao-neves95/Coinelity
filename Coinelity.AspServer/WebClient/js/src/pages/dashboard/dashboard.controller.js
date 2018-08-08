@@ -1,7 +1,10 @@
-﻿class DashboardController extends PageBase {
-  constructor(title) {
-    super(title, DashboardTemplates.iconURL, content, targetElement);
+﻿class DashboardController extends PageControllerBase {
+  constructor() {
+    super(
+      new DashboardModel(),
+      new DashboardView()
+    );
   }
 
-  onSetActive() { };
+  onSetActive() { console.info('Dashboard activated.'); };
 }

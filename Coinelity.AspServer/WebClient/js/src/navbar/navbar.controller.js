@@ -13,7 +13,9 @@ let navbarController = null;
 class NavbarController {
   constructor() {
     if (navbarController)
-      throw new Error("There can only be one instance of NavBarController.")
+      throw new Error( 'There can only be one instance of NavBarController.' );
+
+    this.navbarView = new NavbarView();
 
     /**
      * Dictionary mapping the pages and components.
@@ -59,12 +61,12 @@ class NavbarController {
   }
 
   injectIcon(iconURL) {
-    NavbarView._.injectIcon( iconURL );
+    this.navbarView.injectIcon( iconURL );
   }
 
     /**
    * Activate an item stored in the navbarController.
-   * You must pass or the itemId or the item instance.
+   * You must pass one of the two.
    * 
    * @param { string } itemId
    * @param { object } thisItem Instance of Page | NavbarPanelItem.

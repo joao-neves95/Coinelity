@@ -1,4 +1,6 @@
-﻿/*
+﻿// #region COLLECTIONS
+
+/*
 
 https://github.com/joao-neves95/Exercises_Challenges_Courses/blob/master/JavaScript/Collections.js
 
@@ -202,3 +204,5 @@ class List extends Collection {
     return value % 1 !== 0;
   }
 }
+
+// #endregion

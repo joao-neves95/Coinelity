@@ -1,15 +1,25 @@
 ﻿// @import '/services/externalLibs'
 // @import '/services/utils'
 // @import '/services/router'
+// @import '/navbar/navbarItemBase'
+// @import '/pages/pageViewBase'
+// @import '/pages/pageModelBase'
+// @import '/pages/pageControllerBase'
 // @import '/pages/dashboard/dashboard.templates'
+// @import '/pages/dashboard/dashboard.view'
+// @import '/pages/dashboard/dashboard.model'
 // @import '/pages/dashboard/dashboard.controller'
-// @import '/navbar/navbarController'
+// @import '/navbar/navbar.templates'
+// @import '/navbar/navbar.view'
+// @import '/navbar/navbar.controller'
 // @import 'trader.main'
 'use strict'
 ﻿// when-dom-ready
 // https://github.com/lukechilds/when-dom-ready
 !function (e, n) { "object" == typeof exports && "undefined" != typeof module ? module.exports = n() : "function" == typeof define && define.amd ? define(n) : e.whenDomReady = n() }(this, function () { "use strict"; var e = ["interactive", "complete"], n = function (n, t) { return new Promise(function (o) { n && "function" != typeof n && (t = n, n = null), t = t || window.document; var i = function () { return o(void (n && setTimeout(n))) }; -1 !== e.indexOf(t.readyState) ? i() : t.addEventListener("DOMContentLoaded", i) }) }; return n.resume = function (e) { return function (t) { return n(e).then(function () { return t }) } }, n });
-﻿/*
+﻿// #region COLLECTIONS
+
+/*
 
 https://github.com/joao-neves95/Exercises_Challenges_Courses/blob/master/JavaScript/Collections.js
 
@@ -213,6 +223,8 @@ class List extends Collection {
     return value % 1 !== 0;
   }
 }
+
+// #endregion
 ﻿// https://developer.mozilla.org/en-US/docs/Web/API/History
 // https://developer.mozilla.org/en-US/docs/Web/API/History_API
 // Examples: https://html5demos.com/history/, http://krasimirtsonev.com/blog/article/deep-dive-into-client-side-routing-navigo-pushstate-hash
@@ -265,14 +277,173 @@ class Router {
 
 }
 
-﻿﻿class DashoardController {
-  constructor() {
+﻿/**
+  * Every class that extends PageBase MUST implement all properties and methods present in IPage.
+  */
+class NavbarItemBase {
+  /**
+   * 
+   * @param { PageModelBase } model An extended PageModelBase.
+   * @param { PageViewBase } view An extended PageViewBase.
+   */
+  constructor(model, view) {
+    this.id = model.id;
+    this.navIconURL = model.navIconURL;
+    this.content = view.initContent;
+    this.targetElement = view.targetElement;
+  }
 
+  injectContent() {
+    this.targetElement().innerHTML = this.content;
+  }
+}
+﻿class PageViewBase {
+  /**
+   * 
+   * @param { () => HTMLElement } targetElement (optional) Function to select the DOM injection target element.
+   * @param { string } initContent
+   */
+  constructor(initContent, targetElement = () => { return document.getElementById('page-container'); }) {
+    this.initContent = initContent;
+    this.targetElement = targetElement;
+  }
+}
+﻿class PageModelBase {
+  /**
+   * 
+   * @param { string } title
+   * @param { string } navIconURL
+   */
+  constructor(id, title, navIconURL) {
+    this.id = id;
+    this.title = title;
+    this.navIconURL = navIconURL;
+  }
+}
+﻿/**
+  * Every class that extends PageControllerBase MUST implement all properties and methods present in IPage.
+  */
+class PageControllerBase extends NavbarItemBase {
+  /**
+   * 
+   * @param { PageModelBase } model An extended PageModelBase.
+   * @param { PageViewBase } view An extended PageViewBase.
+   */
+  constructor(model, view) {
+    super(model, view);
+
+    this.model = model;
+    this.view = view;
+    this.title = model.title;
+  }
+}
+﻿class DashboardTemplates {
+  constructor() {
+    throw new Error( "You can not instantiate DashboardTemplates (static class)" );
+  }
+
+  static page() {
+    return `
+      <main class="page" id="dashboard-page">
+        <h1>DASHBOARD</h1>
+      </main>`;
+  }
+}
+﻿/**
+  * Do not use this directly.
+  * Use "DashboardModel._" or "DashboardController.model" instead.
+  */
+let dashboardView = null;
+
+class DashboardView extends PageViewBase {
+  constructor() {
+    if (dashboardView)
+      throw new Error("There can only be one instance of DashboardView.");
+
+    super( DashboardTemplates.page() );
+
+    dashboardView = this;
+    Object.freeze( dashboardView );
+  }
+
+  static get _() { return dashboardView; }
+}
+﻿/**
+  * Do not use this directly.
+  * Use "DashboardModel._" or "DashboardController.model" instead.
+  */
+let dashboardModel = null;
+
+class DashboardModel extends PageModelBase {
+  constructor() {
+    if (dashboardModel)
+      throw new Error("There can only be one instance of DashboardModel.");
+
+    super('Dashboard', '');
+
+    dashboardModel = this;
+    Object.freeze( dashboardModel );
+  }
+
+  static get _() { return dashboardModel; }
+}
+﻿class DashboardController extends PageControllerBase {
+  constructor() {
+    super(
+      new DashboardModel(),
+      new DashboardView()
+    );
+  }
+
+  onSetActive() { console.info('Dashboard activated.'); };
+}
+﻿class NavbarTemplates {
+  constructor() {
+    throw new Error("You can not instantiate NavbarTemplates (static class)");
+  }
+
+  static navIcon(iconURL) {
+    // Demo.
+    return `<img src="${iconURL}" alt=""/>`;
+  }
+}﻿/**
+ * This stores the NavbarView instance.
+ * Do not use this variable directly. Use NavbarView._ instead.
+ * 
+ * @type { NavbarView }
+ * */
+let navbarView = null;
+
+/**
+ * The NavbarView singleton. Access it with NavbarView._
+ * */
+class NavbarView {
+  constructor() {
+    if (navbarView)
+      throw new Error("There can only be one instance of NavBarController.")
+
+    navbarView = this;
+    Object.freeze( navbarView );
+  }
+
+  /**
+   * Returns the current NavbarController instance.
+   * @returns { NavbarView }
+   */
+  static get _() { return navbarView };
+
+  get element() { return document.getElementById('') };
+
+  injectIcon(iconURL) {
+    // Inject.
+    // this.element.innerHTML += NavbarTemplates.navIcon( iconURL );
+    return;
   }
 }﻿// This variable is a hack because there can be no static properties in JavaScript classes...
 /**
  * This stores the NavbarController instance.
  * Do not use this variable directly. Use NavbarController._ instead.
+ * 
  * @type {NavbarController}
  * */
 let navbarController = null;
@@ -283,14 +454,18 @@ let navbarController = null;
 class NavbarController {
   constructor() {
     if (navbarController)
-      throw new Error("There can only be one instance of NavBarController.")
+      throw new Error( 'There can only be one instance of NavBarController.' );
+
+    this.navbarView = new NavbarView();
 
     /**
      * Dictionary mapping the pages and components.
-     * key: string (unique id of the page/component. To be used by the router)
-     * value: object (instance of the page/component)
+     * key: string (unique id of the Page | NavbarPanelItem. To be used by the router)
+     * value:  Instance of Page | NavbarPanelItem.
      */
-    this.items = new Dictionary( true );
+    this.items = new Dictionary(true);
+    this.activePage = null;
+    this.activeNavbarPanelItem = null;
 
     navbarController = this;
     Object.freeze( navbarController );
@@ -298,16 +473,18 @@ class NavbarController {
 
   /**
    * Returns the current NavbarController instance.
-   * Same as using navbarController, but don't use it for a more secure code.
+   * Same as using navbarController, but don't use it for a more secure (error free) code.
    * @returns { NavbarController }
    */
   static get _() { return navbarController };
 
   /**
   * Map a page ID to its instance.
-  * key: string (unique id of the page/component. To be used by the router)
-  * value: object (instance of the page/component)
-  * @returns {void}
+  * key: string (unique id of the Page | NavbarPanelItem. To be used by the router)
+  * value: object (instance of the Page | NavbarPanelItem)
+  * @param { string } key Unique id of the Page | NavbarPanelItem.
+  * @param { object } value Instance of Page | NavbarPanelItem.
+  * @returns { void }
   */
   mapItem(key, value) {
     this.items.add(key, value);
@@ -317,15 +494,40 @@ class NavbarController {
   * @returns {void}
   */
   init() {
-    // Initialize all items.
+    for (let i = 0; i < this.items.length; ++i) {
+      this.injectIcon( this.items.getByIndex(i).navIconURL );
+    }
+
+    this.activateItem( 'dashboard' );
+  }
+
+  injectIcon(iconURL) {
+    this.navbarView.injectIcon( iconURL );
+  }
+
+    /**
+   * Activate an item stored in the navbarController.
+   * You must pass one of the two.
+   * 
+   * @param { string } itemId
+   * @param { object } thisItem Instance of Page | NavbarPanelItem.
+   * 
+   * @return {NavbarItem}
+   */
+  activateItem(itemId = null, thisItem = null) {
+    if (!thisItem)
+      thisItem = this.items.getByKey( itemId );
+
+    thisItem.injectContent();
+    thisItem.onSetActive();
   }
 }
 
 new NavbarController();
 ﻿whenDomReady(() => {
-  console.log("The DOM is ready");
+  console.log('The DOM is ready');
 
-  NavbarController._.mapItem("dashboard", new DashoardController());
+  NavbarController._.mapItem('dashboard', new DashboardController( 'dashboard' ));
 
   NavbarController._.init();
 });
