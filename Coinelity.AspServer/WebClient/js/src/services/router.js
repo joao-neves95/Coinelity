@@ -3,6 +3,8 @@
 // Examples: https://html5demos.com/history/, http://krasimirtsonev.com/blog/article/deep-dive-into-client-side-routing-navigo-pushstate-hash
 // .pushState()
 
+// Using Page.js for routing. Don't reinvent the wheel.
+
 /**
  * This stores the Router instance.
  * Do not use this variable directly. Use Router._ instead.
@@ -27,14 +29,6 @@ class Router {
  * @returns { NavbarController }
  */
   static get _() { return navbarController };
-
-  setTile(title) {
-
-  }
-
-  on(path, callback) {
-
-  }
 
   notFound() {
 
