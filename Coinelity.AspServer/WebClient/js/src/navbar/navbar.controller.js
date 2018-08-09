@@ -15,7 +15,7 @@ class NavbarController {
     if (navbarController)
       throw new Error( 'There can only be one instance of NavBarController.' );
 
-    this.navbarView = new NavbarView();
+    this.view = new NavbarView();
 
     /**
      * Dictionary mapping the pages and components.
@@ -61,21 +61,25 @@ class NavbarController {
   }
 
   injectIcon(iconURL) {
-    this.navbarView.injectIcon( iconURL );
+    this.view.injectIcon( iconURL );
   }
 
-    /**
+  /**
    * Activate an item stored in the navbarController.
    * You must pass one of the two.
    * 
    * @param { string } itemId
-   * @param { object } thisItem Instance of Page | NavbarPanelItem.
+   * @param { NavbarItemBase } thisItem Instance of Page | NavbarPanelItem.
    * 
    * @return {NavbarItem}
    */
   activateItem(itemId = null, thisItem = null) {
+    console.debug('activate item')
     if (!thisItem)
       thisItem = this.items.getByKey( itemId );
+
+    if (thisItem.navbarItemType === NavbarItemType.Page)
+      this.view.removeActivePage();
 
     thisItem.injectContent();
     thisItem.onSetActive();

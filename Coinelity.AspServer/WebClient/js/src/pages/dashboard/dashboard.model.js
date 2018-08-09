@@ -9,7 +9,7 @@ class DashboardModel extends PageModelBase {
     if (dashboardModel)
       throw new Error("There can only be one instance of DashboardModel.");
 
-    super('Dashboard', '');
+    super('Dashboard', NavbarItemType.Page, '', '');
 
     dashboardModel = this;
     Object.freeze( dashboardModel );

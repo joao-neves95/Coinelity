@@ -1,5 +1,7 @@
-﻿// @import '/services/externalLibs'
+﻿// @import '/enums/navbarItemType'
+// @import '/services/externalLibs'
 // @import '/services/utils'
+// @import '/services/DOM'
 // @import '/services/router'
 // @import '/navbar/navbarItemBase'
 // @import '/pages/pageViewBase'
@@ -12,8 +14,14 @@
 // @import '/navbar/navbar.templates'
 // @import '/navbar/navbar.view'
 // @import '/navbar/navbar.controller'
+// @import '/services/traderRoutes'
 // @import 'trader.main'
 'use strict'
+﻿const NavbarItemType = Object.freeze({
+  Page: 1,
+  NavbarPanelItem: 2,
+  Modal: 3
+});
 ﻿// when-dom-ready
 // https://github.com/lukechilds/when-dom-ready
 !function (e, n) { "object" == typeof exports && "undefined" != typeof module ? module.exports = n() : "function" == typeof define && define.amd ? define(n) : e.whenDomReady = n() }(this, function () { "use strict"; var e = ["interactive", "complete"], n = function (n, t) { return new Promise(function (o) { n && "function" != typeof n && (t = n, n = null), t = t || window.document; var i = function () { return o(void (n && setTimeout(n))) }; -1 !== e.indexOf(t.readyState) ? i() : t.addEventListener("DOMContentLoaded", i) }) }; return n.resume = function (e) { return function (t) { return n(e).then(function () { return t }) } }, n });
@@ -229,10 +237,26 @@ class List extends Collection {
 }
 
 // #endregion
+﻿class DOM {
+  /**
+   * 
+   * @param { string } url
+   * @param { HTMLElement } target Default: <body>
+   */
+  static addScript(url, target = document.getElementsByTagName('body')[0]) {
+    let newScript = document.createElement('script');
+    newScript.setAttribute('src', url);
+    newScript.setAttribute('type', 'application/javascript');
+
+    target.insertAdjacentElement('beforeend', newScript);
+  }
+}
 ﻿// https://developer.mozilla.org/en-US/docs/Web/API/History
 // https://developer.mozilla.org/en-US/docs/Web/API/History_API
 // Examples: https://html5demos.com/history/, http://krasimirtsonev.com/blog/article/deep-dive-into-client-side-routing-navigo-pushstate-hash
 // .pushState()
+
+// Using Page.js for routing. Don't reinvent the wheel.
 
 /**
  * This stores the Router instance.
@@ -259,19 +283,6 @@ class Router {
  */
   static get _() { return navbarController };
 
-  setTile(title) {
-
-  }
-
-  goTo(path, title, content) {
-    history.pushState()
-  }
-
-  on(path, callback) {
-
-  }
-
-
   notFound() {
 
   }
@@ -297,6 +308,7 @@ class NavbarItemBase {
    */
   constructor(model, view) {
     this.id = model.id;
+    this.navbarItemType = model.navbarItemType;
     this.navIconURL = model.navIconURL;
     this.content = view.initContent;
     this.targetElement = view.targetElement;
@@ -322,12 +334,14 @@ class NavbarItemBase {
 }
 ﻿class PageModelBase {
   /**
-   * 
+   * @param { string } id
+   * @param { NavbarItemType } id
    * @param { string } title
    * @param { string } navIconURL
    */
-  constructor(id, title, navIconURL) {
+  constructor(id, navbarItemType, title, navIconURL) {
     this.id = id;
+    this.navbarItemType = navbarItemType;
     this.title = title;
     this.navIconURL = navIconURL;
   }
@@ -391,7 +405,7 @@ class DashboardModel extends PageModelBase {
     if (dashboardModel)
       throw new Error("There can only be one instance of DashboardModel.");
 
-    super('Dashboard', '');
+    super('Dashboard', NavbarItemType.Page, '', '');
 
     dashboardModel = this;
     Object.freeze( dashboardModel );
@@ -437,6 +451,7 @@ class NavbarView {
     navbarView = this;
     Object.freeze( navbarView );
   }
+  // #region PROPERTIES
 
   /**
    * Returns the current NavbarController instance.
@@ -444,13 +459,25 @@ class NavbarView {
    */
   static get _() { return navbarView };
 
-  get element() { return document.getElementById('') };
+  get element() { return document.getElementById('sidenav-container') };
+
+  static get pageContainer() { return document.getElementById('page-container') };
+
+  // #endregion
+
+  // #region METHODS
 
   injectIcon(iconURL) {
     // Inject.
     // this.element.innerHTML += NavbarTemplates.navIcon( iconURL );
     return;
   }
+
+  removeActivePage() {
+    NavbarView.pageContainer.innerHTML = '';
+  }
+
+  // #endregion
 }﻿// This variable is a hack because there can be no static properties in JavaScript classes...
 /**
  * This stores the NavbarController instance.
@@ -468,7 +495,7 @@ class NavbarController {
     if (navbarController)
       throw new Error( 'There can only be one instance of NavBarController.' );
 
-    this.navbarView = new NavbarView();
+    this.view = new NavbarView();
 
     /**
      * Dictionary mapping the pages and components.
@@ -514,21 +541,25 @@ class NavbarController {
   }
 
   injectIcon(iconURL) {
-    this.navbarView.injectIcon( iconURL );
+    this.view.injectIcon( iconURL );
   }
 
-    /**
+  /**
    * Activate an item stored in the navbarController.
    * You must pass one of the two.
    * 
    * @param { string } itemId
-   * @param { object } thisItem Instance of Page | NavbarPanelItem.
+   * @param { NavbarItemBase } thisItem Instance of Page | NavbarPanelItem.
    * 
    * @return {NavbarItem}
    */
   activateItem(itemId = null, thisItem = null) {
+    console.debug('activate item')
     if (!thisItem)
       thisItem = this.items.getByKey( itemId );
+
+    if (thisItem.navbarItemType === NavbarItemType.Page)
+      this.view.removeActivePage();
 
     thisItem.injectContent();
     thisItem.onSetActive();
@@ -536,6 +567,22 @@ class NavbarController {
 }
 
 new NavbarController();
+﻿page();
+
+page('/dashboard', () => {
+  NavbarController._.activateItem('dashboard');
+  console.info('Dashboard page.');
+});
+
+page('/trade-room', () => {
+  console.info('Trade Room page.');
+  throw new Error('Route "/trade-room" not yet implemented.')
+});
+
+page('/settings', () => {
+  console.info('Settings page.');
+  throw new Error('Route "/settings" not yet implemented.')
+});
 ﻿whenDomReady(() => {
   console.log('The DOM is ready');
 

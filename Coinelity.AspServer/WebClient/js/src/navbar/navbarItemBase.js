@@ -9,6 +9,7 @@ class NavbarItemBase {
    */
   constructor(model, view) {
     this.id = model.id;
+    this.navbarItemType = model.navbarItemType;
     this.navIconURL = model.navIconURL;
     this.content = view.initContent;
     this.targetElement = view.targetElement;
