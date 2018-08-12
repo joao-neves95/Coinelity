@@ -1,0 +1,20 @@
+﻿@import 'variables';
+
+.top-bar {
+    background-color: dodgerblue !important;
+    position: relative;
+    max-width: 100% !important;
+    height: 3em;
+
+    .mobile-burger {
+        margin-left: @sidebar-icon-mobile-margin-left;
+
+        @media screen and (min-width: @hide-navbar-labels-width) {
+            display: none;
+        }
+    }
+
+    .title-bar-title {
+        margin-left: 1em;
+    }
+}

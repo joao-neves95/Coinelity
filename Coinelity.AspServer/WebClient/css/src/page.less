@@ -2,13 +2,17 @@
 
 .page-container {
     position: relative;
+    background-color: green;
 
-    @media screen and (max-width: @mobile-width-max) {
-        max-width: 90%;
+    @media screen and (max-width: @hide-navbar-labels-width) {
+        margin-left: @sidebar-mobile-width;
+    }
+
+    @media screen and (min-width: @hide-navbar-labels-width) {
+        margin-left: @sidebar-desktop-width;
     }
 
     .page {
         height: 100%;
-        background-color: green;
     }
 }
