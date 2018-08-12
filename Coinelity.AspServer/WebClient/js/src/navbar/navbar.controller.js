@@ -54,14 +54,15 @@ class NavbarController {
   */
   init() {
     for (let i = 0; i < this.items.length; ++i) {
-      this.injectIcon( this.items.getByIndex(i).navIconURL );
+      const thisItemModel = this.items.getByIndex(i).model;
+      this.injectIcon(thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id);
     }
 
     this.activateItem( 'dashboard' );
   }
 
-  injectIcon(iconURL) {
-    this.view.injectIcon( iconURL );
+  injectIcon(url, label, linkTo = null) {
+    this.view.injectIcon(url, label, linkTo);
   }
 
   /**

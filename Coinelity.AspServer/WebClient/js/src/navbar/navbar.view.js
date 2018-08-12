@@ -17,6 +17,7 @@ class NavbarView {
     navbarView = this;
     Object.freeze( navbarView );
   }
+
   // #region PROPERTIES
 
   /**
@@ -25,7 +26,9 @@ class NavbarView {
    */
   static get _() { return navbarView };
 
-  get element() { return document.getElementById('sidenav-container') };
+  get element() { return document.getElementById('sidenav') };
+
+  get iconContainer() { return document.getElementById('icon-container') };
 
   static get pageContainer() { return document.getElementById('page-container') };
 
@@ -33,10 +36,8 @@ class NavbarView {
 
   // #region METHODS
 
-  injectIcon(iconURL) {
-    // Inject.
-    // this.element.innerHTML += NavbarTemplates.navIcon( iconURL );
-    return;
+  injectIcon(url, label, linkTo = null) {
+    this.iconContainer.innerHTML += NavbarTemplates.iconLink(url, label, linkTo);
   }
 
   removeActivePage() {

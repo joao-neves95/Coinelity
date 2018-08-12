@@ -44,7 +44,7 @@ namespace Coinelity.AspServer.Middleware
                 case "json":
                     return "application/json";
                 case "img":
-                    string extension = Path.GetExtension( fileName );
+                    string extension = Path.GetExtension(fileName).Replace(".", "");
                     if (extension == "svg")
                         extension += "+xml";
 

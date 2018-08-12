@@ -9,7 +9,7 @@ class DashboardModel extends PageModelBase {
     if (dashboardModel)
       throw new Error("There can only be one instance of DashboardModel.");
 
-    super('Dashboard', NavbarItemType.Page, '', '');
+    super('dashboard', NavbarItemType.Page, 'Dashboard', 'public/img/dashboard-icon-white.svg');
 
     dashboardModel = this;
     Object.freeze( dashboardModel );

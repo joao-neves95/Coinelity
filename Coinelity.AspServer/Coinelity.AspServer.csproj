@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="WebClient\js\src\components\" />
     <Folder Include="WebClient\js\src\pages\tradeRoom\trade\" />
+    <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
   <ItemGroup>

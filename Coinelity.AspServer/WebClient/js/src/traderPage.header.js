@@ -14,6 +14,6 @@
 // @import '/navbar/navbar.templates'
 // @import '/navbar/navbar.view'
 // @import '/navbar/navbar.controller'
-// @import '/services/traderRoutes'
 // @import 'trader.main'
+// @import '/services/traderRoutes'
 'use strict'

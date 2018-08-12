@@ -20,31 +20,63 @@
   <!-- FOUNDATION CSS -->
   <!-- Temporary, only for development. -->
   <!-- TODO: Create a custom Foundation build for production: https://foundation.zurb.com/sites/download.html/ -->
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0-rc.2/dist/css/foundation.min.css"
-        integrity="sha256-iJQ8dZac/jUYHxiEnZJsyVpKcdq2sQvdA7t02QFmp30= sha384-SplqNBo/0ZlvSdwrP/riIPDozO5ck8+yIm++KVqyMAC53S6m3BaV+2OLpi7ULOOh sha512-ho6hK4sAWdCeqopNZWNy1d9Ok2hzfTLQLcGSr8ZlRzDzh6tNHkVoqSl6wgLsqls3yazwiG9H9dBCtSfPuiLRCQ=="
-        crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0-rc.2/dist/css/foundation.min.css" integrity="sha256-iJQ8dZac/jUYHxiEnZJsyVpKcdq2sQvdA7t02QFmp30= sha384-SplqNBo/0ZlvSdwrP/riIPDozO5ck8+yIm++KVqyMAC53S6m3BaV+2OLpi7ULOOh sha512-ho6hK4sAWdCeqopNZWNy1d9Ok2hzfTLQLcGSr8ZlRzDzh6tNHkVoqSl6wgLsqls3yazwiG9H9dBCtSfPuiLRCQ==" crossorigin="anonymous">
   <link rel="stylesheet" href="private/css/dashboard.css" type="text/css">
 </head>
 
 <body>
   <div class="grid-container fluid">
+
+    <div class="title-bar" data-responsive-toggle="top-bar" data-hide-for="medium" style="height: 3em;">
+      <button class="menu-icon" type="button" data-toggle></button>
+      <div class="title-bar-title">Menu</div>
+    </div>
+    <header class="top-bar" id="top-bar" data-animate="hinge-in-from-top spin-out" style="height: 3em;">
+      <div class="top-bar-left">
+        <ul class="dropdown menu" data-dropdown-menu>
+          <li class="menu-text">Site Title</li>
+          <li>
+            <a href="#">One</a>
+            <ul class="menu vertical">
+              <li><a href="#">One</a></li>
+              <li><a href="#">Two</a></li>
+              <li><a href="#">Three</a></li>
+            </ul>
+          </li>
+          <li><a href="#">Two</a></li>
+          <li><a href="#">Three</a></li>
+        </ul>
+      </div>
+    </header>
+
     <div class="grid-x container-content">
 
-      <aside class="cell small-1 medium-1 large-1 sidenav" id="sidenav-container"> <a href="./dashboard">Dashboard</a> <br /> <a href="./trade-room">Trade Room</a> </aside>
+      <aside class="cell small-1 medium-1 large-1 sidenav" id="sidenav">
+        <ul class="grid-y no-bullet" id="icon-container">
 
-      <section class="cell small-11 medium-11 large-11" id="page-container"></section>
+          <!--<li class="cell">
+            <a href="./dashboard" class="grid-x align-middle">
+              <img class="icon cell large-6" src="public/img/dashboard-icon-white.svg" alt"=Dashboard Icon" /><figcaption class="icon-label large-6">Dashboard</figcaption>
+            </a>
+          </li>-->
+
+        </ul>
+      </aside>
+
+      <section class="cell small-11 medium-11 large-11 page-container" id="page-container"></section>
 
     </div>
   </div>
 
+  <!-- JQUERY SLIM JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+
   <!-- FOUNDATION JS -->
-  <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0-rc.2/dist/js/foundation.min.js"
-          integrity="sha256-G6jsRyH1fxbsvFIXSCuwYmI1aIDYBa28xscrvmYjJy0= sha384-vtoG68NvPc9azmFJr447vvY8qgdyA4FdaJ5/bqvzIM4eAdZfO0iyRRF8l2AAscYI sha512-43seCcNrHA0BQgrtyajB9sp8yOdv5c8QdYvgjP7zJ7v+dmzAcxYDQ2gupb9aztsNWBq1COIp/3NHYkQs4l/dkg=="
-          crossorigin="anonymous"></script>
-  <!-- TEMPORARY PATHS -->
+  <!-- Compressed JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0-rc.2/dist/js/foundation.min.js" integrity="sha256-G6jsRyH1fxbsvFIXSCuwYmI1aIDYBa28xscrvmYjJy0= sha384-vtoG68NvPc9azmFJr447vvY8qgdyA4FdaJ5/bqvzIM4eAdZfO0iyRRF8l2AAscYI sha512-43seCcNrHA0BQgrtyajB9sp8yOdv5c8QdYvgjP7zJ7v+dmzAcxYDQ2gupb9aztsNWBq1COIp/3NHYkQs4l/dkg==" crossorigin="anonymous"></script>
+
   <script type="text/javascript" src="private/js/trader.js"></script>
-  <!-- Get user previleges. If it has admin rights inject the script. -->
+  <!-- Get user previleges. If it has admin rights, inject the relative script. -->
   <script type="text/javascript" src="private/js/admin.js"></script>
 </body>
 

@@ -14,8 +14,8 @@
 // @import '/navbar/navbar.templates'
 // @import '/navbar/navbar.view'
 // @import '/navbar/navbar.controller'
-// @import '/services/traderRoutes'
 // @import 'trader.main'
+// @import '/services/traderRoutes'
 'use strict'
 ﻿const NavbarItemType = Object.freeze({
   Page: 1,
@@ -405,7 +405,7 @@ class DashboardModel extends PageModelBase {
     if (dashboardModel)
       throw new Error("There can only be one instance of DashboardModel.");
 
-    super('Dashboard', NavbarItemType.Page, '', '');
+    super('dashboard', NavbarItemType.Page, 'Dashboard', 'public/img/dashboard-icon-white.svg');
 
     dashboardModel = this;
     Object.freeze( dashboardModel );
@@ -428,11 +428,25 @@ class DashboardModel extends PageModelBase {
     throw new Error("You can not instantiate NavbarTemplates (static class)");
   }
 
-  static navIcon(iconURL) {
-    // Demo.
-    return `<img src="${iconURL}" alt=""/>`;
+  static iconLink(url, label, linkTo = null) {
+    if (!linkTo)
+      linkTo = label.toLowerCase();
+
+    return `
+      <li class="cell">
+        <a href="./${ linkTo }" class="grid-x align-middle">
+          <img class="icon cell large-6" src="${ url }" alt"=${ label } Icon" />
+          <figcaption class="icon-label large-6">${ label }</figcaption>
+        </a>  
+      </li>`;
   }
-}﻿/**
+
+  static iconButton() {
+    throw new Error('NavbarTemplates.iconButton() not implemented.');
+  }
+
+}
+﻿/**
  * This stores the NavbarView instance.
  * Do not use this variable directly. Use NavbarView._ instead.
  * 
@@ -451,6 +465,7 @@ class NavbarView {
     navbarView = this;
     Object.freeze( navbarView );
   }
+
   // #region PROPERTIES
 
   /**
@@ -459,7 +474,9 @@ class NavbarView {
    */
   static get _() { return navbarView };
 
-  get element() { return document.getElementById('sidenav-container') };
+  get element() { return document.getElementById('sidenav') };
+
+  get iconContainer() { return document.getElementById('icon-container') };
 
   static get pageContainer() { return document.getElementById('page-container') };
 
@@ -467,10 +484,8 @@ class NavbarView {
 
   // #region METHODS
 
-  injectIcon(iconURL) {
-    // Inject.
-    // this.element.innerHTML += NavbarTemplates.navIcon( iconURL );
-    return;
+  injectIcon(url, label, linkTo = null) {
+    this.iconContainer.innerHTML += NavbarTemplates.iconLink(url, label, linkTo);
   }
 
   removeActivePage() {
@@ -534,14 +549,15 @@ class NavbarController {
   */
   init() {
     for (let i = 0; i < this.items.length; ++i) {
-      this.injectIcon( this.items.getByIndex(i).navIconURL );
+      const thisItemModel = this.items.getByIndex(i).model;
+      this.injectIcon(thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id);
     }
 
     this.activateItem( 'dashboard' );
   }
 
-  injectIcon(iconURL) {
-    this.view.injectIcon( iconURL );
+  injectIcon(url, label, linkTo = null) {
+    this.view.injectIcon(url, label, linkTo);
   }
 
   /**
@@ -567,6 +583,15 @@ class NavbarController {
 }
 
 new NavbarController();
+﻿whenDomReady(() => {
+  console.log('The DOM is ready');
+  $(document).foundation();
+
+  const newDashboardController = new DashboardController();
+  NavbarController._.mapItem(newDashboardController.model.id, newDashboardController);
+
+  NavbarController._.init();
+});
 ﻿page();
 
 page('/dashboard', () => {
@@ -582,11 +607,4 @@ page('/trade-room', () => {
 page('/settings', () => {
   console.info('Settings page.');
   throw new Error('Route "/settings" not yet implemented.')
-});
-﻿whenDomReady(() => {
-  console.log('The DOM is ready');
-
-  NavbarController._.mapItem('dashboard', new DashboardController( 'dashboard' ));
-
-  NavbarController._.init();
 });

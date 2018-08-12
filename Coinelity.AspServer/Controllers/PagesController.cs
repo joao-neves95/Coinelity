@@ -42,17 +42,6 @@ namespace Coinelity.AspServer.Controllers
             }
         }
 
-        [HttpGet("/public/{fileType}/{fileName}")]
-        // [Authorize]
-        /// <summary>
-        /// Get a public resource file.
-        /// </summary>
-        /// <param name="fileType"> js/css/json/img </param>
-        /// <param name="fileName"> The file name. </param>
-        public IActionResult GetPublicResource([FromRoute]string fileType, [FromRoute]string fileName)
-        {
-            return GetResource(ResourcePrivacyLevel.Public, fileType, fileName);
-        }
 
         [HttpGet("/dashboard")]
         // [Authorize]
@@ -70,6 +59,17 @@ namespace Coinelity.AspServer.Controllers
                 Console.WriteLine($"ERROR:\nIn: /dashboard\n{ e.Message }");
                 return NotFound(Json( new ErrorMessage(ErrorType.NotFound) ).Value);
             }
+        }
+
+        [HttpGet("/public/{fileType}/{fileName}")]
+        /// <summary>
+        /// Get a public resource file.
+        /// </summary>
+        /// <param name="fileType"> js/css/json/img </param>
+        /// <param name="fileName"> The file name. </param>
+        public IActionResult GetPublicResource([FromRoute]string fileType, [FromRoute]string fileName)
+        {
+            return GetResource(ResourcePrivacyLevel.Public, fileType, fileName);
         }
 
         [HttpGet("/private/{fileType}/{fileName}")]
@@ -96,13 +96,14 @@ namespace Coinelity.AspServer.Controllers
 
                 Response.ContentType = contentType;
                 string filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, fileType, fileName);
+                Console.WriteLine( filePath );
                 return PhysicalFile(filePath, contentType);
             }
             catch (Exception e)
             {
                 // TODO: Error handling.
                 Console.WriteLine(e.Message);
-                return NotFound(Json( new ErrorMessage(ErrorType.NotFound )).Value);
+                return NotFound(Json( new ErrorMessage( ErrorType.NotFound )).Value);
             }
         }
     }

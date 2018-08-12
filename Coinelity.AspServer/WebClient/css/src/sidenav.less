@@ -1,3 +1,42 @@
-﻿.sidenav {
-    background-color: yellow;
+﻿@import 'variables';
+
+.sidenav {
+    background-color: @grey-dark;
+    position: relative;
+
+    @media screen and (max-width: @mobile-width-max) {
+        min-width: 10%;
+    }
+
+    a {
+        height: 2.5em;
+        padding: 5px;
+
+        &:hover {
+            background-color: @grey-ligth;
+        }
+
+        .icon {
+            display: inline-block;
+            width: 25px;
+            height: 2em;
+            padding: 2px;
+
+            @media screen and (max-width: @mobile-width-max) {
+                width: 30px;
+            }
+        }
+
+        .icon-label {
+            display: inline-block;
+            padding: 3px;
+            margin-left: .2em;
+            font-size: .8rem;
+            color: white;
+
+            @media screen and (max-width: @tablet-width-max) {
+                display: none;
+            }
+        }
+    }
 }
