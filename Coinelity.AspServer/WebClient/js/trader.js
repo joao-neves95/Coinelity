@@ -1,8 +1,8 @@
-﻿// @import '/enums/navbarItemType'
+﻿// @import '/enums/colors'
+// @import '/enums/navbarItemType'
 // @import '/services/externalLibs'
 // @import '/services/utils'
 // @import '/services/DOM'
-// @import '/services/router'
 // @import '/navbar/navbarItemBase'
 // @import '/pages/pageViewBase'
 // @import '/pages/pageModelBase'
@@ -14,9 +14,15 @@
 // @import '/navbar/navbar.templates'
 // @import '/navbar/navbar.view'
 // @import '/navbar/navbar.controller'
+// @import '/enums/themeType'
+// @import '/services/themes'
 // @import 'trader.main'
 // @import '/services/traderRoutes'
 'use strict'
+﻿const Colors = Object.freeze({
+  DarkGrey: '#3D3D3D',
+  LightBlue: '#78BBFF'
+});
 ﻿const NavbarItemType = Object.freeze({
   Page: 1,
   NavbarPanelItem: 2,
@@ -243,7 +249,7 @@ class List extends Collection {
    * @param { string } url
    * @param { HTMLElement } target Default: <body>
    */
-  static addScript(url, target = document.getElementsByTagName('body')[0]) {
+  static addScript(url, target = document.body) {
     let newScript = document.createElement('script');
     newScript.setAttribute('src', url);
     newScript.setAttribute('type', 'application/javascript');
@@ -251,52 +257,6 @@ class List extends Collection {
     target.insertAdjacentElement('beforeend', newScript);
   }
 }
-﻿// https://developer.mozilla.org/en-US/docs/Web/API/History
-// https://developer.mozilla.org/en-US/docs/Web/API/History_API
-// Examples: https://html5demos.com/history/, http://krasimirtsonev.com/blog/article/deep-dive-into-client-side-routing-navigo-pushstate-hash
-// .pushState()
-
-// Using Page.js for routing. Don't reinvent the wheel.
-
-/**
- * This stores the Router instance.
- * Do not use this variable directly. Use Router._ instead.
- * */
-let router = null;
-
-/**
- * The Router singleton.
- * */
-class Router {
-  constructor() {
-    if (router)
-      throw new Error("There can only be one instance of Router.")
-
-    router = this;
-    Object.freeze( router );
-  }
-
-  /**
- * Return the current Router instance.
- * Same as using router, but don't use it a more secure code.
- * @returns { NavbarController }
- */
-  static get _() { return navbarController };
-
-  notFound() {
-
-  }
-
-  addStyleSheet(url) {
-
-  }
-
-  addScript(url) {
-
-  }
-
-}
-
 ﻿/**
   * Every class that extends PageBase MUST implement all properties and methods present in IPage.
   */
@@ -583,9 +543,70 @@ class NavbarController {
 }
 
 new NavbarController();
+﻿const ThemeType = Object.freeze({
+  Light: 1,
+  Dark: 2
+});
+﻿class Theme {
+  /**
+   * 
+   * @param { Colors } sidenav
+   */
+  constructor(sidenav, topbar) {
+    this.sidenav = sidenav;
+    this.topbar = topbar;
+  }
+}
+
+let lightTheme = null;
+class LightTheme extends Theme {
+  constructor() {
+    super( Colors.LightBlue, Colors.LightBlue );
+
+    lightTheme = this;
+    Object.freeze( lightTheme );
+  }
+}
+new LightTheme();
+
+let darkTheme = null;
+class DarkTheme extends Theme {
+  constructor() {
+    super( Colors.DarkGrey, Colors.DarkGrey );
+
+    darkTheme = this;
+    Object.freeze( darkTheme );
+  }
+}
+new DarkTheme();
+
+class Themes {
+  constructor() {
+    throw new Error( 'Can not create a new instance of Themes (static class).' );
+  }
+
+  /**
+   * 
+   * @param { ThemeType } themeType
+   */
+  static apply( themeType ) {
+    /**
+     * @type { Theme }
+     */
+    let theme = lightTheme;
+
+    if (themeType === ThemeType.Dark)
+      theme = darkTheme;
+
+    document.getElementById( 'sidenav' ).style.backgroundColor = theme.sidenav;
+    document.getElementsByClassName( 'top-bar' )[0].style.backgroundColor = theme.topbar;
+  }
+}
 ﻿whenDomReady(() => {
-  console.log('The DOM is ready');
+  console.log( 'The DOM is ready' );
+
   $(document).foundation();
+  Themes.apply( ThemeType.Dark );
 
   const newDashboardController = new DashboardController();
   NavbarController._.mapItem(newDashboardController.model.id, newDashboardController);

@@ -1,10 +1,10 @@
 ﻿@import 'variables';
 
 .top-bar {
-    background-color: dodgerblue !important;
+    background-color: #78BBFF; // #1f2a4b; // #497df1; //> #2284B9;
     position: relative;
     max-width: 100% !important;
-    height: 3em;
+    height: 3.8em;
 
     .mobile-burger {
         margin-left: @sidebar-icon-mobile-margin-left;
@@ -15,6 +15,12 @@
     }
 
     .title-bar-title {
-        margin-left: 1em;
+        margin-left: .1em;
+        color: white;
+        font-weight: normal;
+
+        @media screen and (max-width: @hide-navbar-labels-width) {
+            margin-left: .8em;
+        }
     }
 }
