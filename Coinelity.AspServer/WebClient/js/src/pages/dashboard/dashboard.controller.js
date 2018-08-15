@@ -1,4 +1,4 @@
-﻿class DashboardController extends PageControllerBase {
+﻿class DashboardController extends ControllerBase {
   constructor() {
     super(
       new DashboardModel(),

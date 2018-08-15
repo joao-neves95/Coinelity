@@ -1,16 +1,27 @@
-﻿// @import '/enums/colors'
+﻿// MergerJS imports:
+//
+// @import '/enums/colors'
 // @import '/enums/navbarItemType'
+// @import '/enums/pageID'
 // @import '/services/externalLibs'
 // @import '/services/utils'
 // @import '/services/DOM'
 // @import '/navbar/navbarItemBase'
-// @import '/pages/pageViewBase'
-// @import '/pages/pageModelBase'
-// @import '/pages/pageControllerBase'
+// @import '/interfaces/ModelBase'
+// @import '/interfaces/ViewBase'
+// @import '/interfaces/ControllerBase'
 // @import '/pages/dashboard/dashboard.templates'
-// @import '/pages/dashboard/dashboard.view'
 // @import '/pages/dashboard/dashboard.model'
+// @import '/pages/dashboard/dashboard.view'
 // @import '/pages/dashboard/dashboard.controller'
+// @import '/pages/tradeRoom/tradeRoom.templates'
+// @import '/pages/tradeRoom/tradeRoom.model'
+// @import '/pages/tradeRoom/tradeRoom.view'
+// @import '/pages/tradeRoom/tradeRoom.controller'
+// @import '/pages/settings/settings.templates'
+// @import '/pages/settings/settings.model'
+// @import '/pages/settings/settings.view'
+// @import '/pages/settings/settings.controller'
 // @import '/navbar/navbar.templates'
 // @import '/navbar/navbar.view'
 // @import '/navbar/navbar.controller'
@@ -27,6 +38,11 @@
   Page: 1,
   NavbarPanelItem: 2,
   Modal: 3
+});
+﻿const PageID = Object.freeze({
+  Dashboard: 'dashboard',
+  TradeRoom: 'traderoom',
+  Settings: 'settings'
 });
 ﻿// when-dom-ready
 // https://github.com/lukechilds/when-dom-ready
@@ -281,46 +297,46 @@ class NavbarItemBase {
     this.targetElement().innerHTML = this.content;
   }
 }
-﻿class PageViewBase {
+﻿class ModelBase {
   /**
-   * 
-   * @param { () => HTMLElement } targetElement (optional) Function to select the DOM injection target element.
-   * @param { string } initContent
-   */
-  constructor(initContent, targetElement = () => { return document.getElementById('page-container'); }) {
-    this.initContent = initContent;
-    this.targetElement = targetElement;
-  }
-}
-﻿class PageModelBase {
-  /**
-   * @param { string } id
-   * @param { NavbarItemType } id
+   * @param { PageID } id PageID enum
+   * @param { NavbarItemType } id NavbarItemType enum
    * @param { string } title
    * @param { string } navIconURL
    */
-  constructor(id, navbarItemType, title, navIconURL) {
+  constructor( id, navbarItemType, title, navIconURL ) {
     this.id = id;
     this.navbarItemType = navbarItemType;
     this.title = title;
     this.navIconURL = navIconURL;
   }
 }
-﻿/**
-  * Every class that extends PageControllerBase MUST implement all properties and methods present in IPage.
-  */
-class PageControllerBase extends NavbarItemBase {
+﻿class ViewBase {
   /**
    * 
-   * @param { PageModelBase } model An extended PageModelBase.
-   * @param { PageViewBase } view An extended PageViewBase.
+   * @param { string } initContent
+   * @param { () => HTMLElement } targetElement (optional) Function to select the DOM injection target element.
+   * Default: (id) 'page-container'
    */
-  constructor(model, view) {
-    super(model, view);
+  constructor( initContent, targetElement = () => { return document.getElementById( 'page-container' ); } ) {
+    this.initContent = initContent;
+    this.targetElement = targetElement;
+  }
+}
+﻿/**
+  * Every class that extends ControllerBase MUST implement all properties and methods present in IController.
+  */
+class ControllerBase extends NavbarItemBase {
+  /**
+   * 
+   * @param { ModelBase } model An extended ModelBase.
+   * @param { ViewBase } view An extended ViewBase.
+   */
+  constructor( model, view ) {
+    super( model, view );
 
     this.model = model;
     this.view = view;
-    this.title = model.title;
   }
 }
 ﻿class DashboardTemplates {
@@ -339,9 +355,28 @@ class PageControllerBase extends NavbarItemBase {
   * Do not use this directly.
   * Use "DashboardModel._" or "DashboardController.model" instead.
   */
+let dashboardModel = null;
+
+class DashboardModel extends ModelBase {
+  constructor() {
+    if (dashboardModel)
+      throw new Error("There can only be one instance of DashboardModel.");
+
+    super( PageID.Dashboard, NavbarItemType.Page, 'Dashboard', 'public/img/dashboard-icon-white.svg' );
+
+    dashboardModel = this;
+    Object.freeze( dashboardModel );
+  }
+
+  static get _() { return dashboardModel; }
+}
+﻿/**
+  * Do not use this directly.
+  * Use "DashboardModel._" or "DashboardController.model" instead.
+  */
 let dashboardView = null;
 
-class DashboardView extends PageViewBase {
+class DashboardView extends ViewBase {
   constructor() {
     if (dashboardView)
       throw new Error("There can only be one instance of DashboardView.");
@@ -354,26 +389,7 @@ class DashboardView extends PageViewBase {
 
   static get _() { return dashboardView; }
 }
-﻿/**
-  * Do not use this directly.
-  * Use "DashboardModel._" or "DashboardController.model" instead.
-  */
-let dashboardModel = null;
-
-class DashboardModel extends PageModelBase {
-  constructor() {
-    if (dashboardModel)
-      throw new Error("There can only be one instance of DashboardModel.");
-
-    super('dashboard', NavbarItemType.Page, 'Dashboard', 'public/img/dashboard-icon-white.svg');
-
-    dashboardModel = this;
-    Object.freeze( dashboardModel );
-  }
-
-  static get _() { return dashboardModel; }
-}
-﻿class DashboardController extends PageControllerBase {
+﻿class DashboardController extends ControllerBase {
   constructor() {
     super(
       new DashboardModel(),
@@ -383,15 +399,56 @@ class DashboardModel extends PageModelBase {
 
   onSetActive() { console.info('Dashboard activated.'); };
 }
+﻿﻿﻿﻿﻿class SettingsTemplates {
+  constructor() {
+    throw new Error( "It's not possible to create an intance of SettingsTemplates (static class)." );
+  }
+}
+﻿let settingsModel;
+
+class SettingsModel extends ModelBase {
+  constructor() {
+    if ( settingsModel )
+      throw new Error( "There can only be one instance of SettingsModel." );
+
+    super( PageID.Settings, NavbarItemType.Page, 'Settings', 'public/img/settings-icon-white.svg' );
+
+    settingsModel = this;
+    Object.freeze( settingsModel );
+  }
+
+  static get _() { return settingsModel; }
+}﻿let settingsView;
+
+class SettingsView extends ViewBase {
+  constructor() {
+    if ( settingsView )
+      throw new Error( "There can only be one instance of SettingsView." );
+
+    super( '' );
+
+    settingsView = this;
+    Object.freeze( settingsView );
+  }
+
+  static get _() { return settingsView; }
+}
+﻿class SettingsController extends ControllerBase {
+  constructor() {
+    super(
+      new SettingsModel(),
+      new SettingsView()
+    )
+  }
+
+  onSetActive() { return; }
+}
 ﻿class NavbarTemplates {
   constructor() {
     throw new Error("You can not instantiate NavbarTemplates (static class)");
   }
 
-  static iconLink(url, label, linkTo = null) {
-    if (!linkTo)
-      linkTo = label.toLowerCase();
-
+  static iconLink(url, label, linkTo) {
     return `
       <li class="cell">
         <a href="./${ linkTo }" class="grid-x align-middle">
@@ -444,7 +501,10 @@ class NavbarView {
 
   // #region METHODS
 
-  injectIcon(url, label, linkTo = null) {
+  injectIcon( url, label, linkTo = null ) {
+    if ( !linkTo )
+      linkTo = label.toLowerCase();
+
     this.iconContainer.innerHTML += NavbarTemplates.iconLink(url, label, linkTo);
   }
 
@@ -513,7 +573,7 @@ class NavbarController {
       this.injectIcon(thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id);
     }
 
-    this.activateItem( 'dashboard' );
+    this.activateItem( PageID.Dashboard );
   }
 
   injectIcon(url, label, linkTo = null) {
@@ -530,7 +590,6 @@ class NavbarController {
    * @return {NavbarItem}
    */
   activateItem(itemId = null, thisItem = null) {
-    console.debug('activate item')
     if (!thisItem)
       thisItem = this.items.getByKey( itemId );
 
@@ -605,11 +664,11 @@ class Themes {
 ﻿whenDomReady(() => {
   console.log( 'The DOM is ready' );
 
-  $(document).foundation();
+  $( document ).foundation();
   Themes.apply( ThemeType.Dark );
 
-  const newDashboardController = new DashboardController();
-  NavbarController._.mapItem(newDashboardController.model.id, newDashboardController);
+  NavbarController._.mapItem( PageID.Dashboard, new DashboardController() );
+  NavbarController._.mapItem( PageID.Settings, new SettingsController() );
 
   NavbarController._.init();
 });

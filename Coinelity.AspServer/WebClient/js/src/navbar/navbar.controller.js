@@ -58,7 +58,7 @@ class NavbarController {
       this.injectIcon(thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id);
     }
 
-    this.activateItem( 'dashboard' );
+    this.activateItem( PageID.Dashboard );
   }
 
   injectIcon(url, label, linkTo = null) {
@@ -75,7 +75,6 @@ class NavbarController {
    * @return {NavbarItem}
    */
   activateItem(itemId = null, thisItem = null) {
-    console.debug('activate item')
     if (!thisItem)
       thisItem = this.items.getByKey( itemId );
 

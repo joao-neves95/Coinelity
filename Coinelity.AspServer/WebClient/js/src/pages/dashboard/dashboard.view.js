@@ -4,7 +4,7 @@
   */
 let dashboardView = null;
 
-class DashboardView extends PageViewBase {
+class DashboardView extends ViewBase {
   constructor() {
     if (dashboardView)
       throw new Error("There can only be one instance of DashboardView.");

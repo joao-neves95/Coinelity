@@ -3,10 +3,7 @@
     throw new Error("You can not instantiate NavbarTemplates (static class)");
   }
 
-  static iconLink(url, label, linkTo = null) {
-    if (!linkTo)
-      linkTo = label.toLowerCase();
-
+  static iconLink(url, label, linkTo) {
     return `
       <li class="cell">
         <a href="./${ linkTo }" class="grid-x align-middle">

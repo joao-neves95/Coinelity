@@ -4,8 +4,8 @@
   $( document ).foundation();
   Themes.apply( ThemeType.Dark );
 
-  const newDashboardController = new DashboardController();
-  NavbarController._.mapItem( newDashboardController.model.id, newDashboardController );
+  NavbarController._.mapItem( PageID.Dashboard, new DashboardController() );
+  NavbarController._.mapItem( PageID.Settings, new SettingsController() );
 
   NavbarController._.init();
 });

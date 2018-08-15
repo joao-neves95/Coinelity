@@ -36,7 +36,10 @@ class NavbarView {
 
   // #region METHODS
 
-  injectIcon(url, label, linkTo = null) {
+  injectIcon( url, label, linkTo = null ) {
+    if ( !linkTo )
+      linkTo = label.toLowerCase();
+
     this.iconContainer.innerHTML += NavbarTemplates.iconLink(url, label, linkTo);
   }
 
