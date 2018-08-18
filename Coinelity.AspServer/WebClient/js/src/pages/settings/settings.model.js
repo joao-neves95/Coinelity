@@ -3,12 +3,12 @@
 class SettingsModel extends ModelBase {
   constructor() {
     if ( settingsModel )
-      throw new Error( "There can only be one instance of SettingsModel." );
+      throw new Error( 'There can only be one instance of SettingsModel.' );
 
-    super( PageID.Settings, NavbarItemType.Page, 'Settings', 'public/img/settings-icon-white.svg' );
+    super( NavItemID.Settings, NavbarItemType.Page, 'Settings', 'public/img/settings-icon-white.svg' );
 
     settingsModel = this;
-    Object.freeze( settingsModel );
+    Object.seal( settingsModel );
   }
 
   static get _() { return settingsModel; }

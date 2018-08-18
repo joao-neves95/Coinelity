@@ -7,9 +7,9 @@ let dashboardView = null;
 class DashboardView extends ViewBase {
   constructor() {
     if (dashboardView)
-      throw new Error("There can only be one instance of DashboardView.");
+      throw new Error( 'There can only be one instance of DashboardView.' );
 
-    super( DashboardTemplates.page() );
+    super( PageTemplates.page( '<h1>Dashboard</h1>' ));
 
     dashboardView = this;
     Object.freeze( dashboardView );

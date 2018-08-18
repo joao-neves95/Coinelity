@@ -1,8 +1,9 @@
 ﻿class ModelBase {
   /**
-   * @param { PageID } id PageID enum
-   * @param { NavbarItemType } id NavbarItemType enum
-   * @param { string } title
+   * @param { NavItemID } id NavItemID enum
+   * Used for storing in Dictionaries and as the URL slug for pages.
+   * @param { NavbarItemType } navbarItemType NavbarItemType enum.
+   * @param { string } title Used as label on the navbar.
    * @param { string } navIconURL
    */
   constructor( id, navbarItemType, title, navIconURL ) {

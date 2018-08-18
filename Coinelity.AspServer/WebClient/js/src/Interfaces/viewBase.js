@@ -9,4 +9,8 @@
     this.initContent = initContent;
     this.targetElement = targetElement;
   }
+
+  injectID(id) {
+    document.getElementById( 'page-container' ).firstChild.id = id;
+  }
 }

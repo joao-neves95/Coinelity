@@ -1,6 +1,6 @@
 ﻿/**
-  * Every class that extends PageBase MUST implement all properties and methods present in IPage.
-  */
+ * Extended by ControllerBase.
+ */
 class NavbarItemBase {
   /**
    * 

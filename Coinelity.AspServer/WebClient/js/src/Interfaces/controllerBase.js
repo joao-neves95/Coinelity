@@ -1,7 +1,4 @@
-﻿/**
-  * Every class that extends ControllerBase MUST implement all properties and methods present in IController.
-  */
-class ControllerBase extends NavbarItemBase {
+﻿class ControllerBase extends NavbarItemBase {
   /**
    * 
    * @param { ModelBase } model An extended ModelBase.
@@ -12,5 +9,16 @@ class ControllerBase extends NavbarItemBase {
 
     this.model = model;
     this.view = view;
+  }
+
+  /**
+   * Event fired when the page/item is injected.
+   * */
+  onSetActive() {
+    this.injectIDInView();
+  }
+
+  injectIDInView() {
+    this.view.injectID( this.model.id );
   }
 }

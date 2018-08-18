@@ -3,8 +3,6 @@
     super(
       new SettingsModel(),
       new SettingsView()
-    )
+    );
   }
-
-  onSetActive() { return; }
 }

@@ -1,9 +1,9 @@
 ﻿// MergerJS imports:
 //
-// @import 'pages/appAnaliticsBoard/appAnaliticsBoard.templates'
-// @import 'pages/appAnaliticsBoard/appAnaliticsBoard.controller'
+// @import 'pages/appAnalyticsBoard/appAnalyticsBoard.templates'
+// @import 'pages/appAnalyticsBoard/appAnalyticsBoard.controller'
 // @import 'admin.main'
-'use strict'
+'use strict';
 ﻿﻿class AppAnaliticsBoardController {
   constructor() {
 
