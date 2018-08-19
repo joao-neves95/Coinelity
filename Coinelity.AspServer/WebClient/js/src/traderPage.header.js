@@ -1,8 +1,11 @@
 ﻿// MergerJS imports:
 //
+// @import '/enums/environmentType'
 // @import '/enums/colors'
 // @import '/enums/navbarItemType'
 // @import '/enums/navItemID'
+// @import 'constants'
+// @import '/services/devErrors'
 // @import '/services/externalLibs'
 // @import '/services/utils'
 // @import '/services/DOM'
@@ -15,6 +18,10 @@
 // @import '/pages/dashboard/dashboard.model'
 // @import '/pages/dashboard/dashboard.view'
 // @import '/pages/dashboard/dashboard.controller'
+// @import '/pages/tradeRoom/markets/markets.templates'
+// @import '/pages/tradeRoom/markets/markets.model'
+// @import '/pages/tradeRoom/markets/markets.view'
+// @import '/pages/tradeRoom/markets/markets.controller'
 // @import '/pages/tradeRoom/tradeRoom.templates'
 // @import '/pages/tradeRoom/tradeRoom.model'
 // @import '/pages/tradeRoom/tradeRoom.view'
@@ -32,5 +39,3 @@
 // @import 'trader.main'
 // @import '/services/traderRoutes'
 'use strict';
-
-const BASE_URL = 'http://localhost:33623';

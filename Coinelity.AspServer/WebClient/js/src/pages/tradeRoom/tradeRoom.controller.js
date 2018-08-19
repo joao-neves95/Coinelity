@@ -40,6 +40,6 @@ class TradeRoomController extends ControllerBase {
   }
 
   onSetActive() {
-    console.debug( 'from trade room' );
+    console.debug( 'onSetActive fired at TradeRoomController.' );
   }
 }

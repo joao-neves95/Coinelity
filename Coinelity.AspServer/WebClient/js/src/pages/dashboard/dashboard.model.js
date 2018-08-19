@@ -9,7 +9,7 @@ class DashboardModel extends ModelBase {
     if (dashboardModel)
       throw new Error("There can only be one instance of DashboardModel.");
 
-    super( NavItemID.Dashboard, NavbarItemType.Page, 'Dashboard', 'public/img/dashboard-icon-white.svg' );
+    super( NavItemID.Dashboard, NavbarItemType.Page, 'Dashboard', DASHBOARD_ICON_URL );
 
     dashboardModel = this;
     Object.seal( dashboardModel );

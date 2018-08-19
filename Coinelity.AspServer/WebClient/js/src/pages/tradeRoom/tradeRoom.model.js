@@ -5,7 +5,7 @@ class TradeRoomModel extends ModelBase {
     if ( tradeRoomModel )
       throw new Error( 'There can only be one instance of TradeRoomModel.' );
 
-    super( NavItemID.Markets, NavbarItemType.Page, 'Trade Room', '' );
+    super( NavItemID.Markets, NavbarItemType.Page, 'Trade Room', TRADE_ROOM_ICON_URL );
 
     this.activeContent = NavItemID.Markets;
 

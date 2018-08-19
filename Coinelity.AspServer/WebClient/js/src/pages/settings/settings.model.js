@@ -5,7 +5,7 @@ class SettingsModel extends ModelBase {
     if ( settingsModel )
       throw new Error( 'There can only be one instance of SettingsModel.' );
 
-    super( NavItemID.Settings, NavbarItemType.Page, 'Settings', 'public/img/settings-icon-white.svg' );
+    super( NavItemID.Settings, NavbarItemType.Page, 'Settings', SETTINGS_ICON_URL );
 
     settingsModel = this;
     Object.seal( settingsModel );

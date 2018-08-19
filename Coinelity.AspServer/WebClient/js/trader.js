@@ -1,8 +1,11 @@
 ﻿// MergerJS imports:
 //
+// @import '/enums/environmentType'
 // @import '/enums/colors'
 // @import '/enums/navbarItemType'
 // @import '/enums/navItemID'
+// @import 'constants'
+// @import '/services/devErrors'
 // @import '/services/externalLibs'
 // @import '/services/utils'
 // @import '/services/DOM'
@@ -15,6 +18,10 @@
 // @import '/pages/dashboard/dashboard.model'
 // @import '/pages/dashboard/dashboard.view'
 // @import '/pages/dashboard/dashboard.controller'
+// @import '/pages/tradeRoom/markets/markets.templates'
+// @import '/pages/tradeRoom/markets/markets.model'
+// @import '/pages/tradeRoom/markets/markets.view'
+// @import '/pages/tradeRoom/markets/markets.controller'
 // @import '/pages/tradeRoom/tradeRoom.templates'
 // @import '/pages/tradeRoom/tradeRoom.model'
 // @import '/pages/tradeRoom/tradeRoom.view'
@@ -32,8 +39,10 @@
 // @import 'trader.main'
 // @import '/services/traderRoutes'
 'use strict';
-
-const BASE_URL = 'http://localhost:33623';
+﻿const EnvironmentType = Object.freeze( {
+  Development: 'DEVELOPMENT',
+  Production: 'PRODUCTION'
+} );
 ﻿const Colors = Object.freeze({
   DarkGrey: '#3D3D3D',
   LightBlue: '#78BBFF'
@@ -53,6 +62,43 @@ const NavItemID = Object.freeze( {
   Trade: 'trade-room/trade',
   Settings: 'settings'
 });
+﻿const ENV = EnvironmentType.Development;
+const BASE_URL = 'http://localhost:33623/';
+const PUBLIC_IMGS_URL = 'public/img/';
+
+// Images URL'S:
+const DASHBOARD_ICON_URL = `${PUBLIC_IMGS_URL}dashboard-icon-white.svg`;
+const TRADE_ROOM_ICON_URL = `${PUBLIC_IMGS_URL}chart-icon-white.svg`;
+const SETTINGS_ICON_URL = `${PUBLIC_IMGS_URL}settings-icon-white.svg`;
+﻿class DevErrors {
+  constructor() {
+    DevErrors.cantInstantiate( 'DevErrors' );
+  }
+
+  /**
+   * 
+   * @param { string } message Error message to throw.
+   * @returns { Error }
+   */
+  static throw( message ) {
+    if ( ENV === EnvironmentType.Production )
+      return;
+
+    throw new Error( message );
+  }
+
+  /**
+   * 
+   * @param { string } className The name of the static class that can not be intantiated.
+   */
+  static cantInstantiateStatic( className ) {
+    DevErrors.throw( `Can not create an intance of ${className} (static class).` );
+  }
+
+  static singleIntance( singletonClassName ) {
+    DevErrors.throw( `There can only be one instance of ${className} (singleton class).` );
+  }
+}
 ﻿// when-dom-ready
 // https://github.com/lukechilds/when-dom-ready
 !function (e, n) { "object" == typeof exports && "undefined" != typeof module ? module.exports = n() : "function" == typeof define && define.amd ? define(n) : e.whenDomReady = n() }(this, function () { "use strict"; var e = ["interactive", "complete"], n = function (n, t) { return new Promise(function (o) { n && "function" != typeof n && (t = n, n = null), t = t || window.document; var i = function () { return o(void (n && setTimeout(n))) }; -1 !== e.indexOf(t.readyState) ? i() : t.addEventListener("DOMContentLoaded", i) }) }; return n.resume = function (e) { return function (t) { return n(e).then(function () { return t }) } }, n });
@@ -317,7 +363,7 @@ class NavbarItemBase {
     this.injectContent();
     this.injectIDInView();
 
-    //  "in" operator to test for properties that are inherited.
+    // "in" operator to test for properties that are inherited.
     if ( 'onSetActive' in this )
       this.onSetActive();
   }
@@ -348,7 +394,7 @@ class NavbarItemBase {
 ﻿class ViewBase {
   /**
    * 
-   * @param { string } initContent
+   * @param { string } initContent The content to inject when the page/navbar panel item get activated.
    * @param { () => HTMLElement } targetElement (optional) Function to select the DOM injection target element.
    * Default: (id) 'page-container'
    */
@@ -358,7 +404,6 @@ class NavbarItemBase {
   }
 
   injectID( id ) {
-    console.debug( document.getElementById( 'page-container' ) );
     document.getElementById( 'page-container' ).firstElementChild.id = id;
   }
 }
@@ -395,7 +440,7 @@ class DashboardModel extends ModelBase {
     if (dashboardModel)
       throw new Error("There can only be one instance of DashboardModel.");
 
-    super( NavItemID.Dashboard, NavbarItemType.Page, 'Dashboard', 'public/img/dashboard-icon-white.svg' );
+    super( NavItemID.Dashboard, NavbarItemType.Page, 'Dashboard', DASHBOARD_ICON_URL );
 
     dashboardModel = this;
     Object.seal( dashboardModel );
@@ -440,18 +485,39 @@ class DashboardController extends ControllerBase {
 
   static get _() { return dashboardController; }
 }
+﻿class MarketsTemplates {
+  constructor() {
+    DevErrors.cantInstantiateStatic( 'MarketsTemplates' );
+  }
+
+  static container( content ) {
+    return `
+      <section id="markets" class=""> ${ content } <h3>Markets</h3> </section>
+    `;
+  }
+}
+﻿class MarketsModel {
+
+}
+﻿class MarketsView {
+
+}
+﻿class MarketsController {
+
+}
 ﻿class TradeRoomTemplates {
   constructor() {
-    throw new Error( 'You can not instantiate DashboardTemplates (static class)' );
+    DevErrors.cantInstantiateStatic( 'TradeRoomTemplates' );
   }
-}﻿let tradeRoomModel = null;
+}
+﻿let tradeRoomModel = null;
 
 class TradeRoomModel extends ModelBase {
   constructor() {
     if ( tradeRoomModel )
       throw new Error( 'There can only be one instance of TradeRoomModel.' );
 
-    super( NavItemID.Markets, NavbarItemType.Page, 'Trade Room', '' );
+    super( NavItemID.Markets, NavbarItemType.Page, 'Trade Room', TRADE_ROOM_ICON_URL );
 
     this.activeContent = NavItemID.Markets;
 
@@ -468,7 +534,7 @@ class TradeRoomView extends ViewBase {
     if ( tradeRoomView )
       throw new Error( 'There can only be one instance of TradeRoomView.' );
 
-    super( PageTemplates.page( '<h1>Trade Room</h1>' ) );
+    super( PageTemplates.page( `<h1>Trade Room</h1><br/>${ MarketsTemplates.container( '' ) }`));
 
     tradeRoomView = this;
     Object.freeze( tradeRoomView );
@@ -518,7 +584,7 @@ class TradeRoomController extends ControllerBase {
   }
 
   onSetActive() {
-    console.debug( 'from trade room' );
+    console.debug( 'onSetActive fired at TradeRoomController.' );
   }
 }
 ﻿class SettingsTemplates {
@@ -533,7 +599,7 @@ class SettingsModel extends ModelBase {
     if ( settingsModel )
       throw new Error( 'There can only be one instance of SettingsModel.' );
 
-    super( NavItemID.Settings, NavbarItemType.Page, 'Settings', 'public/img/settings-icon-white.svg' );
+    super( NavItemID.Settings, NavbarItemType.Page, 'Settings', SETTINGS_ICON_URL );
 
     settingsModel = this;
     Object.seal( settingsModel );
@@ -580,7 +646,7 @@ class SettingsView extends ViewBase {
   static iconLink(url, label, linkTo) {
     return `
       <li class="cell">
-        <a href="${ BASE_URL }/${ linkTo }" class="grid-x align-middle">
+        <a href="${ BASE_URL + linkTo }" class="grid-x align-middle">
           <img class="icon cell large-6" src="${ url }" alt"=${ label } Icon" />
           <figcaption class="icon-label large-6">${ label }</figcaption>
         </a>  

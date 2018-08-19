@@ -1,7 +1,7 @@
 ﻿class ViewBase {
   /**
    * 
-   * @param { string } initContent
+   * @param { string } initContent The content to inject when the page/navbar panel item get activated.
    * @param { () => HTMLElement } targetElement (optional) Function to select the DOM injection target element.
    * Default: (id) 'page-container'
    */
