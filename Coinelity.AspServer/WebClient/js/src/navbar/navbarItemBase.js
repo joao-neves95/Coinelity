@@ -21,4 +21,20 @@ class NavbarItemBase {
   injectContent() {
     this.targetElement().innerHTML = this.content;
   }
+
+  injectIDInView() {
+    this.view.injectID( this.model.id );
+  }
+
+  /**
+   * Event fired when the page/item is injected.
+   * */
+  onSetActiveBase() {
+    this.injectContent();
+    this.injectIDInView();
+
+    // "in" operator to test for properties that are inherited.
+    if ( 'onSetActive' in this )
+      this.onSetActive();
+  }
 }

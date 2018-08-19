@@ -11,8 +11,8 @@ let navbarView = null;
  * */
 class NavbarView {
   constructor() {
-    if (navbarView)
-      throw new Error("There can only be one instance of NavBarController.")
+    if ( navbarView )
+      throw new Error( 'There can only be one instance of NavBarController.' );
 
     navbarView = this;
     Object.freeze( navbarView );
@@ -24,13 +24,13 @@ class NavbarView {
    * Returns the current NavbarController instance.
    * @returns { NavbarView }
    */
-  static get _() { return navbarView };
+  static get _() { return navbarView; };
 
-  get element() { return document.getElementById('sidenav') };
+  get element() { return document.getElementById( 'sidenav' ); }
 
-  get iconContainer() { return document.getElementById('icon-container') };
+  get iconContainer() { return document.getElementById( 'icon-container' ); }
 
-  static get pageContainer() { return document.getElementById('page-container') };
+  static get pageContainer() { return document.getElementById( 'page-container' ); }
 
   // #endregion
 

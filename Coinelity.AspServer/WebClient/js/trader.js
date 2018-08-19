@@ -32,6 +32,8 @@
 // @import 'trader.main'
 // @import '/services/traderRoutes'
 'use strict';
+
+const BASE_URL = 'http://localhost:33623';
 ﻿const Colors = Object.freeze({
   DarkGrey: '#3D3D3D',
   LightBlue: '#78BBFF'
@@ -303,6 +305,22 @@ class NavbarItemBase {
   injectContent() {
     this.targetElement().innerHTML = this.content;
   }
+
+  injectIDInView() {
+    this.view.injectID( this.model.id );
+  }
+
+  /**
+   * Event fired when the page/item is injected.
+   * */
+  onSetActiveBase() {
+    this.injectContent();
+    this.injectIDInView();
+
+    //  "in" operator to test for properties that are inherited.
+    if ( 'onSetActive' in this )
+      this.onSetActive();
+  }
 }
 ﻿class PageTemplates {
   static page(content) {
@@ -339,11 +357,16 @@ class NavbarItemBase {
     this.targetElement = targetElement;
   }
 
-  injectID(id) {
-    document.getElementById( 'page-container' ).firstChild.id = id;
+  injectID( id ) {
+    console.debug( document.getElementById( 'page-container' ) );
+    document.getElementById( 'page-container' ).firstElementChild.id = id;
   }
 }
-﻿class ControllerBase extends NavbarItemBase {
+﻿/**
+ * Available events:
+ * - onSetActive(): Fired when a page/navbar panel item gets activated.
+ * */
+class ControllerBase extends NavbarItemBase {
   /**
    * 
    * @param { ModelBase } model An extended ModelBase.
@@ -354,17 +377,6 @@ class NavbarItemBase {
 
     this.model = model;
     this.view = view;
-  }
-
-  /**
-   * Event fired when the page/item is injected.
-   * */
-  onSetActive() {
-    this.injectIDInView();
-  }
-
-  injectIDInView() {
-    this.view.injectID( this.model.id );
   }
 }
 ﻿class DashboardTemplates {
@@ -441,7 +453,7 @@ class TradeRoomModel extends ModelBase {
 
     super( NavItemID.Markets, NavbarItemType.Page, 'Trade Room', '' );
 
-    this.activeItem = NavItemID.Markets;
+    this.activeContent = NavItemID.Markets;
 
     tradeRoomModel = this;
     Object.seal( tradeRoomModel );
@@ -486,17 +498,27 @@ class TradeRoomController extends ControllerBase {
   static get _() { return tradeRoomController; }
 
   openMarkets() {
-    this.model.id = NavItemID.TradeRoom + NavItemID.Markets;
-    this.model.activeItem = NavItemID.Markets;
+    if ( this.model.activeContent === NavItemID.Markets )
+      return;
+
+    this.model.id = NavItemID.Markets;
+    this.model.activeContent = NavItemID.Markets;
     console.info( `The TradeRoom markets were opened.` );
     console.debug( this.model.activeItem );
   }
 
   tradeAsset( assetID ) {
-    this.model.id = NavItemID.TradeRoom + NavItemID.Trade;
-    this.model.activeItem = NavItemID.Trade;
+    if ( this.model.activeContent === NavItemID.Trade )
+      return;
+
+    this.model.id = NavItemID.Trade;
+    this.model.activeContent = NavItemID.Trade;
     console.info( `TradeRoom opened to trade ${assetID}.` );
     console.debug( this.model.activeItem );
+  }
+
+  onSetActive() {
+    console.debug( 'from trade room' );
   }
 }
 ﻿class SettingsTemplates {
@@ -544,13 +566,21 @@ class SettingsView extends ViewBase {
 }
 ﻿class NavbarTemplates {
   constructor() {
-    throw new Error("You can not instantiate NavbarTemplates (static class)");
+    throw new Error( 'You can not instantiate NavbarTemplates (static class)' );
   }
 
+  /**
+   * Used for NavbarItemType.Pages
+   * 
+   * @param { string } url The icon image url. White the image extention extention type (".png"/".svg"/etc.)
+   * @param { string } label The icon label (E.g.: "Dashboard").
+   * @param { string } linkTo The link to the page it links to. Use the traderRoutes/adminRoutes here.
+   * @returns { string } HTML string content
+   */
   static iconLink(url, label, linkTo) {
     return `
       <li class="cell">
-        <a href="./${ linkTo }" class="grid-x align-middle">
+        <a href="${ BASE_URL }/${ linkTo }" class="grid-x align-middle">
           <img class="icon cell large-6" src="${ url }" alt"=${ label } Icon" />
           <figcaption class="icon-label large-6">${ label }</figcaption>
         </a>  
@@ -558,9 +588,8 @@ class SettingsView extends ViewBase {
   }
 
   static iconButton() {
-    throw new Error('NavbarTemplates.iconButton() not implemented.');
+    throw new Error( 'NavbarTemplates.iconButton() not implemented.' );
   }
-
 }
 ﻿let navbarModel = null;
 
@@ -597,8 +626,8 @@ let navbarView = null;
  * */
 class NavbarView {
   constructor() {
-    if (navbarView)
-      throw new Error("There can only be one instance of NavBarController.")
+    if ( navbarView )
+      throw new Error( 'There can only be one instance of NavBarController.' );
 
     navbarView = this;
     Object.freeze( navbarView );
@@ -610,13 +639,13 @@ class NavbarView {
    * Returns the current NavbarController instance.
    * @returns { NavbarView }
    */
-  static get _() { return navbarView };
+  static get _() { return navbarView; };
 
-  get element() { return document.getElementById('sidenav') };
+  get element() { return document.getElementById( 'sidenav' ); }
 
-  get iconContainer() { return document.getElementById('icon-container') };
+  get iconContainer() { return document.getElementById( 'icon-container' ); }
 
-  static get pageContainer() { return document.getElementById('page-container') };
+  static get pageContainer() { return document.getElementById( 'page-container' ); }
 
   // #endregion
 
@@ -724,12 +753,19 @@ class NavbarController {
     }
 
     if ( thisItem.navbarItemType === NavbarItemType.Page ) {
+      if ( this.model.activePage === itemId )
+        return;
+
       this.view.removeActivePage();
       this.model.activePage = itemId;
+    } else if ( thisItem.navbarItemType === NavbarItemType.NavbarPanelItem ) {
+      if ( this.model.activeNavbarPanelItem === itemId )
+        return;
+
+      this.model.activeNavbarPanelItem = itemId;
     }
 
-    thisItem.injectContent();
-    thisItem.onSetActive();
+    thisItem.onSetActiveBase();
   }
 }
 
@@ -800,7 +836,7 @@ class Themes {
   Themes.apply( ThemeType.Dark );
 
   NavbarController._.mapItem( NavItemID.Dashboard, new DashboardController() );
-  NavbarController._.mapItem( NavItemID.TradeRoom, new TradeRoomController() );
+  NavbarController._.mapItem( NavItemID.Markets, new TradeRoomController() );
   NavbarController._.mapItem( NavItemID.Settings, new SettingsController() );
 
   NavbarController._.init();
@@ -812,13 +848,13 @@ page( `/${NavItemID.Dashboard}`, () => {
   console.info( 'Dashboard page.' );
 } );
 
-page( `/${NavItemID.TradeRoom}`, () => {
-  NavbarController._.activateItem( NavItemID.TradeRoom );
-  page.redirect( `/${ NavItemID.Markets }` );
-} );
+//page( `/${NavItemID.TradeRoom}`, () => {
+//  NavbarController._.activateItem( NavItemID.TradeRoom );
+//  page.redirect( `/${ NavItemID.Markets }` );
+//} );
 
 page( `/${NavItemID.Markets}`, () => {
-  NavbarController._.activateItem( NavItemID.TradeRoom );
+  NavbarController._.activateItem( NavItemID.Markets );
   TradeRoomController._.openMarkets();
 } );
 

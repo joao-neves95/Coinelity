@@ -88,12 +88,19 @@ class NavbarController {
     }
 
     if ( thisItem.navbarItemType === NavbarItemType.Page ) {
+      if ( this.model.activePage === itemId )
+        return;
+
       this.view.removeActivePage();
       this.model.activePage = itemId;
+    } else if ( thisItem.navbarItemType === NavbarItemType.NavbarPanelItem ) {
+      if ( this.model.activeNavbarPanelItem === itemId )
+        return;
+
+      this.model.activeNavbarPanelItem = itemId;
     }
 
-    thisItem.injectContent();
-    thisItem.onSetActive();
+    thisItem.onSetActiveBase();
   }
 }
 

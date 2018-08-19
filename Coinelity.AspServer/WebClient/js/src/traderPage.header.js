@@ -32,3 +32,5 @@
 // @import 'trader.main'
 // @import '/services/traderRoutes'
 'use strict';
+
+const BASE_URL = 'http://localhost:33623';

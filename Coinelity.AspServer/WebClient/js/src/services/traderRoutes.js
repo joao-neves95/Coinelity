@@ -5,13 +5,13 @@ page( `/${NavItemID.Dashboard}`, () => {
   console.info( 'Dashboard page.' );
 } );
 
-page( `/${NavItemID.TradeRoom}`, () => {
-  NavbarController._.activateItem( NavItemID.TradeRoom );
-  page.redirect( `/${ NavItemID.Markets }` );
-} );
+//page( `/${NavItemID.TradeRoom}`, () => {
+//  NavbarController._.activateItem( NavItemID.TradeRoom );
+//  page.redirect( `/${ NavItemID.Markets }` );
+//} );
 
 page( `/${NavItemID.Markets}`, () => {
-  NavbarController._.activateItem( NavItemID.TradeRoom );
+  NavbarController._.activateItem( NavItemID.Markets );
   TradeRoomController._.openMarkets();
 } );
 

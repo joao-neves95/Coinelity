@@ -10,7 +10,7 @@
     this.targetElement = targetElement;
   }
 
-  injectID(id) {
-    document.getElementById( 'page-container' ).firstChild.id = id;
+  injectID( id ) {
+    document.getElementById( 'page-container' ).firstElementChild.id = id;
   }
 }

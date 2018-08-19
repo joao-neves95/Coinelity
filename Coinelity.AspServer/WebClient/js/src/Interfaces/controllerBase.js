@@ -1,4 +1,8 @@
-﻿class ControllerBase extends NavbarItemBase {
+﻿/**
+ * Available events:
+ * - onSetActive(): Fired when a page/navbar panel item gets activated.
+ * */
+class ControllerBase extends NavbarItemBase {
   /**
    * 
    * @param { ModelBase } model An extended ModelBase.
@@ -9,16 +13,5 @@
 
     this.model = model;
     this.view = view;
-  }
-
-  /**
-   * Event fired when the page/item is injected.
-   * */
-  onSetActive() {
-    this.injectIDInView();
-  }
-
-  injectIDInView() {
-    this.view.injectID( this.model.id );
   }
 }

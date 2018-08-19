@@ -20,16 +20,26 @@ class TradeRoomController extends ControllerBase {
   static get _() { return tradeRoomController; }
 
   openMarkets() {
-    this.model.id = NavItemID.TradeRoom + NavItemID.Markets;
-    this.model.activeItem = NavItemID.Markets;
+    if ( this.model.activeContent === NavItemID.Markets )
+      return;
+
+    this.model.id = NavItemID.Markets;
+    this.model.activeContent = NavItemID.Markets;
     console.info( `The TradeRoom markets were opened.` );
     console.debug( this.model.activeItem );
   }
 
   tradeAsset( assetID ) {
-    this.model.id = NavItemID.TradeRoom + NavItemID.Trade;
-    this.model.activeItem = NavItemID.Trade;
+    if ( this.model.activeContent === NavItemID.Trade )
+      return;
+
+    this.model.id = NavItemID.Trade;
+    this.model.activeContent = NavItemID.Trade;
     console.info( `TradeRoom opened to trade ${assetID}.` );
     console.debug( this.model.activeItem );
+  }
+
+  onSetActive() {
+    console.debug( 'from trade room' );
   }
 }
