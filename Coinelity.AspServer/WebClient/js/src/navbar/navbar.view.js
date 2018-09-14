@@ -22,7 +22,8 @@ class NavbarView {
 
   /**
    * Returns the current NavbarController instance.
-   * @returns { NavbarView }
+   * 
+   * @returns { NavbarView } The current NavbarView instance.
    */
   static get _() { return navbarView; };
 
@@ -32,9 +33,44 @@ class NavbarView {
 
   static get pageContainer() { return document.getElementById( 'page-container' ); }
 
+  get toggleButtonElem() { return document.getElementById( 'sidenav-toggle' ); }
+  get toggleButtonPElem() { return document.getElementById( 'sidenav-toggle-p' ); }
+
+  getIconLabels() { return document.getElementsByClassName( 'icon-label' ); }
+
   // #endregion
 
   // #region METHODS
+
+  injectToggleButton() {
+    this.iconContainer.innerHTML += NavbarTemplates.toggleButton();
+  }
+
+  minimize() {
+    this.element.style.maxWidth = SIDEBAR_MOBILE_WIDTH;
+    this.element.style.minWidth = SIDEBAR_MOBILE_WIDTH;
+    this.element.style.width = SIDEBAR_MOBILE_WIDTH;
+    this.toggleButtonPElem.innerHTML = '&raquo;';
+    NavbarView.pageContainer.style.marginLeft = SIDEBAR_MOBILE_WIDTH;
+
+    const labels = this.getIconLabels();
+    for ( let i = 0; i < labels.length; ++i ) {
+      labels[i].style.display = 'none';
+    }
+  }
+
+  maximize() {
+    this.element.style.maxWidth = SIDEBAR_DESKTOP_WIDTH;
+    this.element.style.minWidth = SIDEBAR_DESKTOP_WIDTH;
+    this.element.style.width = SIDEBAR_DESKTOP_WIDTH;
+    this.toggleButtonPElem.innerHTML = '&laquo;';
+    NavbarView.pageContainer.style.marginLeft = SIDEBAR_DESKTOP_WIDTH;
+
+    const labels = this.getIconLabels();
+    for ( let i = 0; i < labels.length; ++i ) {
+      labels[i].style.display = 'inline-block';
+    }
+  }
 
   injectIcon( url, label, linkTo = null ) {
     if ( !linkTo )

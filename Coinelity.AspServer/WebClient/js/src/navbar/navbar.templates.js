@@ -3,6 +3,18 @@
     throw new Error( 'You can not instantiate NavbarTemplates (static class)' );
   }
 
+  static toggleButton() {
+    // "&laquo;" == "«"
+    // "&raquo;" == "»"
+    return `
+      <li class="cell li-toggle">
+        <a id="sidenav-toggle">
+          <p id="sidenav-toggle-p"> &laquo; </p>
+        </a>
+      </li>
+    `;
+  }
+
   /**
    * Used for NavbarItemType.Pages
    * 
@@ -22,6 +34,6 @@
   }
 
   static iconButton() {
-    throw new Error( 'NavbarTemplates.iconButton() not implemented.' );
+    throw DevErrors.notImplemented();
   }
 }

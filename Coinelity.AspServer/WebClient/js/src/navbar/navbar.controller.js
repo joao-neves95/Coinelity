@@ -31,7 +31,7 @@ class NavbarController {
      * value:  Instance of Page | NavbarPanelItem.
      */
     //this.items = new Dictionary(true);
-    //this.activePage = null;
+    //this.activePageId = null;
     //this.activeNavbarPanelItem = null;
 
     navbarController = this;
@@ -61,11 +61,26 @@ class NavbarController {
   * @returns {void}
   */
   init() {
+    this.view.injectToggleButton();
+
     const thisItems = this.model.items;
     for (let i = 0; i < thisItems.length; ++i) {
       const thisItemModel = thisItems.getByIndex(i).model;
       this.injectIcon(thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id);
     }
+
+    DOM.on( 'click', this.view.toggleButtonElem, ( e ) => {
+      console.debug( 'here' );
+      e.preventDefault();
+
+      if ( this.model.toggled ) {
+        this.view.maximize();
+        this.model.toggled = false;
+      } else {
+        this.view.minimize();
+        this.model.toggled = true;
+      }
+    } );
 
     this.activateItem( NavItemID.Dashboard );
   }
@@ -88,11 +103,11 @@ class NavbarController {
     }
 
     if ( thisItem.navbarItemType === NavbarItemType.Page ) {
-      if ( this.model.activePage === itemId )
+      if ( this.model.activePageId === itemId )
         return;
 
       this.view.removeActivePage();
-      this.model.activePage = itemId;
+      this.model.activePageId = itemId;
     } else if ( thisItem.navbarItemType === NavbarItemType.NavbarPanelItem ) {
       if ( this.model.activeNavbarPanelItem === itemId )
         return;
@@ -100,7 +115,7 @@ class NavbarController {
       this.model.activeNavbarPanelItem = itemId;
     }
 
-    thisItem.onSetActiveBase();
+    thisItem.onSetActiveBase( thisItem.navbarItemType );
   }
 }
 

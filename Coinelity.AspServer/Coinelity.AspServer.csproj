@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <Folder Include="WebClient\js\src\components\" />
-    <Folder Include="WebClient\js\src\pages\tradeRoom\trade\" />
+    <Folder Include="WebClient\js\src\navbarPanelItems\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 

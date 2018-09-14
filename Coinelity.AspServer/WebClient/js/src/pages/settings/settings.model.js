@@ -3,7 +3,7 @@
 class SettingsModel extends ModelBase {
   constructor() {
     if ( settingsModel )
-      throw new Error( 'There can only be one instance of SettingsModel.' );
+      throw DevErrors.singleIntance( 'SettingsModel' );
 
     super( NavItemID.Settings, NavbarItemType.Page, 'Settings', SETTINGS_ICON_URL );
 

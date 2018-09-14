@@ -3,6 +3,8 @@
 .page-container {
     position: relative;
     background-color: lightgray;
+    max-width: 100%;
+
     @media screen and (max-width: @hide-navbar-labels-width) {
         margin-left: @sidebar-mobile-width;
     }
@@ -13,5 +15,7 @@
 
     .page {
         height: 100%;
+        max-width: 100%;
+        padding: 2em;
     }
 }

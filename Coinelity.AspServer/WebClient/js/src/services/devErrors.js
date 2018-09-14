@@ -6,6 +6,7 @@
   /**
    * 
    * @param { string } message Error message to throw.
+   * 
    * @returns { Error }
    */
   static throw( message ) {
@@ -25,5 +26,9 @@
 
   static singleIntance( singletonClassName ) {
     DevErrors.throw( `There can only be one instance of ${className} (singleton class).` );
+  }
+
+  static notImplemented( additionalInfo = '' ) {
+    DevErrors.throw( `The function, method, class or opertion has not yet been implemented.\n${additionalInfo}` );
   }
 }

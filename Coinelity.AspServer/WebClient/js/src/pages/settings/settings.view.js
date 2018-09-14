@@ -3,9 +3,9 @@
 class SettingsView extends ViewBase {
   constructor() {
     if ( settingsView )
-      throw new Error( "There can only be one instance of SettingsView." );
+      throw DevErrors.singleIntance( 'SettingsView' );
 
-    super( PageTemplates.page('<h1>Settinhs</h1>') );
+    super( '<h1>Settings</h1>' + SettingsTemplates.changePassword() );
 
     settingsView = this;
     Object.freeze( settingsView );

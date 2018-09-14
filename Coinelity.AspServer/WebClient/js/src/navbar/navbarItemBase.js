@@ -18,8 +18,11 @@ class NavbarItemBase {
     this.view = view;
   }
 
-  injectContent() {
-    this.targetElement().innerHTML = this.content;
+  injectContent( navbarItemType ) {
+    if ( navbarItemType === NavbarItemType.Page )
+      this.targetElement().innerHTML = PageTemplates.page( this.content );
+    else if ( navbarItemType === NavbarItemType.NavbarPanelItem )
+      throw DevErrors.notImplemented();
   }
 
   injectIDInView() {
@@ -27,13 +30,15 @@ class NavbarItemBase {
   }
 
   /**
-   * Event fired when the page/item is injected.
+   * Event fired when the page/item is injected into the DOM.
+   * 
+   * @param { NavbarItemType } navbarItemType NavbarItemType enum.
    * */
-  onSetActiveBase() {
-    this.injectContent();
+  onSetActiveBase( navbarItemType ) {
+    this.injectContent( navbarItemType );
     this.injectIDInView();
 
-    // "in" operator to test for properties that are inherited.
+    // "in" operator to test for properties that are inherited by child classes.
     if ( 'onSetActive' in this )
       this.onSetActive();
   }
