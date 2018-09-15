@@ -8,8 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using System.Data.SqlClient;
-using Coinelity.Core.Data;
 using Coinelity.Core;
+using Coinelity.Core.Data;
+using Coinelity.Core.Errors;
 using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer.DataAccess
@@ -25,6 +26,7 @@ namespace Coinelity.AspServer.DataAccess
 
         public void Dispose()
         {
+            this._connection?.Dispose();
             GC.SuppressFinalize( this );
         }
 
@@ -102,7 +104,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public async Task<bool> ExistsByEmailAsync(string userEmail)
         {
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(_connection,
+            IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(_connection,
                 $@"SELECT 1
                    FROM dbo.ApplicationUser
                    WHERE Email = @Email",
@@ -112,7 +114,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            if (userListDictionaries.Count <= 0)
+            if (userDictionaryList.Count <= 0)
                 return false;
 
             return true;
@@ -122,7 +124,7 @@ namespace Coinelity.AspServer.DataAccess
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(_connection,
+            IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(_connection,
                 $@"SELECT *
                    FROM dbo.ApplicationUser
                    WHERE Id = @ID",
@@ -132,14 +134,14 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.ToObject<ApplicationUser>( userListDictionaries );
+            return Utils.ToObject<ApplicationUser>( userDictionaryList );
         }
 
         public async Task<ApplicationUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(_connection,
+            IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(_connection,
                 $@"SELECT *
                    FROM dbo.ApplicationUser
                    WHERE NormalizedEmail = @NormalizedEmail",
@@ -149,7 +151,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.ToObject<ApplicationUser>( userListDictionaries );
+            return Utils.ToObject<ApplicationUser>( userDictionaryList );
         }
 
         public Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
@@ -167,7 +169,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public async Task<string> GetUserIdByEmailAsync(string userEmail)
         {
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(
+            IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(
                 _connection,
                 $@"SELECT Id
                    FROM dbo.ApplicationUser
@@ -178,10 +180,10 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            if (userListDictionaries.Count <= 0)
+            if (userDictionaryList.Count <= 0)
                 return null;
 
-            return userListDictionaries[0]["Id"].ToString();
+            return userDictionaryList[0]["Id"].ToString();
         }
 
         /// <summary>
@@ -191,7 +193,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public async Task<string> GetUserPasswordByEmailAsync(string userEmail)
         {
-            IList<Dictionary<string, object>> userListDictionaries = await MSSQLClient.QueryOnceAsync(
+            IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(
                 _connection,
                 @"SELECT Password
                   FROM dbo.ApplicationUser
@@ -202,10 +204,58 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            if (userListDictionaries.Count <= 0)
+            if (userDictionaryList.Count <= 0)
                 return null;
 
-            return userListDictionaries[0]["Password"].ToString();
+            return userDictionaryList[0]["Password"].ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// It returns "Success" if successful or ErrorMessages.ProvidedPassDoesNotMatch/ErrorMessages.CouldNotChangePassword error message if not.
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="currentPassword"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        public async Task<string> ChangePasswordAsync(string userId, string currentPassword, string newPassword)
+        {
+            await this._connection.OpenAsync();
+
+            IList<Dictionary<string, object>> expectedPasswordDictList = await MSSQLClient.QueryAsync(
+                _connection,
+                @"SELECT Password
+                  FROM dbo.ApplicationUser
+                  WHERE Id = @Id",
+                new Dictionary<string, object>
+                {
+                    { "@Id", userId }
+                }
+            );
+
+            if (currentPassword != expectedPasswordDictList[0]["Password"].ToString())
+            {
+                this._connection.Close();
+                return ErrorMessages.ProvidedPassDoesNotMatch;
+            }
+
+            int result = await MSSQLClient.CommandAsync(
+                _connection,
+                @"UPDATE dbo.ApplicationUser
+                  SET Password = @Password
+                  WHERE Id = @Id",
+                new Dictionary<string, object>
+                {
+                    { "@Password", newPassword },
+                    { "@Id", userId }
+                }
+            );
+
+            if (result <= 0)
+                return ErrorMessages.CouldNotChangePassword;
+
+            return "Success";
         }
 
         public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)

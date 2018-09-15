@@ -44,6 +44,7 @@ namespace Coinelity.AspServer
             // TODO: Alter password configuration.
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
+                // TODO: Configure password requirements.
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = Env.MinPasswordLen;
                 options.Password.RequireNonAlphanumeric = false;

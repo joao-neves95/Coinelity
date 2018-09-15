@@ -9,6 +9,8 @@ namespace Coinelity.Core.Errors
     {
         EmailAlreadyInUse,
         LoginError,
+        ProvidedPassDoesNotMatch,
+        CouldNotChangePassword,
         NotFound,
         UnknownError
     }

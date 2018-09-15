@@ -13,6 +13,7 @@ using Coinelity.AspServer.Models;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.Core.Errors;
 
+// TODO: Add consistency to the JSON responses (Successes/Errors).
 namespace Coinelity.AspServer.Controllers
 {
     [Route("api/user")]
@@ -54,14 +55,14 @@ namespace Coinelity.AspServer.Controllers
                 // return StatusCode( 500 );
                 return StatusCode(500, registerSuccess.Errors.ToList());
 
-            return Ok();
+            return Ok( Json( "User successfully registered." ).Value );
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginDTO loginDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ));
+                return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ).Value );
 
             string userEmail = loginDTO.Email;
             UserStore userStore = new UserStore();
@@ -76,6 +77,36 @@ namespace Coinelity.AspServer.Controllers
             userStore.Dispose();
 
             return Ok(Json( new jwtDTO { AccessToken = JWTTokens.Generate(userEmail, userId) } ).Value);
+        }
+
+        // TODO: Test.
+        /// <summary>
+        /// 
+        /// NOT TESTED.
+        /// 
+        /// </summary>
+        /// <param name="changePasswordDTO"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordDTO changePasswordDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
+
+            string userIdClaim = User.Claims.Where( c => c.Type == "id" ).First().Value;
+            UserStore userStore = new UserStore();
+            string result = await userStore.ChangePasswordAsync( userIdClaim, changePasswordDTO.CurrentPassword, changePasswordDTO.NewPassword );
+
+            if (result == "Success")
+                return Ok( Json( "Successfully changed the password" ).Value );
+
+            if (result == ErrorMessages.ProvidedPassDoesNotMatch)
+                return BadRequest( Json( new ErrorMessage( ErrorType.ProvidedPassDoesNotMatch ) ).Value );
+            if (result == ErrorMessages.CouldNotChangePassword)
+                return BadRequest( Json( new ErrorMessage( ErrorType.CouldNotChangePassword ) ).Value );
+
+            return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
         }
 
         [Authorize]

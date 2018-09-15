@@ -17,6 +17,10 @@ namespace Coinelity.Core.Errors
 
         public const string MinPasswordLength = "The Password must have at least 8 characters.";
 
+        public const string ProvidedPassDoesNotMatch = "The provided password does not match with the current password.";
+
+        public const string CouldNotChangePassword = "There was an error while changing the password.";
+
         public const string LoginError = "Wrong email or password.";
 
         public const string NotFound = "Not Found";

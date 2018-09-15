@@ -24,6 +24,12 @@ namespace Coinelity.Core.Errors
                 case ErrorType.LoginError:
                     ERROR = ErrorMessages.LoginError;
                     break;
+                case ErrorType.ProvidedPassDoesNotMatch:
+                    ERROR = ErrorMessages.ProvidedPassDoesNotMatch;
+                    break;
+                case ErrorType.CouldNotChangePassword:
+                    ERROR = ErrorMessages.CouldNotChangePassword;
+                    break;
                 case ErrorType.NotFound:
                     ERROR = ErrorMessages.NotFound;
                     break;
