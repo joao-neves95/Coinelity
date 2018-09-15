@@ -17,13 +17,13 @@
         <div class="grid-container fluid">
           <div class="grid-y">
             <label>Current Password
-              <input type="password">
+              <input type="password" id="curr-pass-input">
             </label>
             <label>New Password
-              <input type="password">
+              <input type="password" id="new-pass-input">
             </label>
             <label>Confirm New Password
-              <input type="password">
+              <input type="password" id="check-new-pass-input">
             </label>
           </div>
         </div>

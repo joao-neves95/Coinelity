@@ -3,7 +3,7 @@
 class NavbarModel {
   constructor() {
     if ( navbarModel )
-      throw new Error( 'There can only be one instance of NavBarModel.' );
+      throw DevErrors.singleIntance( 'NavbarModel' );
 
     /**
      * Dictionary mapping the pages and components.

@@ -47,28 +47,23 @@ class NavbarView {
   }
 
   minimize() {
-    this.element.style.maxWidth = SIDEBAR_MOBILE_WIDTH;
-    this.element.style.minWidth = SIDEBAR_MOBILE_WIDTH;
-    this.element.style.width = SIDEBAR_MOBILE_WIDTH;
-    this.toggleButtonPElem.innerHTML = '&raquo;';
-    NavbarView.pageContainer.style.marginLeft = SIDEBAR_MOBILE_WIDTH;
-
-    const labels = this.getIconLabels();
-    for ( let i = 0; i < labels.length; ++i ) {
-      labels[i].style.display = 'none';
-    }
+    this.resize( SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
   }
 
   maximize() {
-    this.element.style.maxWidth = SIDEBAR_DESKTOP_WIDTH;
-    this.element.style.minWidth = SIDEBAR_DESKTOP_WIDTH;
-    this.element.style.width = SIDEBAR_DESKTOP_WIDTH;
-    this.toggleButtonPElem.innerHTML = '&laquo;';
-    NavbarView.pageContainer.style.marginLeft = SIDEBAR_DESKTOP_WIDTH;
+    this.resize( SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
+  }
+
+  resize( width, toggleButtonLabel, iconLabelsDisplay ) {
+    this.element.style.maxWidth = width;
+    this.element.style.minWidth = width;
+    this.element.style.width = width;
+    this.toggleButtonPElem.innerHTML = toggleButtonLabel;
+    NavbarView.pageContainer.style.marginLeft = width;
 
     const labels = this.getIconLabels();
     for ( let i = 0; i < labels.length; ++i ) {
-      labels[i].style.display = 'inline-block';
+      labels[i].style.display = iconLabelsDisplay;
     }
   }
 

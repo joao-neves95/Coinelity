@@ -660,13 +660,13 @@ class TradeRoomController extends ControllerBase {
         <div class="grid-container fluid">
           <div class="grid-y">
             <label>Current Password
-              <input type="password">
+              <input type="password" id="curr-pass-input">
             </label>
             <label>New Password
-              <input type="password">
+              <input type="password" id="new-pass-input">
             </label>
             <label>Confirm New Password
-              <input type="password">
+              <input type="password" id="check-new-pass-input">
             </label>
           </div>
         </div>
@@ -735,6 +735,11 @@ class SettingsView extends ViewBase {
   }
 
   static get _() { return settingsView; }
+
+  get changePasswordButton() { return document.getElementById( 'change-password-button' ); }
+  get currPassInput() { return document.getElementById( 'curr-pass-input' ); }
+  get newPassInput() { return document.getElementById( 'new-pass-input' ); }
+  get checkNewPassInput() { return document.getElementById( 'check-new-pass-input' ); }
 }
 ﻿class SettingsController extends ControllerBase {
   constructor() {
@@ -742,6 +747,21 @@ class SettingsView extends ViewBase {
       new SettingsModel(),
       new SettingsView()
     );
+
+    this.setEventListeners();
+  }
+
+  setEventListeners() {
+    DOM.on( 'click', this.view.changePasswordButton, ( e ) => {
+      e.preventDefault();
+
+      if ( this.view.newPassInput.value !== this.view.checkNewPassInput.value ) {
+        // TODO: Send notification.
+        return false;
+      }
+
+      // Update password (API connection - confirm current password).
+    } );
   }
 }
 ﻿class NavbarTemplates {
@@ -788,7 +808,7 @@ class SettingsView extends ViewBase {
 class NavbarModel {
   constructor() {
     if ( navbarModel )
-      throw new Error( 'There can only be one instance of NavBarModel.' );
+      throw DevErrors.singleIntance( 'NavbarModel' );
 
     /**
      * Dictionary mapping the pages and components.
@@ -862,28 +882,23 @@ class NavbarView {
   }
 
   minimize() {
-    this.element.style.maxWidth = SIDEBAR_MOBILE_WIDTH;
-    this.element.style.minWidth = SIDEBAR_MOBILE_WIDTH;
-    this.element.style.width = SIDEBAR_MOBILE_WIDTH;
-    this.toggleButtonPElem.innerHTML = '&raquo;';
-    NavbarView.pageContainer.style.marginLeft = SIDEBAR_MOBILE_WIDTH;
-
-    const labels = this.getIconLabels();
-    for ( let i = 0; i < labels.length; ++i ) {
-      labels[i].style.display = 'none';
-    }
+    this.resize( SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
   }
 
   maximize() {
-    this.element.style.maxWidth = SIDEBAR_DESKTOP_WIDTH;
-    this.element.style.minWidth = SIDEBAR_DESKTOP_WIDTH;
-    this.element.style.width = SIDEBAR_DESKTOP_WIDTH;
-    this.toggleButtonPElem.innerHTML = '&laquo;';
-    NavbarView.pageContainer.style.marginLeft = SIDEBAR_DESKTOP_WIDTH;
+    this.resize( SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
+  }
+
+  resize( width, toggleButtonLabel, iconLabelsDisplay ) {
+    this.element.style.maxWidth = width;
+    this.element.style.minWidth = width;
+    this.element.style.width = width;
+    this.toggleButtonPElem.innerHTML = toggleButtonLabel;
+    NavbarView.pageContainer.style.marginLeft = width;
 
     const labels = this.getIconLabels();
     for ( let i = 0; i < labels.length; ++i ) {
-      labels[i].style.display = 'inline-block';
+      labels[i].style.display = iconLabelsDisplay;
     }
   }
 

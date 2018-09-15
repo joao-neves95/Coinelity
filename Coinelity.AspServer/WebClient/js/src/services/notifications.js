@@ -1,4 +1,7 @@
-﻿class Notifications {
+﻿// SweetAlert2
+// https://github.com/sweetalert2/sweetalert2
+
+class Notifications {
   constructor() {
     throw DevErrors.cantInstantiateStatic( 'Notifications' );
   }
@@ -19,11 +22,35 @@
     swall();
   }
 
-  infoToast( title, description = '' ) {
+  static infoToast( title, description = '' ) {
     swall();
   }
 
-  infoPopUp( title, description = '' ) {
+  static infoToastAndIcon( title, description = '' ) {
+    swall();
+  }
+
+  static infoPopUp( title, description = '' ) {
+    swall();
+  }
+
+  static infoPopUpAndIcon( title, description = '' ) {
+    swall();
+  }
+
+  static errorToast( title, description = '' ) {
+    swall();
+  }
+
+  static errorToastAndIcon( title, description = '' ) {
+    swall();
+  }
+
+  static errorPopUp( title, description = '' ) {
+    swall();
+  }
+
+  static errorPopUpAndIcon( title, description = '' ) {
     swall();
   }
 }
