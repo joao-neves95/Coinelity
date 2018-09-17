@@ -258,9 +258,21 @@ namespace Coinelity.AspServer.DataAccess
             return "Success";
         }
 
-        public Task SetMaxloginFailsAsync(int maxLoginFails)
+        public async Task<int> SetMaxloginFailsAsync(string userId, string maxLoginFails)
         {
+            int result = await MSSQLClient.CommandOnceAsync(
+                _connection,
+                @"UPDATE dbo.ApplicationUserSettings
+                  SET MaxLoginFailes = @MaxLoginFailes
+                  WHERE id = @Id",
+                new Dictionary<string, object>
+                {
+                    { "@MaxLoginFailes", maxLoginFails },
+                    { "@Id", userId }
+                }
+            );
 
+            return result;
         }
 
         public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)

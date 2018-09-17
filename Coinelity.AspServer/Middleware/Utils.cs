@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace Coinelity.AspServer.Middleware
 {
@@ -52,6 +53,19 @@ namespace Coinelity.AspServer.Middleware
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// Get a value of a claim from the user's request JWT.
+        /// 
+        /// </summary>
+        /// <param name="userClaims"> The object User from the controller. </param>
+        /// <param name="claim"> A ClaimType value or a custom claim. </param>
+        /// <returns></returns>
+        public static string GetUserClaim(ClaimsPrincipal userClaims, string claim)
+        {
+            return userClaims.Claims.Where( c => c.Type == claim ).First().Value;
         }
     }
 }

@@ -3,21 +3,23 @@
     DevErrors.cantInstantiateStatic( 'HttpClient' );
   }
 
-  static get( url, jwtAuth = true ) {
-    HttpClient.request( RequestType.Get, url, jwtAuth, ( err, res ) => {
-      if ( err )
-        return console.debug( err );
+  // res.json()
 
-      return console.debug( res.json() );
+  static get( url, jwtAuth = true, Callback ) {
+    HttpClient.request( RequestType.Get, url, jwtAuth, ( err, res ) => {
+      Callback( err, res );
     } );
   }
 
-  static post( url, body, jwtAuth = true ) {
+  static post( url, body, jwtAuth = true, Callback ) {
     HttpClient.request( RequestType.Post, url, jwtAuth, ( err, res ) => {
-      if ( err )
-        return console.debug( err );
+      Callback( err, res );
+    } );
+  }
 
-      return console.debug( res.json() );
+  static put( url, body, jwtAuth = true, Callback ) {
+    HttpClient.request( RequestType.Put, url, body, jwtAuth, ( err, res ) => {
+      Callback( err, res );
     } );
   }
 
@@ -30,7 +32,7 @@
     if ( jwtAuth )
       requestObject.headers['Authorization'] = 'Bearer ' + localStorage.getItem( AUTH_TOKEN_ID );
 
-    if ( requestType === RequestType.Post ) {
+    if ( requestType === RequestType.Post || requestType === RequestType.Put ) {
       requestObject.body = body;
       requestObject.headers['Content-Type'] = 'application/json;charset=utf-8';
     }

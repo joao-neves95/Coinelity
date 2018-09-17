@@ -13,7 +13,8 @@ using Coinelity.AspServer.Models;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.Core.Errors;
 
-// TODO: Add consistency to the JSON responses (Successes/Errors).
+// TODO: Add consistency to the JSON responses (**Successes**/Errors).
+// TODO: Update AuditLog table.
 namespace Coinelity.AspServer.Controllers
 {
     [Route("api/user")]
@@ -82,13 +83,13 @@ namespace Coinelity.AspServer.Controllers
 
         [Authorize]
         [HttpGet("roles")]
-        public async Task<IActionResult> Roles()
+        public async Task<IActionResult> GetRoles()
         {
             RoleStore roleStore = new RoleStore();
             List<ApplicationRoleDTO> applicationUserRoles = new List<ApplicationRoleDTO>();
             try
             {
-                string userIdClaim = User.Claims.Where(c => c.Type == "id").First().Value;
+                string userIdClaim = Utils.GetUserClaim( User, "id" );
                 applicationUserRoles = await roleStore.GetUserRolesByUserIdAsync( userIdClaim );
 
                 return Ok(Json( applicationUserRoles ).Value);
@@ -96,7 +97,7 @@ namespace Coinelity.AspServer.Controllers
             catch (Exception e)
             {
                 // TODO: Exception handling.
-                Console.WriteLine($"ERROR:\nIn: api/users/roles\n{ e.Message }");
+                Console.WriteLine( $"ERROR:\nIn: api/users/roles\n{ e.Message }" );
                 return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
             }
             finally
@@ -116,13 +117,13 @@ namespace Coinelity.AspServer.Controllers
         /// <param name="setPasswordDTO"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("set-password")]
-        public async Task<IActionResult> SetPassword([FromBody]SetPasswordDTO setPasswordDTO)
+        [HttpPut("password")]
+        public async Task<IActionResult> PutPassword([FromBody]SetPasswordDTO setPasswordDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
-            string userIdClaim = User.Claims.Where( c => c.Type == "id" ).First().Value;
+            string userIdClaim = Utils.GetUserClaim( User, "id" );
             UserStore userStore = new UserStore();
             string result = await userStore.ChangePasswordAsync( userIdClaim, setPasswordDTO.CurrentPassword, setPasswordDTO.NewPassword );
 
@@ -137,11 +138,29 @@ namespace Coinelity.AspServer.Controllers
             return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
         }
 
+        /// <summary>
+        /// 
+        /// NOT TESTED.
+        /// 
+        /// </summary>
+        /// <param name="setMaxLoginFailsDTO"></param>
+        /// <returns></returns>
         [Authorize]
-        [HttpPost("set-max-login-fails")]
-        public async Task<IActionResult> SetMaxLoginFails([FromBody]SetMaxLoginFailsDTO setMaxLoginFailsDTO)
+        [HttpPut("max-login-fails")]
+        public async Task<IActionResult> PutMaxLoginFails([FromBody]SetMaxLoginFailsDTO setMaxLoginFailsDTO)
         {
-            return Json("");
+            if (!ModelState.IsValid)
+                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
+
+            string userId = Utils.GetUserClaim( User, "id" );
+
+            UserStore userStore = new UserStore();
+            int result = await userStore.SetMaxloginFailsAsync( userId, setMaxLoginFailsDTO.MaxLoginFails.ToString() );
+
+            if (result <= 0)
+                return StatusCode( 500, Json( new ErrorMessage( ErrorType.UnknownError ) ).Value );
+
+            return Ok( Json( "Successfully changed the maximum number of failed logins." ).Value );
         }
 
         #endregion

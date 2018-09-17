@@ -1,4 +1,6 @@
 ﻿const RequestType = Object.freeze( {
   Post: 'POST',
-  Get: 'GET'
+  Get: 'GET',
+  Put: 'PUT',
+  Delete: 'DELETE'
 } );

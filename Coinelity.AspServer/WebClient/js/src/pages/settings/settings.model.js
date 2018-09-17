@@ -16,7 +16,22 @@ class SettingsModel extends ModelBase {
   get baseUserApiUrl() { return BASE_API_URL + 'user/'; }
 
   changePassword( changePasswordDTO ) {
-    HttpClient.post( this.baseUserApiUrl + 'set-password', changePasswordDTO );
+    HttpClient.put( this.baseUserApiUrl + 'password', changePasswordDTO, ( err, res ) => {
+      if ( err )
+        console.debug( err );
+
+      console.debug( res );
+    } );
   }
 
+  setMaxLoginFailes( maxLoginFailes ) {
+    HttpClient.put( this.baseUserApiUrl + 'max-login-fails',
+      JSON.stringify( { "maxLoginFails": maxLoginFailes } ),
+      ( err, res ) => {
+        if ( err )
+          console.debug( err );
+
+        console.debug( res );
+      });
+  }
 }
