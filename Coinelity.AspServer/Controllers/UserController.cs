@@ -53,7 +53,7 @@ namespace Coinelity.AspServer.Controllers
             if (!registerSuccess.Succeeded)
                 // TODO: Error handling.
                 // return StatusCode( 500 );
-                return StatusCode(500, registerSuccess.Errors.ToList());
+                return StatusCode( 500, registerSuccess.Errors.ToList() );
 
             return Ok( Json( "User successfully registered." ).Value );
         }
@@ -79,35 +79,6 @@ namespace Coinelity.AspServer.Controllers
             return Ok(Json( new jwtDTO { AccessToken = JWTTokens.Generate(userEmail, userId) } ).Value);
         }
 
-        // TODO: Test.
-        /// <summary>
-        /// 
-        /// NOT TESTED.
-        /// 
-        /// </summary>
-        /// <param name="changePasswordDTO"></param>
-        /// <returns></returns>
-        [Authorize]
-        [HttpPost("change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody]ChangePasswordDTO changePasswordDTO)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
-
-            string userIdClaim = User.Claims.Where( c => c.Type == "id" ).First().Value;
-            UserStore userStore = new UserStore();
-            string result = await userStore.ChangePasswordAsync( userIdClaim, changePasswordDTO.CurrentPassword, changePasswordDTO.NewPassword );
-
-            if (result == "Success")
-                return Ok( Json( "Successfully changed the password" ).Value );
-
-            if (result == ErrorMessages.ProvidedPassDoesNotMatch)
-                return BadRequest( Json( new ErrorMessage( ErrorType.ProvidedPassDoesNotMatch ) ).Value );
-            if (result == ErrorMessages.CouldNotChangePassword)
-                return BadRequest( Json( new ErrorMessage( ErrorType.CouldNotChangePassword ) ).Value );
-
-            return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
-        }
 
         [Authorize]
         [HttpGet("roles")]
@@ -133,5 +104,46 @@ namespace Coinelity.AspServer.Controllers
                 roleStore.Dispose();
             }
         }
+
+        #region SETTINGS
+
+        // TODO: Test.
+        /// <summary>
+        /// 
+        /// NOT TESTED.
+        /// 
+        /// </summary>
+        /// <param name="setPasswordDTO"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("set-password")]
+        public async Task<IActionResult> SetPassword([FromBody]SetPasswordDTO setPasswordDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
+
+            string userIdClaim = User.Claims.Where( c => c.Type == "id" ).First().Value;
+            UserStore userStore = new UserStore();
+            string result = await userStore.ChangePasswordAsync( userIdClaim, setPasswordDTO.CurrentPassword, setPasswordDTO.NewPassword );
+
+            if (result == "Success")
+                return Ok( Json( "Successfully changed the password" ).Value );
+
+            if (result == ErrorMessages.ProvidedPassDoesNotMatch)
+                return BadRequest( Json( new ErrorMessage( ErrorType.ProvidedPassDoesNotMatch ) ).Value );
+            if (result == ErrorMessages.CouldNotChangePassword)
+                return BadRequest( Json( new ErrorMessage( ErrorType.CouldNotChangePassword ) ).Value );
+
+            return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
+        }
+
+        [Authorize]
+        [HttpPost("set-max-login-fails")]
+        public async Task<IActionResult> SetMaxLoginFails([FromBody]SetMaxLoginFailsDTO setMaxLoginFailsDTO)
+        {
+            return Json("");
+        }
+
+        #endregion
     }
 }

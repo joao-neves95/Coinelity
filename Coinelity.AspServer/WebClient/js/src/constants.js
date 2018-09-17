@@ -1,6 +1,8 @@
 ﻿const ENV = EnvironmentType.Development;
 const BASE_URL = 'http://localhost:33623/';
+const BASE_API_URL = BASE_URL + 'api/';
 const PUBLIC_IMGS_URL = 'public/img/';
+const AUTH_TOKEN_ID = 'auth-token';
 
 // Images URL'S:
 const DASHBOARD_ICON_URL = `${PUBLIC_IMGS_URL}dashboard-icon-white.svg`;

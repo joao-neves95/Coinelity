@@ -17,4 +17,16 @@ class SettingsView extends ViewBase {
   get currPassInput() { return document.getElementById( 'curr-pass-input' ); }
   get newPassInput() { return document.getElementById( 'new-pass-input' ); }
   get checkNewPassInput() { return document.getElementById( 'check-new-pass-input' ); }
+
+  /**
+   * Returns a ChangePasswordDTO with the user input.
+   * 
+   * @returns { ChangePasswordDTO } ChangePasswordDTO
+   */
+  getChangePasswordInput() {
+    const currentPasswordInput = this.currPassInput.value;
+    const newPasswordInput = this.newPassInput.value;
+
+    return new ChangePasswordDTO( currentPasswordInput, newPasswordInput );
+  }
 }

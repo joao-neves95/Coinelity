@@ -12,4 +12,11 @@ class SettingsModel extends ModelBase {
   }
 
   static get _() { return settingsModel; }
+
+  get baseUserApiUrl() { return BASE_API_URL + 'user/'; }
+
+  changePassword( changePasswordDTO ) {
+    HttpClient.post( this.baseUserApiUrl + 'set-password', changePasswordDTO );
+  }
+
 }

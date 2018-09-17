@@ -11,4 +11,12 @@
         ${content}
       </main>`;
   }
+
+  static inputElem( label, type, id, placeholder = '' ) {
+    return `
+      <label>${ label}
+        <input type="${ type}" id="${id}">
+      </label>
+    `;
+  }
 }

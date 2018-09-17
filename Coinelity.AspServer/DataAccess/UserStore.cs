@@ -258,6 +258,11 @@ namespace Coinelity.AspServer.DataAccess
             return "Success";
         }
 
+        public Task SetMaxloginFailsAsync(int maxLoginFails)
+        {
+
+        }
+
         public Task<string> GetUserIdAsync(ApplicationUser user, CancellationToken cancellationToken)
         {
             return Task.FromResult( user.Id.ToString() );

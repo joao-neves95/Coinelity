@@ -17,7 +17,11 @@
         return false;
       }
 
+      /** @type { ChangePasswordDTO } */
+      const newChangePasswordDTO = this.view.getChangePasswordInput();
+
       // Update password (API connection - confirm current password).
+      this.model.changePassword( newChangePasswordDTO );
     } );
   }
 }
