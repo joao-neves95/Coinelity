@@ -4,8 +4,6 @@
       new SettingsModel(),
       new SettingsView()
     );
-
-    this.setEventListeners();
   }
 
   setEventListeners() {
@@ -17,11 +15,14 @@
         return false;
       }
 
-      /** @type { ChangePasswordDTO } */
-      const newChangePasswordDTO = this.view.getChangePasswordInput();
+      const newChangePasswordDTO = this.view.getChangePasswordInputDTO();
 
       // Update password (API connection - confirm current password).
       this.model.changePassword( newChangePasswordDTO );
     } );
+  }
+
+  onSetActive() {
+    this.setEventListeners();
   }
 }

@@ -4,11 +4,15 @@
 // @import '/enums/colors'
 // @import '/enums/navbarItemType'
 // @import '/enums/navItemID'
+// @import '/enums/gridOrientationType'
+// @import '/enums/requestType'
+// @import '/models/changePasswordDTO'
 // @import 'constants'
 // @import '/services/devErrors'
 // @import '/services/externalLibs'
 // @import '/services/utils'
 // @import '/services/DOM'
+// @import '/services/httpClient'
 // @import '/navbar/navbarItemBase'
 // @import '/interfaces/pageTemplates'
 // @import '/interfaces/modelBase'
@@ -62,9 +66,27 @@ const NavItemID = Object.freeze( {
   Trade: 'trade-room/trade',
   Settings: 'settings'
 });
+﻿const GridOrientationType = Object.freeze( {
+  Y: 'grid-y',
+  X: 'grid-x'
+} );
+﻿const RequestType = Object.freeze( {
+  Post: 'POST',
+  Get: 'GET',
+  Put: 'PUT',
+  Delete: 'DELETE'
+} );
+﻿class ChangePasswordDTO {
+  constructor( currentPassword, newPassword ) {
+    this.currentPassword = currentPassword;
+    this.newPassword = newPassword;
+  }
+}
 ﻿const ENV = EnvironmentType.Development;
 const BASE_URL = 'http://localhost:33623/';
+const BASE_API_URL = BASE_URL + 'api/';
 const PUBLIC_IMGS_URL = 'public/img/';
+const AUTH_TOKEN_ID = 'auth-token';
 
 // Images URL'S:
 const DASHBOARD_ICON_URL = `${PUBLIC_IMGS_URL}dashboard-icon-white.svg`;
@@ -371,6 +393,54 @@ class List extends Collection {
     } );
   }
 }
+﻿class HttpClient {
+  constructor() {
+    DevErrors.cantInstantiateStatic( 'HttpClient' );
+  }
+
+  // res.json()
+
+  static get( url, jwtAuth = true, Callback ) {
+    HttpClient.request( RequestType.Get, url, jwtAuth, ( err, res ) => {
+      Callback( err, res );
+    } );
+  }
+
+  static post( url, body, jwtAuth = true, Callback ) {
+    HttpClient.request( RequestType.Post, url, jwtAuth, ( err, res ) => {
+      Callback( err, res );
+    } );
+  }
+
+  static put( url, body, jwtAuth = true, Callback ) {
+    HttpClient.request( RequestType.Put, url, body, jwtAuth, ( err, res ) => {
+      Callback( err, res );
+    } );
+  }
+
+  static request( requestType, url, body = null, jwtAuth = true, Callback ) {
+    let requestObject = {
+      method: requestType,
+      headers: new Headers()
+    };
+
+    if ( jwtAuth )
+      requestObject.headers['Authorization'] = 'Bearer ' + localStorage.getItem( AUTH_TOKEN_ID );
+
+    if ( requestType === RequestType.Post || requestType === RequestType.Put ) {
+      requestObject.body = body;
+      requestObject.headers['Content-Type'] = 'application/json;charset=utf-8';
+    }
+
+    fetch( url, requestObject )
+      .then( ( res ) => {
+        return Callback( null, res );
+      } )
+      .catch( ( err ) => {
+        Callback( err, null );
+      } );
+  }
+}
 ﻿/**
  * Extended by ControllerBase.
  */
@@ -421,13 +491,31 @@ class NavbarItemBase {
    * 
    * @param { string } content The content to insert inside the global page template.
    * 
-   * @returns { string }
+   * @returns { string } HTML string.
    */
   static page(content) {
     return `
       <main class="page">
         ${content}
       </main>`;
+  }
+
+  static inputElem( label, type, id, placeholder = '', additionalAttributes = '' ) {
+    return `
+      <label>${label}
+        <input type="${type}" placeholder="${placeholder}" id="${id}" ${additionalAttributes}>
+      </label>
+    `;
+  }
+
+  static inputNumElem( label, id, min, max, placeholder = '', additionalAttributes = '' ) {
+    return PageTemplates.inputElem( label, 'number', id, placeholder, `min="${min.toString()}" max="${max.toString()}" ` + additionalAttributes );
+  }
+
+  static successButton(label, id, addicionalClasses = '') {
+    return `
+      <a id="${id}" class="success button ${addicionalClasses}">${label}</a>
+    `;
   }
 }
 ﻿class ModelBase {
@@ -646,38 +734,47 @@ class TradeRoomController extends ControllerBase {
     throw DevErrors.cantInstantiateStatic( 'SettingsTemplates' );
   }
 
-  //static theForm( content ) {
-  //  return `
-  //    <form>
-  //    </form>
-  //  `;
-  //}
-
-  static changePassword() {
+  static theForm( content ) {
     return `
-      <form class="settings-form">
-        <h3>Change Password</h3>
-        <div class="grid-container fluid">
-          <div class="grid-y">
-            <label>Current Password
-              <input type="password" id="curr-pass-input">
-            </label>
-            <label>New Password
-              <input type="password" id="new-pass-input">
-            </label>
-            <label>Confirm New Password
-              <input type="password" id="check-new-pass-input">
-            </label>
-          </div>
-        </div>
-        <a id="change-password-button" class="success button">Change Password</a>
+      <form class="settings-form grid-x">
+        ${ content }
       </form>
     `;
   }
 
-  static maxFailedLogins() {
-    throw DevErrors.notImplemented();
-    // return ``;
+  static formItem( title, gridOrientationType, gridContent, containerBottomContent = '' ) {
+    return `
+      <article class="form-item cell small-12 medium-6 large-4">
+        <h4>${ title }</h4>
+        <div class="grid-container fluid">
+          <div class="${ gridOrientationType } article-content">
+            ${ gridContent }
+          </div>
+          ${containerBottomContent}
+        </div>
+      </article>
+      `;
+  }
+
+  static changePassword() {
+    return SettingsTemplates.formItem(
+      'Change Password',
+      GridOrientationType.Y,
+
+      PageTemplates.inputElem( 'Current Password', 'password', 'curr-pass-input' ) +
+      PageTemplates.inputElem( 'New Password', 'password', 'new-pass-input' ) +
+      PageTemplates.inputElem( 'Confirm New Password', 'password', 'check-new-pass-input' ),
+
+      PageTemplates.successButton( 'Change Password', 'change-password-button' )
+    );
+  }
+
+  static maxLoginFailes() {
+    return SettingsTemplates.formItem(
+      'Maximum Login Failes Allowed',
+      GridOrientationType.Y,
+      PageTemplates.inputNumElem( 'Maximum Login Fails', 'max-login-fails-input', 0, 100, 'Leave this blank to deactivate this control.' )
+    );
   }
 
   static themeSelection() {
@@ -720,6 +817,28 @@ class SettingsModel extends ModelBase {
   }
 
   static get _() { return settingsModel; }
+
+  get baseUserApiUrl() { return BASE_API_URL + 'user/'; }
+
+  changePassword( changePasswordDTO ) {
+    HttpClient.put( this.baseUserApiUrl + 'password', changePasswordDTO, ( err, res ) => {
+      if ( err )
+        console.debug( err );
+
+      console.debug( res );
+    } );
+  }
+
+  setMaxLoginFailes( maxLoginFailes ) {
+    HttpClient.put( this.baseUserApiUrl + 'max-login-fails',
+      JSON.stringify( { "maxLoginFails": maxLoginFailes } ),
+      ( err, res ) => {
+        if ( err )
+          console.debug( err );
+
+        console.debug( res );
+      });
+  }
 }
 ﻿let settingsView;
 
@@ -728,7 +847,13 @@ class SettingsView extends ViewBase {
     if ( settingsView )
       throw DevErrors.singleIntance( 'SettingsView' );
 
-    super( '<h1>Settings</h1>' + SettingsTemplates.changePassword() );
+    super(
+      '<h1>Settings</h1>' +
+      SettingsTemplates.theForm(
+        SettingsTemplates.changePassword() +
+        SettingsTemplates.maxLoginFailes()
+      )
+    );
 
     settingsView = this;
     Object.freeze( settingsView );
@@ -740,6 +865,18 @@ class SettingsView extends ViewBase {
   get currPassInput() { return document.getElementById( 'curr-pass-input' ); }
   get newPassInput() { return document.getElementById( 'new-pass-input' ); }
   get checkNewPassInput() { return document.getElementById( 'check-new-pass-input' ); }
+
+  /**
+   * Returns a ChangePasswordDTO with the user input.
+   * 
+   * @returns { ChangePasswordDTO } ChangePasswordDTO
+   */
+  getChangePasswordInput() {
+    const currentPasswordInput = this.currPassInput.value;
+    const newPasswordInput = this.newPassInput.value;
+
+    return new ChangePasswordDTO( currentPasswordInput, newPasswordInput );
+  }
 }
 ﻿class SettingsController extends ControllerBase {
   constructor() {
@@ -747,8 +884,6 @@ class SettingsView extends ViewBase {
       new SettingsModel(),
       new SettingsView()
     );
-
-    this.setEventListeners();
   }
 
   setEventListeners() {
@@ -760,8 +895,16 @@ class SettingsView extends ViewBase {
         return false;
       }
 
+      /** @type { ChangePasswordDTO } */
+      const newChangePasswordDTO = this.view.getChangePasswordInput();
+
       // Update password (API connection - confirm current password).
+      this.model.changePassword( newChangePasswordDTO );
     } );
+  }
+
+  onSetActive() {
+    this.setEventListeners();
   }
 }
 ﻿class NavbarTemplates {

@@ -5,41 +5,44 @@
 
   static theForm( content ) {
     return `
-      <form class="settings-form">
+      <form class="settings-form grid-x">
         ${ content }
       </form>
     `;
   }
 
-  static formItem( title, gridOrientationType, content ) {
+  static formItem( title, gridOrientationType, gridContent, containerBottomContent = '' ) {
     return `
-      <article class="input-item">
-        <h3>${ title }</h3>
+      <article class="form-item cell small-12 medium-6 large-4">
+        <h4>${ title }</h4>
         <div class="grid-container fluid">
-          <div class="${ gridOrientationType }">
-            ${ content }
+          <div class="${ gridOrientationType } article-content">
+            ${ gridContent }
           </div>
+          ${containerBottomContent}
         </div>
       </article>
-      `;
+    `;
   }
 
   static changePassword() {
-    return SettingsTemplates.formItem( 
+    return SettingsTemplates.formItem(
       'Change Password',
       GridOrientationType.Y,
+
       PageTemplates.inputElem( 'Current Password', 'password', 'curr-pass-input' ) +
       PageTemplates.inputElem( 'New Password', 'password', 'new-pass-input' ) +
-      PageTemplates.inputElem( 'Confirm New Password', 'password', 'check-new-pass-input' ) +
-      '<a id="change-password-button" class="success button">Change Password</a>'
+      PageTemplates.inputElem( 'Confirm New Password', 'password', 'check-new-pass-input' ),
+
+      PageTemplates.successButton( 'Change Password', 'change-password-button' )
     );
   }
 
-  static maxFailedLogins() {
+  static maxLoginFailes() {
     return SettingsTemplates.formItem(
-      'Maximum Failed Logins',
+      'Maximum Login Failes Allowed',
       GridOrientationType.Y,
-      PageTemplates.inputElem( 'Maximum Login Fails', 'number', 'check-new-pass-input' )
+      PageTemplates.inputNumElem( 'Maximum Login Fails', 'max-login-fails-input', 0, 100, 'Leave this blank to deactivate this control.' )
     );
   }
 

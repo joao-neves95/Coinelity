@@ -5,7 +5,13 @@ class SettingsView extends ViewBase {
     if ( settingsView )
       throw DevErrors.singleIntance( 'SettingsView' );
 
-    super( '<h1>Settings</h1>' + SettingsTemplates.changePassword() );
+    super(
+      '<h1>Settings</h1>' +
+      SettingsTemplates.theForm(
+        SettingsTemplates.changePassword() +
+        SettingsTemplates.maxLoginFailes()
+      )
+    );
 
     settingsView = this;
     Object.freeze( settingsView );
@@ -23,7 +29,7 @@ class SettingsView extends ViewBase {
    * 
    * @returns { ChangePasswordDTO } ChangePasswordDTO
    */
-  getChangePasswordInput() {
+  getChangePasswordInputDTO() {
     const currentPasswordInput = this.currPassInput.value;
     const newPasswordInput = this.newPassInput.value;
 
