@@ -1,4 +1,13 @@
-﻿const ENV = EnvironmentType.Development;
+﻿/*********************************************************************************************
+ *
+ * Copyright (c) 2018 Jo�o Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Jo�o Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ *********************************************************************************************/
+
+const ENV = EnvironmentType.Development;
 const BASE_URL = 'http://localhost:33623/';
 const BASE_API_URL = BASE_URL + 'api/';
 const PUBLIC_IMGS_URL = 'public/img/';

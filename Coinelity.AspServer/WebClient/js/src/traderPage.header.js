@@ -1,4 +1,13 @@
-﻿// MergerJS imports:
+﻿/*********************************************************************************************
+ *
+ * Copyright (c) 2018 Jo�o Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Jo�o Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ *********************************************************************************************/
+
+// MergerJS imports:
 //
 // @import '/enums/environmentType'
 // @import '/enums/colors'
@@ -9,6 +18,8 @@
 // @import '/models/changePasswordDTO'
 // @import 'constants'
 // @import '/services/devErrors'
+// $import 'when-dom-ready/dist/index.umd'
+// $import 'sweetalert2/dist/sweetalert2.all.min'
 // @import '/services/externalLibs'
 // @import '/services/utils'
 // @import '/services/DOM'

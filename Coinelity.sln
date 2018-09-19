@@ -9,7 +9,7 @@ Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Coinelity.NodeServer", "Coi
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Coinelity.Database", "Coinelity.Database\Coinelity.Database.sqlproj", "{C9B7E13C-27FE-4975-875A-67AC3443AF8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coinelity.Core", "Coinelity.Core\Coinelity.Core.csproj", "{9663D1A8-A922-4EB9-B693-05D4C678D537}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coinelity.Core", "Coinelity.Core\Coinelity.Core.csproj", "{9663D1A8-A922-4EB9-B693-05D4C678D537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

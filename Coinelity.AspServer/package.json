@@ -1,0 +1,25 @@
+{
+  "name": "coinelity.aspserver",
+  "version": "0.0.1",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "sweetalert2": "^7.26.29",
+    "when-dom-ready": "^1.2.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joao-neves95/Coinelity.git"
+  },
+  "author": "shivayl (João Pedro Martins Neves)",
+  "license": "Copyright (C) João Pedro Martins Neves - All Rights Reserved",
+  "bugs": {
+    "url": "https://github.com/joao-neves95/Coinelity/issues"
+  },
+  "homepage": "https://github.com/joao-neves95/Coinelity#readme"
+}

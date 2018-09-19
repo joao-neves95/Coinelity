@@ -1,4 +1,13 @@
-﻿// This variable is a hack because there can be no static properties in JavaScript classes...
+﻿/*********************************************************************************************
+ *
+ * Copyright (c) 2018 Jo�o Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Jo�o Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ *********************************************************************************************/
+
+// This variable is a hack because there can be no static properties in JavaScript classes...
 /**
  * This stores the NavbarController instance.
  * Do not use this variable directly. Use NavbarController._ instead.
