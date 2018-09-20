@@ -15,7 +15,8 @@ class NavbarModel {
       throw DevErrors.singleIntance( 'NavbarModel' );
 
     /**
-     * Dictionary mapping the pages and components.
+     * Dictionary mapping the pages and panel items.
+     * 
      * key: string (unique id of the Page | NavbarPanelItem. To be used by the router)
      * value:  Instance of Page | NavbarPanelItem.
      * 
@@ -24,11 +25,11 @@ class NavbarModel {
     this.items = new Dictionary( true );
     /** 
      * The ID of the active page. 
-     * @type { string } 
+     * @type { string? } 
      */
     this.activePageId = null;
-    this.activeNavbarPanelItem = null;
-    /** @type { boolean } */
+    /** @type { string? } */
+    this.activeNavbarPanelItemId = null;
     this.toggled = false;
 
     navbarModel = this;

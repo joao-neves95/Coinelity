@@ -41,7 +41,7 @@ class NavbarController {
      */
     //this.items = new Dictionary(true);
     //this.activePageId = null;
-    //this.activeNavbarPanelItem = null;
+    //this.activeNavbarPanelItemId = null;
 
     navbarController = this;
     Object.freeze( navbarController );
@@ -111,17 +111,27 @@ class NavbarController {
       itemId = thisItem.id;
     }
 
+
     if ( thisItem.navbarItemType === NavbarItemType.Page ) {
       if ( this.model.activePageId === itemId )
         return;
 
+      /** @type { NavbarItemBase } */
+      const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
+      lastActiveItem.onBeforeDestroyBase();
+
       this.view.removeActivePage();
       this.model.activePageId = itemId;
     } else if ( thisItem.navbarItemType === NavbarItemType.NavbarPanelItem ) {
-      if ( this.model.activeNavbarPanelItem === itemId )
+      if ( this.model.activeNavbarPanelItemId === itemId )
         return;
 
-      this.model.activeNavbarPanelItem = itemId;
+      /** @type { NavbarItemBase } */
+      const lastActiveItem = this.model.items.getByKey( this.model.activeNavbarPanelItemId );
+      lastActiveItem.onBeforeDestroyBase();
+
+      //this.view.removeActivePanelItem();
+      this.model.activeNavbarPanelItemId = itemId;
     }
 
     thisItem.onSetActiveBase( thisItem.navbarItemType );
