@@ -7,6 +7,16 @@
  *
  */
 
-class MarketsModel {
+let marketsModel = null;
 
+class MarketsModel extends ModelBase {
+  constructor() {
+    if ( marketsModel )
+      throw DevErrors.singleIntance( 'MarketsModel' );
+
+    super( '', '', '', '' );
+
+    marketsView = this;
+    Object.freeze( marketsView );
+  }
 }

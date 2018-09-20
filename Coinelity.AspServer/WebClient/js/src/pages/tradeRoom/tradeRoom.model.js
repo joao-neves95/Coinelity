@@ -16,7 +16,7 @@ class TradeRoomModel extends ModelBase {
 
     super( NavItemID.Markets, NavbarItemType.Page, 'Trade Room', TRADE_ROOM_ICON_URL );
 
-    this.activeContent = NavItemID.Markets;
+    this.activeContentId = NavItemID.Markets;
 
     tradeRoomModel = this;
     Object.seal( tradeRoomModel );

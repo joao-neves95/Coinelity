@@ -7,6 +7,14 @@
  *
  */
 
-class MarketsController {
+class MarketsController extends ControllerBase {
+  constructor() {
+    if ( marketsController )
+      throw DevErrors.singleIntance( 'MarketsController' );
 
+    super();
+
+    marketsController = this;
+    Object.freeze( marketsController );
+  }
 }

@@ -7,6 +7,32 @@
  *
  */
 
-class MarketsView {
+let marketsView = null;
 
+class MarketsView extends ViewBase {
+  constructor() {
+    if ( marketsView )
+      throw DevErrors.singleIntance( 'MarketsView' );
+
+    super( '' );
+
+    marketsView = this;
+    Object.freeze( marketsView );
+  }
+
+  get element() { return document.getElementById( 'markets' ); }
+
+  get marketsContent() { return document.getElementsByClassName( 'markets-cards-wrapper' )[0]; }
+
+  addCard( coinName, coinImgUrl, price, priceChange ) {
+    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price, priceChange );
+  }
+
+  removeCard( coinName ) {
+    document.getElementById( coinName + '-coin-card' ).remove();
+  }
+
+  clearContent() {
+    this.marketsContent.innerHTML = '';
+  }
 }

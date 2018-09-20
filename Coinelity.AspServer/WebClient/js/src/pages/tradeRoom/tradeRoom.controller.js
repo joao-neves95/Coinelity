@@ -12,7 +12,7 @@ let tradeRoomController = null;
 class TradeRoomController extends ControllerBase {
   constructor() {
     if ( tradeRoomController )
-      throw new Error( 'There can only be one instance of TradeRoomController.');
+      throw DevErrors.singleIntance( 'TradeRoomController' );
 
     super(
       new TradeRoomModel(),
@@ -34,7 +34,7 @@ class TradeRoomController extends ControllerBase {
       return;
 
     this.model.id = NavItemID.Markets;
-    this.model.activeContent = NavItemID.Markets;
+    this.model.activeContentId = NavItemID.Markets;
     console.info( `The TradeRoom markets were opened.` );
     console.debug( this.model.activeItem );
   }
@@ -45,7 +45,7 @@ class TradeRoomController extends ControllerBase {
       return;
 
     this.model.id = NavItemID.Trade;
-    this.model.activeContent = NavItemID.Trade;
+    this.model.activeContentId = NavItemID.Trade;
     console.info( `TradeRoom opened to trade ${assetID}.` );
     console.debug( this.model.activeItem );
   }
