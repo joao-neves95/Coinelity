@@ -13,25 +13,64 @@ class HttpClient {
   }
 
   // res.json()
-
+  /**
+   * Returns a Fetch Response object or an error.
+   * 
+   * @param {any} url
+   * @param {any} jwtAuth
+   * @param {any} Callback
+   * 
+   * @return { Response }
+   */
   static get( url, jwtAuth = true, Callback ) {
     HttpClient.request( RequestType.Get, url, jwtAuth, ( err, res ) => {
       Callback( err, res );
     } );
   }
 
+  /**
+   * Returns a Fetch Response object or an error.
+   *
+   * @param {any} url
+   * @param {any} body
+   * @param {any} jwtAuth
+   * @param {any} Callback
+   * 
+   * @return { Response }
+   */
   static post( url, body, jwtAuth = true, Callback ) {
     HttpClient.request( RequestType.Post, url, jwtAuth, ( err, res ) => {
       Callback( err, res );
     } );
   }
 
+  /**
+   * Returns a Fetch Response object or an error.
+   * 
+   * @param {any} url
+   * @param {any} body
+   * @param {any} jwtAuth
+   * @param {any} Callback
+   * 
+   * @return { Response }
+   */
   static put( url, body, jwtAuth = true, Callback ) {
     HttpClient.request( RequestType.Put, url, body, jwtAuth, ( err, res ) => {
       Callback( err, res );
     } );
   }
 
+  /**
+   * Returns a Fetch Response object or an error.
+   * 
+   * @param {any} requestType
+   * @param {any} url
+   * @param {any} body
+   * @param {any} jwtAuth
+   * @param {any} Callback
+   * 
+   * @return { Response }
+   */
   static request( requestType, url, body = null, jwtAuth = true, Callback ) {
     let requestObject = {
       method: requestType,
