@@ -1,9 +1,13 @@
 # End-User License Agreement (EULA) of Coinelity
 
-Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
-Unauthorized copying/remixing/sharing of any of the provided files, via any medium is strictly prohibited
-Proprietary and confidential
-Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+*****************************************************************************************************************
+
+    Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+    Unauthorized copying/remixing/sharing of any of the provided files, via any medium is strictly prohibited
+    Proprietary and confidential
+    Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+
+*****************************************************************************************************************
 
 This End-User License Agreement ("EULA") is a legal agreement between you and João Pedro Martins Neves
 
@@ -17,7 +21,7 @@ If you are entering into this EULA agreement on behalf of a company or other leg
 
 This EULA agreement shall apply only to the Software supplied by João Pedro Martins Neves herewith regardless of whether other software is referred to or described herein. The terms also apply to any João Pedro Martins Neves updates, supplements, Internet-based services, and support services for the Software, unless other terms accompany those items on delivery. If so, those terms apply.
 
-#S License Grant
+## License Grant
 
 João Pedro Martins Neves hereby grants you a personal, non-transferable, non-exclusive licence to use the Coinelity software on your devices in accordance with the terms of this EULA agreement.
 
