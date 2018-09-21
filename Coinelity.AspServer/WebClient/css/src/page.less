@@ -1,21 +1,29 @@
 ﻿@import 'variables';
 
 .page-container {
-    position: relative;
     background-color: lightgray;
-    max-width: 100%;
+    position: relative;
+    max-height: 100%;
+    float: left;
+    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    white-space: nowrap;
 
     @media screen and (max-width: @hide-navbar-labels-width) {
         margin-left: @sidebar-mobile-width;
+        max-width: calc(~'100%' - @sidebar-mobile-width);
     }
 
     @media screen and (min-width: @hide-navbar-labels-width) {
         margin-left: @sidebar-desktop-width;
+        max-width: calc(~'100%' - @sidebar-desktop-width);
     }
 
     .page {
         height: 100%;
         max-width: 100%;
-        padding: 2em;
+        position: relative;
+        padding: .7em 1.5em 1.5em 1.5em;
     }
 }

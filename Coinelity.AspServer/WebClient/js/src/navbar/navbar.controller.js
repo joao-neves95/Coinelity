@@ -107,17 +107,19 @@ class NavbarController {
   activateItem( itemId = null, thisItem = null ) {
     if ( !thisItem ) {
       thisItem = this.model.items.getByKey( itemId );
-      itemId = thisItem.id;
     }
 
     if ( thisItem.navbarItemType === NavbarItemType.Page ) {
       if ( this.model.activePageId === itemId )
         return;
 
-      if ( this.model.activePageId !== null ) {
-        /** @type { NavbarItemBase } */
-        const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
-        lastActiveItem.onBeforeDestroyBase();
+      else {
+        console.debug('bang')
+        if ( this.model.activePageId !== null ) {
+          /** @type { NavbarItemBase } */
+          const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
+          lastActiveItem.onBeforeDestroyBase();
+        }
       }
 
       this.view.removeActivePage();
@@ -126,10 +128,12 @@ class NavbarController {
       if ( this.model.activeNavbarPanelItemId === itemId )
         return;
 
-      if ( this.model.activeNavbarPanelItemId !== null ) {
-        /** @type { NavbarItemBase } */
-        const lastActiveItem = this.model.items.getByKey( this.model.activeNavbarPanelItemId );
-        lastActiveItem.onBeforeDestroyBase();
+      else {
+        if ( this.model.activeNavbarPanelItemId !== null ) {
+          /** @type { NavbarItemBase } */
+          const lastActiveItem = this.model.items.getByKey( this.model.activeNavbarPanelItemId );
+          lastActiveItem.onBeforeDestroyBase();
+        }
       }
 
       //this.view.removeActivePanelItem();

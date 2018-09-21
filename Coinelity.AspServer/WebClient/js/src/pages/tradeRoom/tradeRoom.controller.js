@@ -32,8 +32,8 @@ class TradeRoomController extends ControllerBase {
 
   // Called from traderRoutes.
   openMarkets() {
-    if ( this.model.activeContent === NavItemID.Markets )
-      return;
+    //if ( this.model.activeContentId === NavItemID.Markets )
+    //  return;
 
     this.marketsController.injectContent();
 
@@ -45,7 +45,7 @@ class TradeRoomController extends ControllerBase {
 
   // Called from traderRoutes.
   tradeAsset( assetID ) {
-    if ( this.model.activeContent === NavItemID.Trade )
+    if ( this.model.activeContentId === NavItemID.Trade )
       return;
 
     this.model.id = NavItemID.Trade;

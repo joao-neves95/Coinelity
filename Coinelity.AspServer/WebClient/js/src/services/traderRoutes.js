@@ -11,7 +11,6 @@ page();
 
 page( `/${NavItemID.Dashboard}`, () => {
   NavbarController._.activateItem( NavItemID.Dashboard );
-  console.info( 'Dashboard page.' );
 } );
 
 //page( `/${NavItemID.TradeRoom}`, () => {
@@ -30,5 +29,4 @@ page( `/${NavItemID.Trade}/:assetID`, ( ctx ) => {
 
 page( `/${NavItemID.Settings}`, () => {
   NavbarController._.activateItem( NavItemID.Settings );
-  console.info( 'Settings page.' );
 } );

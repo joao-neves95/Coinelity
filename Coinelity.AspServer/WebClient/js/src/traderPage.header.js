@@ -15,6 +15,7 @@
 // @import '/enums/navItemID'
 // @import '/enums/gridOrientationType'
 // @import '/enums/requestType'
+// @import '/enums/fiatSymbol'
 // @import '/models/changePasswordDTO'
 // @import 'constants'
 // @import '/services/devErrors'

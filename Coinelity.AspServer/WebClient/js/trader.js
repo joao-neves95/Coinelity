@@ -15,6 +15,7 @@
 // @import '/enums/navItemID'
 // @import '/enums/gridOrientationType'
 // @import '/enums/requestType'
+// @import '/enums/fiatSymbol'
 // @import '/models/changePasswordDTO'
 // @import 'constants'
 // @import '/services/devErrors'
@@ -140,6 +141,13 @@ const RequestType = Object.freeze( {
   Get: 'GET',
   Put: 'PUT',
   Delete: 'DELETE'
+} );
+﻿const FiatSymbol = Object.freeze( {
+  Euro: '&euro;',
+  Dolar: '&dollar;',
+  Cent: '&cent;',
+  Pound: '&pound;',
+  Yen: '&yen;'
 } );
 ﻿/*
  *
@@ -950,10 +958,9 @@ class MarketsTemplates {
 
   static container() {
     return `
-      <h1>Trade Room</h1>
       <section id="markets" clas="grid-container">
         <h3>Markets</h3>
-        <section class="grid-x markets-cards-wrapper">
+        <section class="grid-x grid-padding-x markets-cards-wrapper">
 
         </section>
       </section>
@@ -964,19 +971,29 @@ class MarketsTemplates {
    * 
    * @param { string } coinName For display and logic purposes.
    * @param { string } coinImgUrl The coin logo image url.
-   * @param { string } price Temporary.
-   * @param { string } priceChange Temporary.
+   * @param { string } price
+   * @param { fiatSymbol } fiatSymbol
+   * @param { string } priceChange
+   * @param { string } percentChange
    * 
    * @returns { string } HTMLElement string.
    */
-  static coinCard(coinName, coinImgUrl, price, priceChange) {
+  static coinCard(coinName, coinImgUrl, price, fiatSymbol, priceChange, percentChange) {
     return `
-      <article class="cell small-12 medium-6 large-4" id="${coinName}-coin-card">
+      <article class="cell small-12 medium-6 large-2 coin-card" id="${coinName}-coin-card">
         <div class="card">
-          <img src="${coinImgUrl}" alt="${coinName} Logo">
+          <img class="float-center" src="${coinImgUrl}" alt="${coinName} Logo">
           <div class="card-section">
-            <h4>${coinName}</h4>
-            <p>Current Price: <span id="${coinName}-curr-price">${price}</span> | Price Change: <span id="${coinName}-price-change">${priceChange}</span>%</p>
+            <h4 class="name">${coinName}</h4>
+            <p>
+              <span class="price">
+                <span id="${coinName}-curr-price">${price}</span>${fiatSymbol}
+              </span>
+              <span class="change">
+                <span id="${coinName}-price-change">${priceChange}</span>
+                (<span id="${coinName}-percent-change">${percentChange}</span>&#37;)
+              </span>
+            </p>
           </div>
         </div>
       </article>
@@ -1041,13 +1058,15 @@ class MarketsView extends ViewBase {
    * 
    * @param { string } coinName For display and logic purposes.
    * @param { string } coinImgUrl The coin logo image url.
-   * @param { string } price Temporary.
-   * @param { string } priceChange Temporary.
+   * @param { number } price
+   * @param { string } fiatSymbol
+   * @param { number } priceChange
+   * @param { number } percentChange
    * 
    * @returns { void }
    */
-  addCoinCard( coinName, coinImgUrl, price, priceChange ) {
-    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price.toString(), priceChange.toString() );
+  addCoinCard( coinName, coinImgUrl, price, fiatSymbol, priceChange, percentChange ) {
+    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price.toString(), fiatSymbol, priceChange.toString(), percentChange.toString() );
   }
 
   removeCoinCard( coinName ) {
@@ -1088,10 +1107,12 @@ class MarketsController extends ControllerBase {
   injectContent() {
     this.view.injectContainer();
 
-    // Simulation. Temporary.
-    const thisCoinName = 'BTCEUR';
-    this.model.instruments.add( thisCoinName );
-    this.view.addCoinCard( thisCoinName, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, 1.3 ); 
+    for ( let i = 0; i < 50; ++i ) {
+      // Simulation. Temporary.
+      const thisCoinName = 'BTCEUR';
+      this.model.instruments.add( thisCoinName );
+      this.view.addCoinCard( thisCoinName, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, FiatSymbol.Euro, 230.73, 3.68 ); 
+    }
   }
 }
 ﻿/*
@@ -1206,8 +1227,8 @@ class TradeRoomController extends ControllerBase {
 
   // Called from traderRoutes.
   openMarkets() {
-    if ( this.model.activeContent === NavItemID.Markets )
-      return;
+    //if ( this.model.activeContentId === NavItemID.Markets )
+    //  return;
 
     this.marketsController.injectContent();
 
@@ -1219,7 +1240,7 @@ class TradeRoomController extends ControllerBase {
 
   // Called from traderRoutes.
   tradeAsset( assetID ) {
-    if ( this.model.activeContent === NavItemID.Trade )
+    if ( this.model.activeContentId === NavItemID.Trade )
       return;
 
     this.model.id = NavItemID.Trade;
@@ -1728,17 +1749,19 @@ class NavbarController {
   activateItem( itemId = null, thisItem = null ) {
     if ( !thisItem ) {
       thisItem = this.model.items.getByKey( itemId );
-      itemId = thisItem.id;
     }
 
     if ( thisItem.navbarItemType === NavbarItemType.Page ) {
       if ( this.model.activePageId === itemId )
         return;
 
-      if ( this.model.activePageId !== null ) {
-        /** @type { NavbarItemBase } */
-        const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
-        lastActiveItem.onBeforeDestroyBase();
+      else {
+        console.debug('bang')
+        if ( this.model.activePageId !== null ) {
+          /** @type { NavbarItemBase } */
+          const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
+          lastActiveItem.onBeforeDestroyBase();
+        }
       }
 
       this.view.removeActivePage();
@@ -1747,10 +1770,12 @@ class NavbarController {
       if ( this.model.activeNavbarPanelItemId === itemId )
         return;
 
-      if ( this.model.activeNavbarPanelItemId !== null ) {
-        /** @type { NavbarItemBase } */
-        const lastActiveItem = this.model.items.getByKey( this.model.activeNavbarPanelItemId );
-        lastActiveItem.onBeforeDestroyBase();
+      else {
+        if ( this.model.activeNavbarPanelItemId !== null ) {
+          /** @type { NavbarItemBase } */
+          const lastActiveItem = this.model.items.getByKey( this.model.activeNavbarPanelItemId );
+          lastActiveItem.onBeforeDestroyBase();
+        }
       }
 
       //this.view.removeActivePanelItem();
@@ -1873,7 +1898,6 @@ page();
 
 page( `/${NavItemID.Dashboard}`, () => {
   NavbarController._.activateItem( NavItemID.Dashboard );
-  console.info( 'Dashboard page.' );
 } );
 
 //page( `/${NavItemID.TradeRoom}`, () => {
@@ -1892,5 +1916,4 @@ page( `/${NavItemID.Trade}/:assetID`, ( ctx ) => {
 
 page( `/${NavItemID.Settings}`, () => {
   NavbarController._.activateItem( NavItemID.Settings );
-  console.info( 'Settings page.' );
 } );

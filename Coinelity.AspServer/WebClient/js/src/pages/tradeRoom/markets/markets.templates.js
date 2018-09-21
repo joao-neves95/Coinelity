@@ -14,10 +14,9 @@ class MarketsTemplates {
 
   static container() {
     return `
-      <h1>Trade Room</h1>
       <section id="markets" clas="grid-container">
         <h3>Markets</h3>
-        <section class="grid-x markets-cards-wrapper">
+        <section class="grid-x grid-padding-x markets-cards-wrapper">
 
         </section>
       </section>
@@ -28,19 +27,29 @@ class MarketsTemplates {
    * 
    * @param { string } coinName For display and logic purposes.
    * @param { string } coinImgUrl The coin logo image url.
-   * @param { string } price Temporary.
-   * @param { string } priceChange Temporary.
+   * @param { string } price
+   * @param { fiatSymbol } fiatSymbol
+   * @param { string } priceChange
+   * @param { string } percentChange
    * 
    * @returns { string } HTMLElement string.
    */
-  static coinCard(coinName, coinImgUrl, price, priceChange) {
+  static coinCard(coinName, coinImgUrl, price, fiatSymbol, priceChange, percentChange) {
     return `
-      <article class="cell small-12 medium-6 large-4" id="${coinName}-coin-card">
+      <article class="cell small-12 medium-6 large-2 coin-card" id="${coinName}-coin-card">
         <div class="card">
-          <img src="${coinImgUrl}" alt="${coinName} Logo">
+          <img class="float-center" src="${coinImgUrl}" alt="${coinName} Logo">
           <div class="card-section">
-            <h4>${coinName}</h4>
-            <p>Current Price: <span id="${coinName}-curr-price">${price}</span> | Price Change: <span id="${coinName}-price-change">${priceChange}</span>%</p>
+            <h4 class="name">${coinName}</h4>
+            <p>
+              <span class="price">
+                <span id="${coinName}-curr-price">${price}</span>${fiatSymbol}
+              </span>
+              <span class="change">
+                <span id="${coinName}-price-change">${priceChange}</span>
+                (<span id="${coinName}-percent-change">${percentChange}</span>&#37;)
+              </span>
+            </p>
           </div>
         </div>
       </article>

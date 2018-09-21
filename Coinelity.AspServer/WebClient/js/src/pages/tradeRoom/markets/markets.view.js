@@ -32,13 +32,15 @@ class MarketsView extends ViewBase {
    * 
    * @param { string } coinName For display and logic purposes.
    * @param { string } coinImgUrl The coin logo image url.
-   * @param { string } price Temporary.
-   * @param { string } priceChange Temporary.
+   * @param { number } price
+   * @param { string } fiatSymbol
+   * @param { number } priceChange
+   * @param { number } percentChange
    * 
    * @returns { void }
    */
-  addCoinCard( coinName, coinImgUrl, price, priceChange ) {
-    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price.toString(), priceChange.toString() );
+  addCoinCard( coinName, coinImgUrl, price, fiatSymbol, priceChange, percentChange ) {
+    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price.toString(), fiatSymbol, priceChange.toString(), percentChange.toString() );
   }
 
   removeCoinCard( coinName ) {

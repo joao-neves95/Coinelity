@@ -28,9 +28,11 @@ class MarketsController extends ControllerBase {
   injectContent() {
     this.view.injectContainer();
 
-    // Simulation. Temporary.
-    const thisCoinName = 'BTCEUR';
-    this.model.instruments.add( thisCoinName );
-    this.view.addCoinCard( thisCoinName, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, 1.3 ); 
+    for ( let i = 0; i < 50; ++i ) {
+      // Simulation. Temporary.
+      const thisCoinName = 'BTCEUR';
+      this.model.instruments.add( thisCoinName );
+      this.view.addCoinCard( thisCoinName, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, FiatSymbol.Euro, 230.73, 3.68 ); 
+    }
   }
 }
