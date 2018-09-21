@@ -79,7 +79,6 @@ class NavbarController {
     }
 
     DOM.on( 'click', this.view.toggleButtonElem, ( e ) => {
-      console.debug( 'here' );
       e.preventDefault();
 
       if ( this.model.toggled ) {
@@ -111,14 +110,15 @@ class NavbarController {
       itemId = thisItem.id;
     }
 
-
     if ( thisItem.navbarItemType === NavbarItemType.Page ) {
       if ( this.model.activePageId === itemId )
         return;
 
-      /** @type { NavbarItemBase } */
-      const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
-      lastActiveItem.onBeforeDestroyBase();
+      if ( this.model.activePageId !== null ) {
+        /** @type { NavbarItemBase } */
+        const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
+        lastActiveItem.onBeforeDestroyBase();
+      }
 
       this.view.removeActivePage();
       this.model.activePageId = itemId;
@@ -126,9 +126,11 @@ class NavbarController {
       if ( this.model.activeNavbarPanelItemId === itemId )
         return;
 
-      /** @type { NavbarItemBase } */
-      const lastActiveItem = this.model.items.getByKey( this.model.activeNavbarPanelItemId );
-      lastActiveItem.onBeforeDestroyBase();
+      if ( this.model.activeNavbarPanelItemId !== null ) {
+        /** @type { NavbarItemBase } */
+        const lastActiveItem = this.model.items.getByKey( this.model.activeNavbarPanelItemId );
+        lastActiveItem.onBeforeDestroyBase();
+      }
 
       //this.view.removeActivePanelItem();
       this.model.activeNavbarPanelItemId = itemId;

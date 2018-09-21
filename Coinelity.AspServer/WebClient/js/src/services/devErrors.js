@@ -34,7 +34,7 @@ class DevErrors {
   }
 
   static singleIntance( singletonClassName ) {
-    DevErrors.throw( `There can only be one instance of ${className} (singleton class).` );
+    DevErrors.throw( `There can only be one instance of ${singletonClassName} (singleton class).` );
   }
 
   static notImplemented( additionalInfo = '' ) {

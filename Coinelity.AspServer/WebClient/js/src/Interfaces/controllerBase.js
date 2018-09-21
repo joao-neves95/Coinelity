@@ -9,7 +9,8 @@
 
 /**
  * Available events:
- * - onSetActive(): Fired when a page/navbar panel item gets activated.
+ * - onSetActive(): Event fired when the page/item is injected into the DOM.
+ * - onBeforeDestroy(): Fired just before the page/item is destroyed (removed) from the DOM.
  * */
 class ControllerBase extends NavbarItemBase {
   /**

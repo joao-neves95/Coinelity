@@ -7,14 +7,30 @@
  *
  */
 
+let marketsController = null;
+
 class MarketsController extends ControllerBase {
   constructor() {
     if ( marketsController )
       throw DevErrors.singleIntance( 'MarketsController' );
 
-    super();
+    super(
+      new MarketsModel(),
+      new MarketsView()
+    );
 
     marketsController = this;
     Object.freeze( marketsController );
+  }
+
+  get _() { return marketsController; }
+
+  injectContent() {
+    this.view.injectContainer();
+
+    // Simulation. Temporary.
+    const thisCoinName = 'BTCEUR';
+    this.model.instruments.add( thisCoinName );
+    this.view.addCoinCard( thisCoinName, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, 1.3 ); 
   }
 }

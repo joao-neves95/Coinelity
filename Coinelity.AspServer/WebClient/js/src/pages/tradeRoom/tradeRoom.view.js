@@ -12,9 +12,9 @@ let tradeRoomView = null;
 class TradeRoomView extends ViewBase {
   constructor() {
     if ( tradeRoomView )
-      throw new Error( 'There can only be one instance of TradeRoomView.' );
+      throw DevErrors.singleIntance( 'TradeRoomView' );
 
-    super( `<h1>Trade Room</h1><br/>${MarketsTemplates.container( '' )}` );
+    super( '' );
 
     tradeRoomView = this;
     Object.freeze( tradeRoomView );
@@ -23,4 +23,16 @@ class TradeRoomView extends ViewBase {
   static get _() { return tradeRoomView; }
 
   get element() { return document.getElementById( NavItemID.Markets ); }
+
+  injectContent( content ) {
+    this.element.innerHTML = content;
+  }
+
+  addContent( content ) {
+    this.element.innerHTML += content;
+  }
+
+  clearContent() {
+    this.element.innerHTML = '';
+  }
 }

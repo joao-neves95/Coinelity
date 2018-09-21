@@ -12,11 +12,11 @@ let tradeRoomModel = null;
 class TradeRoomModel extends ModelBase {
   constructor() {
     if ( tradeRoomModel )
-      throw new Error( 'There can only be one instance of TradeRoomModel.' );
+      throw DevErrors.singleIntance( 'TradeRoomModel' );
 
     super( NavItemID.Markets, NavbarItemType.Page, 'Trade Room', TRADE_ROOM_ICON_URL );
 
-    this.activeContentId = NavItemID.Markets;
+    this.activeContentId = '';
 
     tradeRoomModel = this;
     Object.seal( tradeRoomModel );

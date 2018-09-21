@@ -16,7 +16,9 @@ class MarketsModel extends ModelBase {
 
     super( '', '', '', '' );
 
-    marketsView = this;
-    Object.freeze( marketsView );
+    this.instruments = new List( 'string' );
+
+    marketsModel = this;
+    Object.seal( marketsModel );
   }
 }

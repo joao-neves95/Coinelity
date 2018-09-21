@@ -12,12 +12,13 @@ class MarketsTemplates {
     throw DevErrors.cantInstantiateStatic( 'MarketsTemplates' );
   }
 
-  static container( content ) {
+  static container() {
     return `
+      <h1>Trade Room</h1>
       <section id="markets" clas="grid-container">
         <h3>Markets</h3>
         <section class="grid-x markets-cards-wrapper">
-        
+
         </section>
       </section>
     `;

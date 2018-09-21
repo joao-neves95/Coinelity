@@ -24,11 +24,24 @@ class MarketsView extends ViewBase {
 
   get marketsContent() { return document.getElementsByClassName( 'markets-cards-wrapper' )[0]; }
 
-  addCard( coinName, coinImgUrl, price, priceChange ) {
-    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price, priceChange );
+  injectContainer() {
+    document.getElementById( NavItemID.Markets ).innerHTML = MarketsTemplates.container();
   }
 
-  removeCard( coinName ) {
+  /**
+   * 
+   * @param { string } coinName For display and logic purposes.
+   * @param { string } coinImgUrl The coin logo image url.
+   * @param { string } price Temporary.
+   * @param { string } priceChange Temporary.
+   * 
+   * @returns { void }
+   */
+  addCoinCard( coinName, coinImgUrl, price, priceChange ) {
+    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price.toString(), priceChange.toString() );
+  }
+
+  removeCoinCard( coinName ) {
     document.getElementById( coinName + '-coin-card' ).remove();
   }
 
