@@ -588,9 +588,9 @@ class HttpClient {
    * @return { Response }
    */
   static get( url, jwtAuth = true, Callback ) {
-    HttpClient.request( RequestType.Get, url, jwtAuth, ( err, res ) => {
-      Callback( err, res );
-    } );
+    HttpClient.request( RequestType.Get, url, body=null, jwtAuth )
+      .then( res => { Callback( null, res ); } )
+      .catch( err => { Callback( err, null ); } );
   }
 
   /**
@@ -604,9 +604,9 @@ class HttpClient {
    * @return { Response }
    */
   static post( url, body, jwtAuth = true, Callback ) {
-    HttpClient.request( RequestType.Post, url, jwtAuth, ( err, res ) => {
-      Callback( err, res );
-    } );
+    HttpClient.request( RequestType.Post, url, body, jwtAuth )
+      .then( res => { Callback( null, res ); } )
+      .catch( err => { Callback( err, null ); } );
   }
 
   /**
@@ -620,9 +620,9 @@ class HttpClient {
    * @return { Response }
    */
   static put( url, body, jwtAuth = true, Callback ) {
-    HttpClient.request( RequestType.Put, url, body, jwtAuth, ( err, res ) => {
-      Callback( err, res );
-    } );
+    HttpClient.request( RequestType.Put, url, body, jwtAuth )
+      .then( res => { Callback( null, res ); } )
+      .catch( err => { Callback( err, null ); } );
   }
 
   /**
@@ -636,7 +636,7 @@ class HttpClient {
    * 
    * @return { Response }
    */
-  static request( requestType, url, body = null, jwtAuth = true, Callback ) {
+  static request( requestType, url, body = null, jwtAuth = true ) {
     let requestObject = {
       method: requestType,
       headers: new Headers()
@@ -650,13 +650,11 @@ class HttpClient {
       requestObject.headers['Content-Type'] = 'application/json;charset=utf-8';
     }
 
-    fetch( url, requestObject )
-      .then( ( res ) => {
-        return Callback( null, res );
-      } )
-      .catch( ( err ) => {
-        Callback( err, null );
-      } );
+    ( async () => {
+      const response =  await fetch( url, requestObject );
+
+      return response;
+      } )();
   }
 }
 ﻿/*
@@ -1356,7 +1354,7 @@ class SettingsModel extends ModelBase {
 
   static get _() { return settingsModel; }
 
-  get baseUserApiUrl() { return BASE_API_URL + 'user/'; }
+  get baseUserApiUrl() { return BASE_API_URL + 'users/'; }
 
   changePassword( changePasswordDTO ) {
     HttpClient.put( this.baseUserApiUrl + 'password', changePasswordDTO, ( err, res ) => {

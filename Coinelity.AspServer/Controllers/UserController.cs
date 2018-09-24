@@ -22,11 +22,11 @@ using Coinelity.AspServer.Models;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.Core.Errors;
 
-// TODO: Add consistency to the JSON responses (**Successes**/Errors).
+// TODO: Add consistency to the JSON responses (**Successes**/Errors). Something like: { error: [], result: [] }
 // TODO: Update AuditLog table.
 namespace Coinelity.AspServer.Controllers
 {
-    [Route("api/user")]
+    [Route("api/users")]
     [Produces("application/json")]
     public class UserController : Controller
     {
@@ -65,7 +65,7 @@ namespace Coinelity.AspServer.Controllers
                 // return StatusCode( 500 );
                 return StatusCode( 500, registerSuccess.Errors.ToList() );
 
-            return Ok( Json( "User successfully registered." ).Value );
+            return StatusCode(201, Json( "User successfully registered." ).Value );
         }
 
         [HttpPost("login")]
@@ -89,6 +89,12 @@ namespace Coinelity.AspServer.Controllers
             return Ok(Json( new jwtDTO { AccessToken = JWTTokens.Generate(userEmail, userId) } ).Value);
         }
 
+        [Authorize]
+        [HttpGet("authenticated")]
+        public IActionResult Authenticated()
+        {
+            return Ok( Json( new { msg = "The user is authenticated." } ).Value );
+        }
 
         [Authorize]
         [HttpGet("roles")]

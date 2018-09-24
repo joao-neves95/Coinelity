@@ -22,7 +22,7 @@ class SettingsModel extends ModelBase {
 
   static get _() { return settingsModel; }
 
-  get baseUserApiUrl() { return BASE_API_URL + 'user/'; }
+  get baseUserApiUrl() { return BASE_API_URL + 'users/'; }
 
   changePassword( changePasswordDTO ) {
     HttpClient.put( this.baseUserApiUrl + 'password', changePasswordDTO, ( err, res ) => {

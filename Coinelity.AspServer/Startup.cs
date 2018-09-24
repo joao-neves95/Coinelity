@@ -125,7 +125,7 @@ namespace Coinelity.AspServer
             }
 
             app.UseCors(policyBuilder => {
-                policyBuilder.WithOrigins("http://localhost:3000", "http://localhost:5000", "http://localhost:33620", "http://localhost")
+                policyBuilder.WithOrigins("http://localhost:3000", "http://localhost:5000", "http://localhost:33620", "http://localhost" )
                              .AllowAnyHeader()
                              .AllowAnyMethod()
                              .AllowCredentials();
@@ -134,7 +134,8 @@ namespace Coinelity.AspServer
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-                ForwardedHostHeaderName = "PHP"
+                ForwardedHostHeaderName = "PHP",
+                OriginalHostHeaderName = "PHP"
             });
 
             app.UseAuthentication();
