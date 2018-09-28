@@ -1,3 +1,4 @@
 *.env
 *.licenseheader
 node_modules/
+merger-config.json
