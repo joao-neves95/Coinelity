@@ -28,7 +28,22 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="routes\exchanges.js">
+    <Compile Include="middleware\corsOptions.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="middleware\isAuthenticated.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="middleware\requestControl.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\apiResponseModel.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\changeModel.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\spreadPricesModel.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="server.js" />
@@ -42,6 +57,8 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="models\" />
+    <Folder Include="middleware\" />
     <Folder Include="routes\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->

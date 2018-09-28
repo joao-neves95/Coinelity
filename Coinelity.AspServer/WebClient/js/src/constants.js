@@ -8,10 +8,19 @@
  */
 
 const ENV = EnvironmentType.Development;
-const BASE_URL = 'http://localhost:33623/';
+
+const BASE_PORT = '33623';
+const BASE_URL = `http://localhost:${BASE_PORT}/`;
 const BASE_API_URL = BASE_URL + 'api/';
 const PUBLIC_IMGS_URL = 'public/img/';
 const AUTH_TOKEN_ID = 'auth-token';
+
+const BASE_NODEJS_PORT = '3003';
+const BASE_NODEJS_URL = `http://localhost:${BASE_NODEJS_PORT}/`;
+const BASE_NODEJS_API = BASE_NODEJS_URL + 'api/';
+
+const MARKETS_UPDATE_RATE = 5000;
+const TRADE_OHLCV_UPDATE_RATE = 2000;
 
 // Images URL'S:
 const DASHBOARD_ICON_URL = `${PUBLIC_IMGS_URL}dashboard-icon-white.svg`;

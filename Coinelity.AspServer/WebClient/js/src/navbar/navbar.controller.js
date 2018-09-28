@@ -114,7 +114,6 @@ class NavbarController {
         return;
 
       else {
-        console.debug('bang')
         if ( this.model.activePageId !== null ) {
           /** @type { NavbarItemBase } */
           const lastActiveItem = this.model.items.getByKey( this.model.activePageId );

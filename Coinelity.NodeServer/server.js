@@ -10,25 +10,26 @@
 'use strict';
 const express = require( 'express' );
 const app = express();
-const PORT = 3003;
+const cors = require( 'cors' );
+const corsOptions = require( './middleware/corsOptions' );
+const logger = require( 'morgan' );
 const apiRoute = require( './routes/index' );
-const exchangesRoute = require( './routes/exchanges' );
+const ApiResponseModel = require( './models/apiResponseModel' );
+const PORT = 3003;
 
-const ExchangeClient = require( './exchangeClient' );
-new ExchangeClient();
+app.use( cors( corsOptions ) );
+app.use( logger( 'combined' ) );
 
-app.get( '/api', apiRoute );
+app.use( function ( req, res, next ) {
+  res.setHeader( 'X-Powered-By', 'anonymous' );
 
-//ExchangeClient._.getAllPairs( ( data ) => {
-//  console.debug( data );
-//} );
+  next();
+} );
 
-//ExchangeClient._.getLastTicker( 'BTC/EUR', ( data ) => {
-//  console.debug( data );
-//} );
+app.use( '/api', apiRoute );
 
-ExchangeClient._.getLastOHLCV( 'BTC/EUR', '1m', ( data ) => {
-  console.debug( data );
+app.use( '*', ( req, res ) => {
+  return res.status( 404 ).send( JSON.stringify( new ApiResponseModel( 404, 'Resource not found.', null ) ) );
 } );
 
 app.listen( PORT, () => {

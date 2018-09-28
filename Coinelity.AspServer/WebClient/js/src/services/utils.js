@@ -7,6 +7,16 @@
  *
  */
 
+class Utils {
+  constructor() {
+    throw DevErrors.cantInstantiateStatic( 'Utils' );
+  }
+
+  static encondeCoinSymbolUri( symbol ) {
+    return symbol.replace( '/', '-' );
+  }
+}
+
 // #region COLLECTIONS
 
 /*
@@ -28,11 +38,11 @@ class Errors {
 }
 
 class Collection {
-  constructor(uniqueKeys, type) {
+  constructor( uniqueKeys, type ) {
     this.elements = [];
-    this.uniqueKeys = (uniqueKeys || false);
+    this.uniqueKeys = ( uniqueKeys || false );
 
-    if (!type) throw Errors.noTypeProvided;
+    if ( !type ) throw Errors.noTypeProvided;
     this.type = type;
   }
 
@@ -50,6 +60,14 @@ class Collection {
   }
 
   /**
+   * 
+   * @param { number } index
+   */
+  get( index ) {
+    return this.elements[index];
+  }
+
+  /**
    * Remove all elements from the Collection.
    */
   clear() {
@@ -61,8 +79,8 @@ class Collection {
    * No type safety. For private class use.
    * @param {Type} value
    */
-  push(value) {
-    this.elements.push(value);
+  push( value ) {
+    this.elements.push( value );
   }
 
   /**
@@ -70,8 +88,8 @@ class Collection {
     * No checks. For private class use.
     * @param {Number} index
     */
-  splice(index) {
-    this.elements.splice(index, 1);
+  splice( index ) {
+    this.elements.splice( index, 1 );
   }
 }
 
@@ -82,33 +100,33 @@ class Dictionary extends Collection {
    * Optional. It defaults to false
    * @default {false}
    */
-  constructor(uniqueKeys) {
-    super(uniqueKeys, 'any');
-  };
+  constructor( uniqueKeys ) {
+    super( uniqueKeys, 'any' );
+  }
 
   getAllValues() {
     let allValues = [];
 
-    for (let i = 0; i < this.elements.length; ++i) {
-      allValues.push(Object.values(this.elements[i])[0]);
+    for ( let i = 0; i < this.elements.length; ++i ) {
+      allValues.push( Object.values( this.elements[i] )[0] );
     }
 
     return allValues;
   }
 
-  add(key, value) {
-    if (this.uniqueKeys && this.findIndexOfKey(key) !== false)
-      throw new Error(Errors.existingKey);
+  add( key, value ) {
+    if ( this.uniqueKeys && this.findIndexOfKey( key ) !== false )
+      throw new Error( Errors.existingKey );
 
-    this.push({ [key]: value });
+    this.push( { [key]: value } );
   };
 
-  remove(key) {
-    const index = this.findIndexOfKey(key);
-    if (!index)
+  remove( key ) {
+    const index = this.findIndexOfKey( key );
+    if ( !index )
       return false;
 
-    this.splice(index);
+    this.splice( index );
   };
 
   /**
@@ -116,8 +134,8 @@ class Dictionary extends Collection {
    * @param {number} index
    * @return {any[]}
    */
-  getByIndex(index) {
-    return Object.values(this.elements[index])[0];
+  getByIndex( index ) {
+    return Object.values( this.elements[index] )[0];
   };
 
   /**
@@ -125,21 +143,21 @@ class Dictionary extends Collection {
    * @param {number} index
    * @return {any}
    */
-  getKeyByIndex(index) {
-    return Object.keys(this.elements[index])[0];
+  getKeyByIndex( index ) {
+    return Object.keys( this.elements[index] )[0];
   }
 
-  getByKey(key) {
+  getByKey( key ) {
     try {
-      return this.elements[this.findIndexOfKey(key)][key];
-    } catch (e) {
-      console.error(e);
+      return this.elements[this.findIndexOfKey( key )][key];
+    } catch ( e ) {
+      console.error( e );
     }
   };
 
-  findIndexOfKey(key, Callback) {
-    for (let i = 0; i < this.elements.length; i++) {
-      if (Object.keys(this.elements[i])[0] === key) {
+  findIndexOfKey( key, Callback ) {
+    for ( let i = 0; i < this.elements.length; i++ ) {
+      if ( Object.keys( this.elements[i] )[0] === key ) {
         return i;
       }
     }
@@ -152,7 +170,7 @@ class List extends Collection {
   /**
    * 
    * The Type of the list.
-   * ('string' | 'number' | 'int' | 'float' | 'boolean')
+   * ('string' | 'number' | 'int' | 'float' | 'boolean' | 'any')
    * @param {String} type
    */
   constructor(type) {
@@ -164,10 +182,13 @@ class List extends Collection {
    * @param {Type} value
    */
   add(value) {
-    switch (this.type) {
+    switch ( this.type ) {
+      case 'any':
+        this.push( value );
+        break;
       case 'int':
-        if (this.isInt(value)) {
-          this.push(value);
+        if ( this.isInt( value ) ) {
+          this.push( value );
           break;
         }
       case 'float':
@@ -181,7 +202,7 @@ class List extends Collection {
         else
           throw Errors.wrongType(this.type);
     }
-  };
+  }
 
   /**
    * Remove an new item from the List<T> by index.

@@ -58,7 +58,7 @@ class NavbarItemBase {
    * Event fired just before the page/item is destroyed (removed) from the DOM.
    */
   onBeforeDestroyBase() {
-    if ( 'onDestroy' in this )
+    if ( 'onBeforeDestroy' in this )
       this.onBeforeDestroy();
   }
 

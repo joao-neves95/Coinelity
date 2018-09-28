@@ -12,6 +12,8 @@ class MarketsTemplates {
     throw DevErrors.cantInstantiateStatic( 'MarketsTemplates' );
   }
 
+  static get idPostfix() { return '-coin-card'; }
+
   static container() {
     return `
       <section id="markets" clas="grid-container">
@@ -25,7 +27,7 @@ class MarketsTemplates {
 
   /**
    * 
-   * @param { string } coinName For display and logic purposes.
+   * @param { string } coinName For display and logic (id) purposes.
    * @param { string } coinImgUrl The coin logo image url.
    * @param { string } price
    * @param { fiatSymbol } fiatSymbol
@@ -36,7 +38,7 @@ class MarketsTemplates {
    */
   static coinCard(coinName, coinImgUrl, price, fiatSymbol, priceChange, percentChange) {
     return `
-      <article class="cell small-12 medium-6 large-2 coin-card" id="${coinName}-coin-card">
+      <article class="cell small-12 medium-6 large-2 coin-card" id="${coinName}${MarketsTemplates.idPostfix}">
         <div class="card">
           <img class="float-center" src="${coinImgUrl}" alt="${coinName} Logo">
           <div class="card-section">

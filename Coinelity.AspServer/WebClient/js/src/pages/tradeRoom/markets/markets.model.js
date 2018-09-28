@@ -16,9 +16,30 @@ class MarketsModel extends ModelBase {
 
     super( '', '', '', '' );
 
-    this.instruments = new List( 'string' );
+    this.symbols = new List( 'string' );
 
     marketsModel = this;
     Object.seal( marketsModel );
+  }
+
+  get lastPriceRoute() { return 'last-price'; }
+  get changeRoute() { return 'change'; }
+
+  getLastCoinPrice( symbol, Callback ) {
+    ExchangeClient._.getLastPrice( 'KRAKEN', symbol, ( lastPrice ) => {
+      return Callback( lastPrice );
+    } );
+  }
+
+  /**
+   * 
+   * @param { string } symbol
+   * 
+   * @param { Function } Callback ChangeModel
+   */
+  getCoinChange( symbol, Callback ) {
+    ExchangeClient._.getChange( 'KRAKEN', symbol, ( changeModel ) => {
+      return Callback( changeModel );
+    } );
   }
 }

@@ -32,15 +32,8 @@ class TradeRoomController extends ControllerBase {
 
   // Called from traderRoutes.
   openMarkets() {
-    //if ( this.model.activeContentId === NavItemID.Markets )
-    //  return;
-
     this.marketsController.injectContent();
-
-    this.model.id = NavItemID.Markets;
     this.model.activeContentId = NavItemID.Markets;
-    console.info( `The TradeRoom markets were opened.` );
-    console.debug( this.model.activeContentId );
   }
 
   // Called from traderRoutes.
@@ -48,9 +41,11 @@ class TradeRoomController extends ControllerBase {
     if ( this.model.activeContentId === NavItemID.Trade )
       return;
 
-    this.model.id = NavItemID.Trade;
+    this.marketsController.stopCardUpdate();
     this.model.activeContentId = NavItemID.Trade;
-    console.info( `TradeRoom opened to trade ${assetID}.` );
-    console.debug( this.model.activeContentId );
+  }
+
+  onBeforeDestroy() {
+    this.marketsController.stopCardUpdate();
   }
 }

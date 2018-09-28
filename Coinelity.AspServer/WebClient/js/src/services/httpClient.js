@@ -14,18 +14,17 @@ class HttpClient {
 
   // res.json()
   /**
-   * Returns a Fetch Response object or an error.
+   * Awaitable (async/await) Fetch Response object or an error.
    * 
-   * @param {any} url
-   * @param {any} jwtAuth
-   * @param {any} Callback
+   * @param { string } url
+   * @param { boolean } jwtAuth
    * 
-   * @return { Response }
+   * @return { Promise<Response | Error> }
    */
   static get( url, jwtAuth = true, Callback ) {
-    HttpClient.request( RequestType.Get, url, body=null, jwtAuth )
-      .then( res => { Callback( null, res ); } )
-      .catch( err => { Callback( err, null ); } );
+    HttpClient.request( RequestType.Get, url, null, jwtAuth, ( err, res ) => {
+      return Callback( err, res );
+    } );
   }
 
   /**
@@ -39,9 +38,9 @@ class HttpClient {
    * @return { Response }
    */
   static post( url, body, jwtAuth = true, Callback ) {
-    HttpClient.request( RequestType.Post, url, body, jwtAuth )
-      .then( res => { Callback( null, res ); } )
-      .catch( err => { Callback( err, null ); } );
+    //HttpClient.request( RequestType.Post, url, body, jwtAuth )
+    //  .then( res => { Callback( null, res ); } )
+    //  .catch( err => { Callback( err, null ); } );
   }
 
   /**
@@ -55,9 +54,9 @@ class HttpClient {
    * @return { Response }
    */
   static put( url, body, jwtAuth = true, Callback ) {
-    HttpClient.request( RequestType.Put, url, body, jwtAuth )
-      .then( res => { Callback( null, res ); } )
-      .catch( err => { Callback( err, null ); } );
+    //HttpClient.request( RequestType.Put, url, body, jwtAuth )
+    //  .then( res => { Callback( null, res ); } )
+    //  .catch( err => { Callback( err, null ); } );
   }
 
   /**
@@ -71,7 +70,7 @@ class HttpClient {
    * 
    * @return { Response }
    */
-  static request( requestType, url, body = null, jwtAuth = true ) {
+  static request( requestType, url, body = null, jwtAuth = true, Callback ) {
     let requestObject = {
       method: requestType,
       headers: new Headers()
@@ -81,14 +80,16 @@ class HttpClient {
       requestObject.headers['Authorization'] = 'Bearer ' + localStorage.getItem( AUTH_TOKEN_ID );
 
     if ( requestType === RequestType.Post || requestType === RequestType.Put ) {
-      requestObject.body = body;
+      requestObject.body = body | '';
       requestObject.headers['Content-Type'] = 'application/json;charset=utf-8';
     }
 
     ( async () => {
-      const response =  await fetch( url, requestObject );
-
-      return response;
+      await fetch( url, requestObject )
+        //.then( res => { return res.json(); } )
+        //.then( jsonData => { return Callback( null, jsonData ); } )
+        .then( res => { return Callback( null, res ); } )
+        .catch( err => { return Callback( err, null ); } );
       } )();
   }
 }

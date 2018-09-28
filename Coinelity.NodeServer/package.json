@@ -2,14 +2,21 @@
   "name": "coinelity.node-server",
   "version": "0.0.0",
   "description": "Coinelity.NodeServer",
-  "main": "app.js",
+  "main": "server.js",
   "author": {
-    "name": "Utilizador"
+    "name": "shivayl"
+  },
+  "scripts": {
+    "start": "node-dev server.js"
   },
   "dependencies": {
     "ccxt": "^1.17.342",
     "cors": "^2.8.4",
     "express": "^4.16.3",
-    "helmet": "^3.13.0"
+    "helmet": "^3.13.0",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "node-dev": "^3.1.3"
   }
 }

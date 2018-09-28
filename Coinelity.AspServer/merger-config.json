@@ -10,18 +10,19 @@
 	"notifications": true,
 	"sourceFiles": [
 		{
-			"source": "C:\\Users\\Utilizador1\\Documents\\DEV\\REPO\\coinelity\\Coinelity.AspServer\\WebClient\\js\\src\\traderPage.header.js",
+			"source": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.AspServer\\WebClient\\js\\src\\traderPage.header.js",
 			"output": {
-				"path": "C:\\Users\\Utilizador1\\Documents\\DEV\\REPO\\coinelity\\Coinelity.AspServer\\WebClient\\js\\",
+				"path": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.AspServer\\WebClient\\js\\",
 				"name": "trader.js"
 			}
 		},
 		{
-			"source": "C:\\Users\\Utilizador1\\Documents\\DEV\\REPO\\coinelity\\Coinelity.AspServer\\WebClient\\js\\src\\adminPage.header.js",
+			"source": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.AspServer\\WebClient\\js\\src\\adminPage.header.js",
 			"output": {
-				"path": "C:\\Users\\Utilizador1\\Documents\\DEV\\REPO\\coinelity\\Coinelity.AspServer\\WebClient\\js\\",
+				"path": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.AspServer\\WebClient\\js\\",
 				"name": "admin.js"
 			}
 		}
-	]
+	],
+	"nodeModulesPath": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.AspServer\\node_modules"
 }

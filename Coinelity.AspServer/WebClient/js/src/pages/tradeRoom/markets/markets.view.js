@@ -23,6 +23,9 @@ class MarketsView extends ViewBase {
   get element() { return document.getElementById( 'markets' ); }
 
   get marketsContent() { return document.getElementsByClassName( 'markets-cards-wrapper' )[0]; }
+  coinPriceElem( symbol ) { return document.getElementById( symbol + '-curr-price' ); }
+  coinPriceChangeElem( symbol ) { return document.getElementById( symbol + '-price-change' ); }
+  coinPercentChangeElem( symbol ) { return document.getElementById( symbol + '-percent-change' ); }
 
   injectContainer() {
     document.getElementById( NavItemID.Markets ).innerHTML = MarketsTemplates.container();
@@ -30,7 +33,7 @@ class MarketsView extends ViewBase {
 
   /**
    * 
-   * @param { string } coinName For display and logic purposes.
+   * @param { string } coinSymbol For display and logic purposes.
    * @param { string } coinImgUrl The coin logo image url.
    * @param { number } price
    * @param { string } fiatSymbol
@@ -39,12 +42,18 @@ class MarketsView extends ViewBase {
    * 
    * @returns { void }
    */
-  addCoinCard( coinName, coinImgUrl, price, fiatSymbol, priceChange, percentChange ) {
-    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinName, coinImgUrl, price.toString(), fiatSymbol, priceChange.toString(), percentChange.toString() );
+  addCoinCard( coinSymbol, coinImgUrl, price, fiatSymbol, priceChange, percentChange ) {
+    this.marketsContent.innerHTML += MarketsTemplates.coinCard( coinSymbol, coinImgUrl, price.toString(), fiatSymbol, priceChange.toString(), percentChange.toString() );
   }
 
-  removeCoinCard( coinName ) {
-    document.getElementById( coinName + '-coin-card' ).remove();
+  updateCoinCard( coinSymbol, price, priceChange, percentChange ) {
+    this.coinPriceElem( coinSymbol ).innerText = price.toString();
+    this.coinPriceChangeElem( coinSymbol ).innerText = priceChange.toString();
+    this.coinPercentChangeElem( coinSymbol ).innerText = percentChange.toString();
+  }
+
+  removeCoinCard( coinSymbol ) {
+    document.getElementById( coinSymbol + MarketsTemplates.idPostfix ).remove();
   }
 
   clearContent() {
