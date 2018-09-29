@@ -138,6 +138,39 @@ class ExchangeClient {
   }
 
   /**
+   * Returns <string[]> (example):
+   * [
+         [
+              1504541580000, // UTC timestamp in milliseconds, integer
+              4235.4,        // (O)pen price, float
+              4240.6,        // (H)ighest price, float
+              4230.0,        // (L)owest price, float
+              4230.7,        // (C)losing price, float
+              37.72941911    // (V)olume (in terms of the base currency), float
+         ]
+     ]
+   * 
+   * @param { string } exchangeName The exchange name.
+   * @param { string } symbol The asset symbol.
+   * @param { string } timeframe 1m, 5m, 15m, 30m, 1h, 4h, 1d, 7d, 1M.
+   * @param { Function } Callback Receives a <string[]> representation of the last OHLC candle.
+   */
+  getOHLCV( exchangeName, symbol, timeframe, Callback ) {
+    ( async () => {
+      let OHLCVArray = undefined;
+
+      try {
+        OHLCVArray = await this.getExchangeObject( exchangeName ).fetchOHLCV( symbol, timeframe );
+
+      } catch ( e ) {
+        console.error( `EXCEPTION: \n${e}` );
+      }
+
+      return Callback( OHLCVArray );
+    } )();
+  }
+
+  /**
    * 
    * @param { string } symbol
    * @param { Function } Callback Called in the end of the execution. Receives a <string> representation of SpreadPricesModel.

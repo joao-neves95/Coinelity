@@ -18,9 +18,9 @@ class MarketsTemplates {
     return `
       <section id="markets" clas="grid-container">
         <h3>Markets</h3>
-        <section class="grid-x grid-padding-x markets-cards-wrapper">
+        <div class="grid-x grid-padding-x markets-cards-wrapper">
 
-        </section>
+        </div>
       </section>
     `;
   }

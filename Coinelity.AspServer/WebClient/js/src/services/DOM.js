@@ -8,6 +8,11 @@
  */
 
 class DOM {
+
+  static changeDocTitle( title ) {
+
+  }
+
   /**
    * 
    * @param { string } scriptCode The script code string.
@@ -48,5 +53,9 @@ class DOM {
     htmlElement.addEventListener( eventType, ( e ) => {
       CallbackEventHandler( e );
     } );
+  }
+
+  static elemById( id ) {
+    return document.getElementById( id );
   }
 }

@@ -32,12 +32,13 @@ class MarketsController extends ControllerBase {
     for ( let i = 0; i < 10; ++i ) {
       // TODO: Add [symbols + fiatSymbol + exchange + images] to the database and get from there.
       // Simulation. Temporary.
-      const thisCoinSymbol = 'BTC/EUR' + i.toString();
+      const thisCoinSymbol = 'BTC/EUR';
       this.model.symbols.add( thisCoinSymbol );
-      this.view.addCoinCard( thisCoinSymbol, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, FiatSymbol.Euro, 230.73, 3.68 ); 
+      this.view.addCoinCard( thisCoinSymbol, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, FiatSymbol.Euro, 230.73, 3.68 );
     }
 
     this.setCardUpdate();
+    this.addCardListeners();
   }
 
   setCardUpdate() {
@@ -46,8 +47,7 @@ class MarketsController extends ControllerBase {
 
     cardUpdateInterval = setInterval( () => {
       for ( let i = 0; i < symbols.length; ++i ) {
-        let thisSymbol = symbols.get( i );
-        thisSymbol = thisSymbol.substring( 0, thisSymbol.length - 1 );
+        const thisSymbol = symbols.get( i );
 
         this.model.getCoinChange( thisSymbol, ( coinChange ) => {
           this.view.updateCoinCard( thisSymbol + i.toString(), coinChange.currentPrice, coinChange.price.toFixed(2), coinChange.percent.toFixed(2) );
@@ -57,7 +57,26 @@ class MarketsController extends ControllerBase {
     }, MARKETS_UPDATE_RATE );
   }
 
+  addCardListeners() {
+    /** @type { List } */
+    const symbols = this.model.symbols;
+
+    for ( let i = 0; i < symbols.length; ++i ) {
+      const thisSymbol = symbols.get( i );
+
+      DOM.on( 'click', DOM.elemById( thisSymbol + MarketsTemplates.idPostfix ), ( e ) => {
+        e.preventDefault();
+        page( `/${NavItemID.Trade}/${Utils.encondeCoinSymbolUri( thisSymbol )}` );
+
+        return false;
+      } );
+
+    }
+
+  }
+
   stopCardUpdate() {
-    clearInterval( cardUpdateInterval );
+    if ( cardUpdateInterval )
+      clearInterval( cardUpdateInterval );
   }
 }

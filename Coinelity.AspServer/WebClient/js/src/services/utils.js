@@ -15,6 +15,10 @@ class Utils {
   static encondeCoinSymbolUri( symbol ) {
     return symbol.replace( '/', '-' );
   }
+
+  static decodeCoinSymbolUri( symbol ) {
+    return symbol.replace( '-', '/' );
+  }
 }
 
 // #region COLLECTIONS

@@ -7,3 +7,24 @@
  *
  */
 
+let tradeModel = null;
+
+class TradeModel extends ModelBase {
+  constructor() {
+    if ( tradeModel )
+      throw DevErrors.singleIntance( 'TradeModel' );
+
+    super( '', '', '', '' );
+
+    this.chart = null;
+
+    tradeModel = this;
+    Object.seal( tradeModel );
+  }
+
+  getLastOHLCV( symbol, Callback ) {
+    ExchangeClient._.getOHLCV( 'KRAKEN', symbol, '1m', ( lastOHLCV ) => {
+      return Callback( lastOHLCV );
+    } );
+  }
+}

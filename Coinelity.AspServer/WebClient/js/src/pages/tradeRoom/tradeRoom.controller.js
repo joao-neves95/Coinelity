@@ -20,6 +20,7 @@ class TradeRoomController extends ControllerBase {
     );
 
     this.marketsController = new MarketsController();
+    this.tradeController = new TradeController();
 
     tradeRoomController = this;
     Object.freeze( tradeRoomController );
@@ -30,22 +31,30 @@ class TradeRoomController extends ControllerBase {
    */
   static get _() { return tradeRoomController; }
 
-  // Called from traderRoutes.
+  /** 
+    "traderoom/markets". Called from traderRoutes.
+   */
   openMarkets() {
+    this.tradeController.stopChartUpdate();
     this.marketsController.injectContent();
     this.model.activeContentId = NavItemID.Markets;
   }
 
-  // Called from traderRoutes.
+  /** 
+    "traderoom/trade/:assetID". Called from traderRoutes.
+   * @param { string } assetID The asset symbol. E.g.: "BTC-EUR" == (BTC/EUR).
+   */
   tradeAsset( assetID ) {
     if ( this.model.activeContentId === NavItemID.Trade )
       return;
 
     this.marketsController.stopCardUpdate();
+    this.tradeController.injectContent( Utils.decodeCoinSymbolUri( assetID ) );
     this.model.activeContentId = NavItemID.Trade;
   }
 
   onBeforeDestroy() {
     this.marketsController.stopCardUpdate();
+    this.tradeController.stopChartUpdate();
   }
 }

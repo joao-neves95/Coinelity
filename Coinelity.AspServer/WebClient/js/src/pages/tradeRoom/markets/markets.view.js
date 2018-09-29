@@ -21,8 +21,8 @@ class MarketsView extends ViewBase {
   }
 
   get element() { return document.getElementById( 'markets' ); }
-
   get marketsContent() { return document.getElementsByClassName( 'markets-cards-wrapper' )[0]; }
+
   coinPriceElem( symbol ) { return document.getElementById( symbol + '-curr-price' ); }
   coinPriceChangeElem( symbol ) { return document.getElementById( symbol + '-price-change' ); }
   coinPercentChangeElem( symbol ) { return document.getElementById( symbol + '-percent-change' ); }
