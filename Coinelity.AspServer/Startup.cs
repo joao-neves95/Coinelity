@@ -15,21 +15,19 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
-using System.IO;
-using System.Reflection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Coinelity.AspServer.Middleware;
-using Coinelity.AspServer.DataAccess;
-using Coinelity.AspServer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.HttpOverrides;
+using Coinelity.AspServer.Middleware;
+using Coinelity.AspServer.Hubs;
+using Coinelity.AspServer.DataAccess;
+using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer
 {
@@ -107,21 +105,29 @@ namespace Coinelity.AspServer
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseStatusCodePages();
                 app.UseBrowserLink();
                 app.UseDatabaseErrorPage();
+            }
+            else
+            {
+                app.UseHsts();
             }
 
             app.UseCors(policyBuilder => {
@@ -138,8 +144,14 @@ namespace Coinelity.AspServer
                 OriginalHostHeaderName = "PHP"
             });
 
+            app.UseHttpsRedirection();
             app.UseAuthentication();
-
+            app.UseSignalR( routes =>
+             {
+                 routes.MapHub<BinaryOptionsHub>( "hubs/binary-options" );
+                 routes.MapHub<CFDHub>( "hubs/cfd" );
+                 routes.MapHub<ChatHub>( "hubs/chat" );
+             } );
             app.UseMvc();
         }
     }

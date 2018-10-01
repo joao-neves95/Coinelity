@@ -26,7 +26,6 @@ C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.Properties.Resources.resources
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csproj.GenerateResource.cache
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csproj.CoreCompileInputs.cache
-C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.AssemblyInfoInputs.cache
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.AssemblyInfo.cs
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.0\Coinelity.AspServer.csproj.CopyComplete

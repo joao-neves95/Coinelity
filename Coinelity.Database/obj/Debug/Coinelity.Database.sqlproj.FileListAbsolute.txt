@@ -1,0 +1,6 @@
+C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.dacpac
+C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.dll
+C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.pdb
+C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.sqlprojAssemblyReference.cache
+C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.dll
+C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.pdb
