@@ -8,13 +8,9 @@
 
   <ItemGroup>
     <Compile Remove="WebClient\js\src\components\**" />
-    <Compile Remove="WebClient\js\src\navbarPanelItems\**" />
     <Content Remove="WebClient\js\src\components\**" />
-    <Content Remove="WebClient\js\src\navbarPanelItems\**" />
     <EmbeddedResource Remove="WebClient\js\src\components\**" />
-    <EmbeddedResource Remove="WebClient\js\src\navbarPanelItems\**" />
     <None Remove="WebClient\js\src\components\**" />
-    <None Remove="WebClient\js\src\navbarPanelItems\**" />
   </ItemGroup>
 
   <ItemGroup>

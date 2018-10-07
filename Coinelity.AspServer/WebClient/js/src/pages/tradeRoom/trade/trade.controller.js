@@ -8,7 +8,8 @@
  */
 
 let tradeController = null;
-let chartUpdateInterval = null;
+let chartUpdateCandleInterval = null;
+let chartUpdatePriceInterval = null;
 
 class TradeController extends ControllerBase {
   constructor() {
@@ -28,105 +29,52 @@ class TradeController extends ControllerBase {
    * 
    * @param { string } assetID The asset symbol.
    */
-  injectContent( assetID ) {
+  async injectContent( symbolId ) {
+    this.model.currentSymbol = symbolId;
     this.view.injectContainer();
-    this.injectTradeTools();
-    this.injectChart( assetID );
+    await this.injectChart();
+    // TODO: tradeTools give a bug on the chart. They turn it static.
+    // this.injectTradeTools();
   }
 
-  injectChart( assetID ) {
-    this.view.injectChart();
+  injectChart() {
+    return new Promise( async ( resolve, reject ) => {
 
-    ExchangeClient._.getOHLCV( 'KRAKEN', assetID, '1m', ( OHLCVArray ) => {
-      console.debug( OHLCVArray );
+      this.view.injectChartTemplate();
 
-      if ( !OHLCVArray )
-        return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
+      const chartData = await this.model.getChartData();
 
-      this.model.chart = Highcharts.stockChart( 'trading-chart', {
+      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout, { responsive: true, scrollZoom: true, showLink: false, displaylogo: false } );
 
-        rangeSelector: {
-          buttons: [
-            {
-              type: 'second',
-              count: 1,
-              text: '1s'
-            },
-            {
-              type: 'hour',
-              count: 1,
-              text: '1h'
-            }, {
-              type: 'day',
-              count: 1,
-              text: '1D'
-            }, {
-              type: 'all',
-              count: 1,
-              text: 'All'
-            }
-          ],
-          selected: 1,
-        },
-
-        title: {
-          text: assetID,
-          events: {
-            load: this.updateChart( assetID )
-          }
-        },
-
-        credits: {
-          enabled: false
-        },
-
-        series: [{
-          type: 'candlestick',
-          name: assetID,
-          data: OHLCVArray,
-          dataGrouping: {
-            units: [
-              [
-                'minute',
-                [1]
-              ],
-              [
-                'week', // unit name
-                [1] // allowed multiples
-              ],
-              [
-                'month',
-                [1, 2, 3, 4, 6]
-              ]
-            ]
-          },
-          tooltip: {
-            valueDecimals: 2
-          }
-        }]
-
-      } );
-
+      resolve();
     } );
   }
 
-  updateChart( symbol ) {
-    chartUpdateInterval = setInterval( () => {
-      this.model.getLastOHLCV( symbol, ( OHLCV ) => {
+  startChartCandleUpdate() {
+    chartUpdatePriceInterval = setInterval( () => {
+      this.model.getLastOHLCV( this.model.currentSymbol, ( OHLCV ) => {
         if ( OHLCV )
+          // TODO: Update for the new charting lib.
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
 
       } );
-    }, 1000 * 60 );    
+    }, 1000 * 60 );
+  }
+
+  startChartPriceUpdate() {
+    chartUpdatePriceInterval = setInterval();
   }
 
   stopChartUpdate() {
-    if ( chartUpdateInterval )
-      clearInterval( chartUpdateInterval );
+    if ( chartUpdateCandleInterval )
+      clearInterval( chartUpdateCandleInterval );
+
+    if ( chartUpdatePriceInterval )
+      clearInterval( chartUpdatePriceInterval );
   }
 
   injectTradeTools() {
-
+    this.view.injectTradingTools( TradingToolsType.BinaryOptions );
   }
 
 }

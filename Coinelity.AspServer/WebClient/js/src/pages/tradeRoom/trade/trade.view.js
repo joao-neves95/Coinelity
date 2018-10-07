@@ -26,7 +26,7 @@ class TradeView extends ViewBase {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
   }
 
-  injectChart() {
+  injectChartTemplate() {
     this.tradeContentWrapper.innerHTML += TradeTemplates.chart();
   }
 
@@ -35,16 +35,16 @@ class TradeView extends ViewBase {
    * @param { TradingToolsType } tradingToolsType
    */
   injectTradingTools( tradingToolsType ) {
-    const tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' );
+    // const tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' );
 
-    if ( tradingToolsWrapper.length <= 0 )
-      this.tradeContentWrapper.innerHTML += TradeTemplates.toolsWrapper();
+    // if ( tradingToolsWrapper.length <= 0 )
+    this.tradeContentWrapper.innerHTML += TradeTemplates.toolsWrapper();
 
-    tradingToolsWrapper = tradingToolsWrapper[0];
+    let tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' )[0];
 
-    if ( tradingToolsType === TradingToolsType.BinaryOption )
-      this.tradingToolsWrapper.innerHTML = TradeTemplates.binaryOptionsTools();
+    if ( tradingToolsType === TradingToolsType.BinaryOptions )
+      tradingToolsWrapper.innerHTML = TradeTemplates.binaryOptionsTools();
     else
-      this.tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
+      tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
   }
 }

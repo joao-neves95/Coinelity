@@ -140,18 +140,30 @@ namespace Coinelity.AspServer
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-                ForwardedHostHeaderName = "PHP",
-                OriginalHostHeaderName = "PHP"
-            });
+                ForwardedHostHeaderName = "Anonymous",
+                OriginalHostHeaderName = "Anonymous",
+            } );
+
+            app.Use( async (context, next) =>
+             {
+                 context.Response.OnStarting( () =>
+                 {
+                     context.Response.Headers.Add("Server", "Anonymous");
+                     return Task.FromResult( 0 );
+                 } );
+
+                 await next.Invoke();
+             } );
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseSignalR( routes =>
              {
-                 routes.MapHub<BinaryOptionsHub>( "hubs/binary-options" );
-                 routes.MapHub<CFDHub>( "hubs/cfd" );
-                 routes.MapHub<ChatHub>( "hubs/chat" );
+                 routes.MapHub<BinaryOptionsHub>( "/hubs/binary-options" );
+                 routes.MapHub<CFDHub>( "/hubs/cfd" );
+                 routes.MapHub<ChatHub>( "/hubs/chat" );
              } );
+
             app.UseMvc();
         }
     }

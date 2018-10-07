@@ -9,10 +9,10 @@
 
 const ENV = EnvironmentType.Development;
 
-const BASE_PORT = '33623';
-const BASE_URL = `http://localhost:${BASE_PORT}/`;
+const BASE_PORT = ':33623';
+const BASE_URL = `http://localhost${BASE_PORT}/`;
 const BASE_API_URL = BASE_URL + 'api/';
-const PUBLIC_IMGS_URL = 'public/img/';
+const PUBLIC_IMGS_URL = BASE_URL + 'public/img/';
 const AUTH_TOKEN_ID = 'auth-token';
 
 const BASE_NODEJS_PORT = '3003';

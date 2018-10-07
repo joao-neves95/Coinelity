@@ -16,15 +16,87 @@ class TradeModel extends ModelBase {
 
     super( '', '', '', '' );
 
-    this.chart = null;
+    this.chartLayout = {
+      dragmode: 'zoom',
+      heigth: 2000,
+      margin: {
+        r: 10,
+        t: 25,
+        b: 40,
+        l: 60
+      },
+      showlegend: false,
+      xaxis: {
+        autorange: true,
+        domain: [0, 1],
+        title: 'Date',
+        type: 'date'
+      },
+      yaxis: {
+        autorange: true,
+        domain: [0, 1],
+        range: [114.609999778, 137.410004222],
+        type: 'linear'
+      }
+    };
+
+    this.chartTrace = {
+      type: 'candlestick',
+      increasing: { line: { color: '#26A69A' } },
+      decreasing: { line: { color: '#EF5350' } },
+      xaxis: 'x',
+      yaxis: 'y',
+      // DATA:
+      x: [],
+      open: [],
+      high: [],
+      low: [],
+      close: []
+    };
+
+    this.currentSymbol = null;
+    this.currentTimeframe = '1d';
 
     tradeModel = this;
     Object.seal( tradeModel );
   }
 
-  getLastOHLCV( symbol, Callback ) {
-    ExchangeClient._.getOHLCV( 'KRAKEN', symbol, '1m', ( lastOHLCV ) => {
-      return Callback( lastOHLCV );
+  get _() { return tradeModel; }
+
+  getChartData() {
+    return new Promise( async ( resolve, reject ) => {
+      const OHLCVArray = await this.getOHLCV( this.currentSymbol );
+      
+      if ( !OHLCVArray )
+        return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
+
+      for ( let i = 0; i < OHLCVArray.length; ++i ) {
+        this.chartTrace.x.push( moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY-MM-DD" ) );
+        this.chartTrace.open.push( OHLCVArray[i][1] );
+        this.chartTrace.high.push( OHLCVArray[i][2] );
+        this.chartTrace.low.push( OHLCVArray[i][3] );
+        this.chartTrace.close.push( OHLCVArray[i][4] );
+      }
+
+      return resolve( [this.chartTrace] );
+    } );
+  }
+
+  /**
+   * 
+   * @param {any} symbol
+   * @param { Function } Callback Optional (<OHLCV | undefined>)
+   * 
+   */
+  getOHLCV( symbol, Callback ) {
+    return new Promise( ( resolve, reject ) => {
+
+      ExchangeClient._.getOHLCV( 'KRAKEN', symbol, this.currentTimeframe, ( OHLCVArray ) => {
+        if ( Callback )
+          return Callback( OHLCVArray );
+
+        resolve( OHLCVArray );
+      } );
     } );
   }
 }

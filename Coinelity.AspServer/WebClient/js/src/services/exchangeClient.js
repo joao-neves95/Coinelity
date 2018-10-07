@@ -164,6 +164,7 @@ class ExchangeClient {
 
       } catch ( e ) {
         console.error( `EXCEPTION: \n${e}` );
+
       }
 
       return Callback( OHLCVArray );

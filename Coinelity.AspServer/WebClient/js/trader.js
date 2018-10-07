@@ -164,8 +164,17 @@ const FiatSymbol = Object.freeze( {
   Pound: '&pound;',
   Yen: '&yen;'
 } );
-﻿const TradingToolsType = Object.freeze( {
-  BinaryOption: 1,
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+const TradingToolsType = Object.freeze( {
+  BinaryOptions: 1,
   CFD: 2
 } );
 ﻿/*
@@ -242,10 +251,10 @@ class ChangeModel {
 
 const ENV = EnvironmentType.Development;
 
-const BASE_PORT = '33623';
-const BASE_URL = `http://localhost:${BASE_PORT}/`;
+const BASE_PORT = ':33623';
+const BASE_URL = `http://localhost${BASE_PORT}/`;
 const BASE_API_URL = BASE_URL + 'api/';
-const PUBLIC_IMGS_URL = 'public/img/';
+const PUBLIC_IMGS_URL = BASE_URL + 'public/img/';
 const AUTH_TOKEN_ID = 'auth-token';
 
 const BASE_NODEJS_PORT = '3003';
@@ -870,6 +879,7 @@ class ExchangeClient {
 
       } catch ( e ) {
         console.error( `EXCEPTION: \n${e}` );
+
       }
 
       return Callback( OHLCVArray );
@@ -1247,6 +1257,8 @@ class TradeTemplates {
     throw DevErrors.cantInstantiateStatic( 'TradeTemplates' );
   }
 
+  static get chartElemId() { return 'trading-chart'; }
+
   static container() {
     return `
       <section id="trade" clas="grid-container">
@@ -1260,7 +1272,7 @@ class TradeTemplates {
   static chart() {
     return `
       <section class="cell">
-        <article id="trading-chart">
+        <article id="${TradeTemplates.chartElemId}">
         </article>
       </section>
     `;
@@ -1302,15 +1314,87 @@ class TradeModel extends ModelBase {
 
     super( '', '', '', '' );
 
-    this.chart = null;
+    this.chartLayout = {
+      dragmode: 'zoom',
+      heigth: 2000,
+      margin: {
+        r: 10,
+        t: 25,
+        b: 40,
+        l: 60
+      },
+      showlegend: false,
+      xaxis: {
+        autorange: true,
+        domain: [0, 1],
+        title: 'Date',
+        type: 'date'
+      },
+      yaxis: {
+        autorange: true,
+        domain: [0, 1],
+        range: [114.609999778, 137.410004222],
+        type: 'linear'
+      }
+    };
+
+    this.chartTrace = {
+      type: 'candlestick',
+      increasing: { line: { color: '#26A69A' } },
+      decreasing: { line: { color: '#EF5350' } },
+      xaxis: 'x',
+      yaxis: 'y',
+      // DATA:
+      x: [],
+      open: [],
+      high: [],
+      low: [],
+      close: []
+    };
+
+    this.currentSymbol = null;
+    this.currentTimeframe = '1d';
 
     tradeModel = this;
     Object.seal( tradeModel );
   }
 
-  getLastOHLCV( symbol, Callback ) {
-    ExchangeClient._.getOHLCV( 'KRAKEN', symbol, '1m', ( lastOHLCV ) => {
-      return Callback( lastOHLCV );
+  get _() { return tradeModel; }
+
+  getChartData() {
+    return new Promise( async ( resolve, reject ) => {
+      const OHLCVArray = await this.getOHLCV( this.currentSymbol );
+      
+      if ( !OHLCVArray )
+        return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
+
+      for ( let i = 0; i < OHLCVArray.length; ++i ) {
+        this.chartTrace.x.push( moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY-MM-DD" ) );
+        this.chartTrace.open.push( OHLCVArray[i][1] );
+        this.chartTrace.high.push( OHLCVArray[i][2] );
+        this.chartTrace.low.push( OHLCVArray[i][3] );
+        this.chartTrace.close.push( OHLCVArray[i][4] );
+      }
+
+      return resolve( [this.chartTrace] );
+    } );
+  }
+
+  /**
+   * 
+   * @param {any} symbol
+   * @param { Function } Callback Optional (<OHLCV | undefined>)
+   * 
+   */
+  getOHLCV( symbol, Callback ) {
+    return new Promise( ( resolve, reject ) => {
+
+      ExchangeClient._.getOHLCV( 'KRAKEN', symbol, this.currentTimeframe, ( OHLCVArray ) => {
+        if ( Callback )
+          return Callback( OHLCVArray );
+
+        resolve( OHLCVArray );
+      } );
     } );
   }
 }
@@ -1342,7 +1426,7 @@ class TradeView extends ViewBase {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
   }
 
-  injectChart() {
+  injectChartTemplate() {
     this.tradeContentWrapper.innerHTML += TradeTemplates.chart();
   }
 
@@ -1351,17 +1435,17 @@ class TradeView extends ViewBase {
    * @param { TradingToolsType } tradingToolsType
    */
   injectTradingTools( tradingToolsType ) {
-    const tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' );
+    // const tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' );
 
-    if ( tradingToolsWrapper.length <= 0 )
-      this.tradeContentWrapper.innerHTML += TradeTemplates.toolsWrapper();
+    // if ( tradingToolsWrapper.length <= 0 )
+    this.tradeContentWrapper.innerHTML += TradeTemplates.toolsWrapper();
 
-    tradingToolsWrapper = tradingToolsWrapper[0];
+    let tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' )[0];
 
-    if ( tradingToolsType === TradingToolsType.BinaryOption )
-      this.tradingToolsWrapper.innerHTML = TradeTemplates.binaryOptionsTools();
+    if ( tradingToolsType === TradingToolsType.BinaryOptions )
+      tradingToolsWrapper.innerHTML = TradeTemplates.binaryOptionsTools();
     else
-      this.tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
+      tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
   }
 }
 ﻿/*
@@ -1374,7 +1458,8 @@ class TradeView extends ViewBase {
  */
 
 let tradeController = null;
-let chartUpdateInterval = null;
+let chartUpdateCandleInterval = null;
+let chartUpdatePriceInterval = null;
 
 class TradeController extends ControllerBase {
   constructor() {
@@ -1394,105 +1479,52 @@ class TradeController extends ControllerBase {
    * 
    * @param { string } assetID The asset symbol.
    */
-  injectContent( assetID ) {
+  async injectContent( symbolId ) {
+    this.model.currentSymbol = symbolId;
     this.view.injectContainer();
-    this.injectTradeTools();
-    this.injectChart( assetID );
+    await this.injectChart();
+    // TODO: tradeTools give a bug on the chart. They turn it static.
+    // this.injectTradeTools();
   }
 
-  injectChart( assetID ) {
-    this.view.injectChart();
+  injectChart() {
+    return new Promise( async ( resolve, reject ) => {
 
-    ExchangeClient._.getOHLCV( 'KRAKEN', assetID, '1m', ( OHLCVArray ) => {
-      console.debug( OHLCVArray );
+      this.view.injectChartTemplate();
 
-      if ( !OHLCVArray )
-        return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
+      const chartData = await this.model.getChartData();
 
-      this.model.chart = Highcharts.stockChart( 'trading-chart', {
+      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout, { responsive: true, scrollZoom: true, showLink: false, displaylogo: false } );
 
-        rangeSelector: {
-          buttons: [
-            {
-              type: 'second',
-              count: 1,
-              text: '1s'
-            },
-            {
-              type: 'hour',
-              count: 1,
-              text: '1h'
-            }, {
-              type: 'day',
-              count: 1,
-              text: '1D'
-            }, {
-              type: 'all',
-              count: 1,
-              text: 'All'
-            }
-          ],
-          selected: 1,
-        },
-
-        title: {
-          text: assetID,
-          events: {
-            load: this.updateChart( assetID )
-          }
-        },
-
-        credits: {
-          enabled: false
-        },
-
-        series: [{
-          type: 'candlestick',
-          name: assetID,
-          data: OHLCVArray,
-          dataGrouping: {
-            units: [
-              [
-                'minute',
-                [1]
-              ],
-              [
-                'week', // unit name
-                [1] // allowed multiples
-              ],
-              [
-                'month',
-                [1, 2, 3, 4, 6]
-              ]
-            ]
-          },
-          tooltip: {
-            valueDecimals: 2
-          }
-        }]
-
-      } );
-
+      resolve();
     } );
   }
 
-  updateChart( symbol ) {
-    chartUpdateInterval = setInterval( () => {
-      this.model.getLastOHLCV( symbol, ( OHLCV ) => {
+  startChartCandleUpdate() {
+    chartUpdatePriceInterval = setInterval( () => {
+      this.model.getLastOHLCV( this.model.currentSymbol, ( OHLCV ) => {
         if ( OHLCV )
+          // TODO: Update for the new charting lib.
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
 
       } );
-    }, 1000 * 60 );    
+    }, 1000 * 60 );
+  }
+
+  startChartPriceUpdate() {
+    chartUpdatePriceInterval = setInterval();
   }
 
   stopChartUpdate() {
-    if ( chartUpdateInterval )
-      clearInterval( chartUpdateInterval );
+    if ( chartUpdateCandleInterval )
+      clearInterval( chartUpdateCandleInterval );
+
+    if ( chartUpdatePriceInterval )
+      clearInterval( chartUpdatePriceInterval );
   }
 
   injectTradeTools() {
-
+    this.view.injectTradingTools( TradingToolsType.BinaryOptions );
   }
 
 }
@@ -1697,7 +1729,7 @@ class MarketsController extends ControllerBase {
     for ( let i = 0; i < 10; ++i ) {
       // TODO: Add [symbols + fiatSymbol + exchange + images] to the database and get from there.
       // Simulation. Temporary.
-      const thisCoinSymbol = 'BTC/EUR';
+      const thisCoinSymbol = 'BTC/EUR' + i.toString();
       this.model.symbols.add( thisCoinSymbol );
       this.view.addCoinCard( thisCoinSymbol, 'https://en.bitcoin.it/w/images/en/2/29/BC_Logo_.png', 7000, FiatSymbol.Euro, 230.73, 3.68 );
     }
@@ -1714,8 +1746,8 @@ class MarketsController extends ControllerBase {
       for ( let i = 0; i < symbols.length; ++i ) {
         const thisSymbol = symbols.get( i );
 
-        this.model.getCoinChange( thisSymbol, ( coinChange ) => {
-          this.view.updateCoinCard( thisSymbol + i.toString(), coinChange.currentPrice, coinChange.price.toFixed(2), coinChange.percent.toFixed(2) );
+        this.model.getCoinChange( thisSymbol.substring( 0, thisSymbol.length - 1), ( coinChange ) => {
+          this.view.updateCoinCard( thisSymbol, coinChange.currentPrice, coinChange.price.toFixed(2), coinChange.percent.toFixed(2) );
         } );
 
       }
@@ -1731,7 +1763,7 @@ class MarketsController extends ControllerBase {
 
       DOM.on( 'click', DOM.elemById( thisSymbol + MarketsTemplates.idPostfix ), ( e ) => {
         e.preventDefault();
-        page( `/${NavItemID.Trade}/${Utils.encondeCoinSymbolUri( thisSymbol )}` );
+        page( `/${NavItemID.Trade}/${Utils.encondeCoinSymbolUri( thisSymbol.substring( 0, thisSymbol.length - 1 ) )}` );
 
         return false;
       } );
@@ -2507,6 +2539,7 @@ class Themes {
  */
 
 whenDomReady(() => {
+  console.log( 'Trader.' );
   console.log( 'The DOM is ready' );
 
   $( document ).foundation();
@@ -2517,6 +2550,11 @@ whenDomReady(() => {
   NavbarController._.mapItem( NavItemID.Settings, new SettingsController() );
 
   NavbarController._.init();
+
+  // This will give an error if it exists more than 1 cookie.
+  //const requestedPage = document.cookie.split( '=' )[1].replace( '%2F', '/' ).replace( '%2F', '/' );
+  //page( NavItemID.Dashboard, requestedPage );
+  //document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
 });
 ﻿/*
  *

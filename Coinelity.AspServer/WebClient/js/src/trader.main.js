@@ -8,6 +8,7 @@
  */
 
 whenDomReady(() => {
+  console.log( 'Trader.' );
   console.log( 'The DOM is ready' );
 
   $( document ).foundation();
@@ -18,4 +19,9 @@ whenDomReady(() => {
   NavbarController._.mapItem( NavItemID.Settings, new SettingsController() );
 
   NavbarController._.init();
+
+  // This will give an error if it exists more than 1 cookie.
+  //const requestedPage = document.cookie.split( '=' )[1].replace( '%2F', '/' ).replace( '%2F', '/' );
+  //page( NavItemID.Dashboard, requestedPage );
+  //document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
 });

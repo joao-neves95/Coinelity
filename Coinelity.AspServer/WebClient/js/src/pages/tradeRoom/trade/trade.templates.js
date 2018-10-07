@@ -12,6 +12,8 @@ class TradeTemplates {
     throw DevErrors.cantInstantiateStatic( 'TradeTemplates' );
   }
 
+  static get chartElemId() { return 'trading-chart'; }
+
   static container() {
     return `
       <section id="trade" clas="grid-container">
@@ -25,7 +27,7 @@ class TradeTemplates {
   static chart() {
     return `
       <section class="cell">
-        <article id="trading-chart">
+        <article id="${TradeTemplates.chartElemId}">
         </article>
       </section>
     `;
