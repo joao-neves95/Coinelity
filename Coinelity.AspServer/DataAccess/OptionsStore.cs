@@ -8,11 +8,11 @@ using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer.DataAccess
 {
-    public class OrderStore
+    public class OptionsStore
     {
         private readonly SqlConnection _connection;
 
-        public OrderStore()
+        public OptionsStore()
         {
             this._connection = Env.GetMSSQLConnection();
         }
