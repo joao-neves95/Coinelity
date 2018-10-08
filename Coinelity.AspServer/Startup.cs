@@ -112,7 +112,13 @@ namespace Coinelity.AspServer
                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
 
-            services.AddSignalR();
+            services.AddSignalR()
+                .AddJsonProtocol( options =>
+                 {
+                     options.PayloadSerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                     options.PayloadSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                     
+                 } );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -157,6 +163,7 @@ namespace Coinelity.AspServer
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+
             app.UseSignalR( routes =>
              {
                  routes.MapHub<BinaryOptionsHub>( "/hubs/binary-options" );

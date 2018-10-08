@@ -17,7 +17,7 @@ CREATE TABLE dbo.AuditLog
 )
 GO
 
-CREATE INDEX idx_AuditLog_UserId ON dbo.ApplicationUser( Id );
+CREATE INDEX idx_AuditLog_UserId ON dbo.AuditLog( UserId );
 GO
-CREATE INDEX idx_AuditLog_EventTypeId ON dbo.EventType( Id );
-GO
+-- CREATE INDEX idx_AuditLog_EventTypeId ON dbo.AuditLog( EventTypeId );
+-- GO

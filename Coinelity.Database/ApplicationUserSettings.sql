@@ -20,5 +20,5 @@ CREATE TABLE dbo.ApplicationUserSettings
 )
 GO
 
-CREATE INDEX idx_ApplicationUserSettings_UserId ON dbo.ApplicationUser( Id );
+CREATE INDEX idx_ApplicationUserSettings_UserId ON dbo.ApplicationUserSettings( UserId );
 GO

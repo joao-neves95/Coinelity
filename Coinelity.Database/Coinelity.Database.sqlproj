@@ -68,6 +68,13 @@
     <None Include="Inserts\EventType_Inserts.sql" />
     <Build Include="ApplicationUserRoles.sql" />
     <Build Include="ApplicationUserAccount.sql" />
+    <Build Include="Asset.sql" />
+    <Build Include="Exchange.sql" />
+    <Build Include="OptionHistory.sql" />
+    <Build Include="ActiveOption.sql" />
+    <Build Include="OperationType.sql" />
+    <Build Include="OptionPayout.sql" />
+    <Build Include="OptionLifetime.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Inserts\ApplicationRole_Inserts.sql" />

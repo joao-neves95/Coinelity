@@ -10,12 +10,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using System.Data.SqlClient;
-using Coinelity.AspServer.Models;
 using System.Threading;
-using Coinelity.AspServer.DataAccess;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using Microsoft.AspNetCore.Identity;
+using Coinelity.AspServer.Models;
 using Coinelity.Core;
 using Coinelity.Core.Data;
 

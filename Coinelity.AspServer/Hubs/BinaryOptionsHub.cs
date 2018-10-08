@@ -12,15 +12,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-// using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer.Hubs
 {
     public class BinaryOptionsHub : Hub
     {
-        public async Task PlaceOrder()
+        public Task PlaceOrder(string placeOrderDTO)
         {
-
+            try
+            {
+                PlaceOrderDTO order = JsonConvert.DeserializeObject<PlaceOrderDTO>( placeOrderDTO );
+                // TODO: Add business logic here.
+                return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", "<Send response>" );
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine( e );
+                return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", "<Send new Error message object>" );
+            }
         }
 
         public async Task CheckOrder(string orderId)

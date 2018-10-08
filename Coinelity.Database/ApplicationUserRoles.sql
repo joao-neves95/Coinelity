@@ -15,7 +15,7 @@ CREATE TABLE dbo.ApplicationUserRoles
 )
 GO
 
-CREATE INDEX idx_ApplicationUserRoles_UserId ON dbo.ApplicationUser( Id );
+CREATE INDEX idx_ApplicationUserRoles_UserId ON dbo.ApplicationUserRoles( UserId );
 GO
-CREATE INDEX idx_ApplicationUserRoles_RoleId ON dbo.ApplicationRole( Id );
+CREATE INDEX idx_ApplicationUserRoles_RoleId ON dbo.ApplicationUserRoles( UserId );
 GO

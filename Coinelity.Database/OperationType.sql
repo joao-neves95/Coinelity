@@ -1,0 +1,5 @@
+﻿CREATE TABLE dbo.OperationType
+(
+    Id INT NOT NULL PRIMARY KEY,
+    Name VARCHAR(20) NOT NULL UNIQUE
+)
