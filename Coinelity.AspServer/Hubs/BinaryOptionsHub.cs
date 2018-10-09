@@ -23,8 +23,11 @@ namespace Coinelity.AspServer.Hubs
         {
             try
             {
+                // TODO: Test if not having the strike price on the placeOrderDTO give an error.
                 PlaceOrderDTO order = JsonConvert.DeserializeObject<PlaceOrderDTO>( placeOrderDTO );
                 // TODO: Add business logic here.
+                // Convert string parameter to JSON and then PlaceOrderDTO.
+                // Get strike price from API and add it to the PlaceOrderDTO.
                 return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", "<Send response>" );
             }
             catch (Exception e)

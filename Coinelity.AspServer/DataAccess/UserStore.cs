@@ -143,7 +143,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.ToObject<ApplicationUser>( userDictionaryList );
+            return userDictionaryList.ToObject<ApplicationUser>();
         }
 
         public async Task<ApplicationUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
@@ -160,7 +160,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.ToObject<ApplicationUser>( userDictionaryList );
+            return userDictionaryList.ToObject<ApplicationUser>();
         }
 
         public Task<ApplicationUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)

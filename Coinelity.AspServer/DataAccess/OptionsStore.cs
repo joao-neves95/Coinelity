@@ -22,14 +22,30 @@ namespace Coinelity.AspServer.DataAccess
             GC.SuppressFinalize( this );
         }
 
-        public async Task InsertOrderAsync(PlaceOrderDTO placeOrderDTO)
+        /// <summary>
+        /// 
+        /// Inserts a new order and returns the number of affected rows. Should be 1. If it's 0 there was an error. 
+        /// 
+        /// </summary>
+        /// <param name="placeOrderDTO"></param>
+        /// <returns></returns>
+        public async Task<int> InsertOrderAsync(PlaceOrderDTO placeOrderDTO)
         {
-            await MSSQLClient.CommandOnceAsync( _connection,
-                @"INSERT INTO dbo.ActiveOrder (UserId, AssetId, OperationTypeId, LifetimeId, PayoutPercentId, StrikePrice, InvestmentAmount)
-                  VALUES ()",
+            int payoutPercent = await GetOptionPayoutPercentByAssetId( placeOrderDTO.AssetId );
+
+            return await MSSQLClient.CommandOnceAsync( _connection,
+                @"INSERT INTO dbo.ActiveOption (UserId, AssetId, OperationTypeId, LifetimeId, PayoutPercent, StrikePrice, InvestmentAmount)
+                  VALUES (@UserId, @AssetId, @OperationTypeId, @LifetimeId, @PayoutPercent, @StrikePrice, @InvestmentAmount)",
                 new Dictionary<string, object>
                 {
-                    { "", "" }
+                    { "@UserId", placeOrderDTO.UserId },
+                    { "@AssetId", placeOrderDTO.AssetId },
+                    { "@OperationTypeId", placeOrderDTO.OperationTypeId },
+                    { "@LifetimeId", placeOrderDTO.LifetimeId },
+                    { "@PayoutPercent", payoutPercent },
+                    // TODO: Get the strike price from API.
+                    { "@StrikePricet", placeOrderDTO.StrikePrice },
+                    { "@InvestmentAmount", placeOrderDTO.InvestmentAmount }
                 } );
         }
 
@@ -72,6 +88,57 @@ namespace Coinelity.AspServer.DataAccess
                 });
 
             return orderListDict;
+        }
+
+        /// <summary>
+        /// 
+        /// Returns the payout percentage of the requested asset id, or -1 case the asset does not exist.
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<int> GetOptionPayoutPercentById(int id)
+        {
+            const string whereClause = "WHERE Id = @Id";
+            return await GetOptionPayoutPercent( whereClause, id );
+        }
+
+        /// <summary>
+        /// 
+        /// Returns the payout percentage of the requested asset id, or -1 case the asset does not exist.
+        /// 
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <returns></returns>
+        public async Task<int> GetOptionPayoutPercentByAssetId(int assetId)
+        {
+            const string whereClause = "WHERE AssetId = @Id";
+            return await GetOptionPayoutPercent( whereClause, assetId );
+        }
+
+        /// <summary>
+        /// 
+        /// Returns <int> (16 bits / SQL's tinyint) the payout percentage of the requested asset id, or -1 case the asset does not exist.
+        /// 
+        /// </summary>
+        /// <param name="whereQuery"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<int> GetOptionPayoutPercent(string whereClause, int id)
+        {
+            IList<Dictionary<string, object>> payoutListDict = await MSSQLClient.QueryOnceAsync( _connection,
+                $@"SELECT Payout
+                  FROM dbo.OptionPayout
+                  {whereClause}",
+                new Dictionary<string, object>
+                {
+                    { "@Id", id }
+                } );
+
+            if (payoutListDict.Count <= 0)
+                return -1;
+
+            return Convert.ToInt16( payoutListDict[0]["Payout"] );
         }
     }
 }

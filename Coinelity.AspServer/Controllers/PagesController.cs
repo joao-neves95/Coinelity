@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.Models;
+using Coinelity.AspServer.Enums;
 using Coinelity.Core.Errors;
 
 namespace Coinelity.AspServer.Controllers

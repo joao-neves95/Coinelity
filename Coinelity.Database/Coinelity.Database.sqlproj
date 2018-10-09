@@ -78,5 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Inserts\ApplicationRole_Inserts.sql" />
+    <None Include="Inserts\OperationType_Inserts.sql" />
   </ItemGroup>
 </Project>

@@ -9,4 +9,3 @@ GO
 
 CREATE INDEX idx_Payout_AssetId ON dbo.OptionPayout( AssetId );
 GO
-
