@@ -7,12 +7,23 @@
  *
  */
 
+let settingsController = null;
+
+/**
+ * The Settings page controller.
+ */
 class SettingsController extends ControllerBase {
   constructor() {
+    if ( settingsController )
+      throw DevErrors.singleIntance( 'SettingsController' );
+
     super(
       new SettingsModel(),
       new SettingsView()
     );
+
+    settingsController = this;
+    Object.freeze( settingsController );
   }
 
   setEventListeners() {

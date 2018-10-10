@@ -30,7 +30,7 @@ class MarketsController extends ControllerBase {
     this.view.injectContainer();
 
     for ( let i = 0; i < 10; ++i ) {
-      // TODO: Add [symbols + fiatSymbol + exchange + images] to the database and get from there.
+      // TODO: Add [symbols + fiatSymbol + exchange + images] to the database and get them from there.
       // Simulation. Temporary.
       const thisCoinSymbol = 'BTC/EUR' + i.toString();
       this.model.symbols.add( thisCoinSymbol );

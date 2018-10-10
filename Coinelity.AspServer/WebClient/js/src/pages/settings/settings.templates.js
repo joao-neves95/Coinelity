@@ -12,6 +12,8 @@ class SettingsTemplates {
     throw DevErrors.cantInstantiateStatic( 'SettingsTemplates' );
   }
 
+  // TODO: Change to an Accordion Menu.
+
   static theForm( content ) {
     return `
       <form class="settings-form grid-x">

@@ -9,6 +9,9 @@
 
 let tradeRoomController = null;
 
+/**
+ * The Trade Room page controller.
+ */
 class TradeRoomController extends ControllerBase {
   constructor() {
     if ( tradeRoomController )

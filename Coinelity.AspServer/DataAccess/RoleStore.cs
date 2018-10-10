@@ -68,7 +68,7 @@ namespace Coinelity.AspServer.DataAccess
             return await GetUserRolesByUserIdAsync( userId );
         }
 
-        // TODO: Change to string.
+        // TODO: Change to string[].
         public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserIdAsync(string userId)
         {
             IList<Dictionary<string, object>> userRolesDictionaryList = await MSSQLClient.QueryOnceAsync(

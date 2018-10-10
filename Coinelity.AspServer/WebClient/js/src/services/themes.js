@@ -61,4 +61,6 @@ class Themes {
     document.getElementById( 'sidenav' ).style.backgroundColor = theme.sidenav;
     document.getElementsByClassName( 'top-bar' )[0].style.backgroundColor = theme.topbar;
   }
+
+  static update() {}
 }

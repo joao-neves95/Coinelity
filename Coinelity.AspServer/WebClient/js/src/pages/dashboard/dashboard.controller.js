@@ -9,6 +9,9 @@
 
 let dashboardController = null;
 
+/**
+ * The Dashboard page controller.
+ */
 class DashboardController extends ControllerBase {
   constructor() {
     if ( dashboardController )
