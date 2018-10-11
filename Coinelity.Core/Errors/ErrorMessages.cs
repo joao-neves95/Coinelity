@@ -14,6 +14,11 @@ using System.Threading.Tasks;
 
 namespace Coinelity.Core.Errors
 {
+    /// <summary>
+    /// 
+    /// The error messages constants.
+    /// 
+    /// </summary>
     public static class ErrorMessages
     {
         public const string EmailAlreadyInUse = "Email already in use.";
@@ -31,6 +36,10 @@ namespace Coinelity.Core.Errors
         public const string CouldNotChangePassword = "There was an error while changing the password.";
 
         public const string LoginError = "Wrong email or password.";
+
+        public const string WrongAccountType = "Wrong account type ( send: \"realBalance\" or \"paperBalance\" ).";
+
+        public const string InsufficientFunds = "Not enough funds to complete the operation.";
 
         public const string NotFound = "Not Found";
 

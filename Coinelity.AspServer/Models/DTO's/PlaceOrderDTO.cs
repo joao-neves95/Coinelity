@@ -9,6 +9,8 @@ namespace Coinelity.AspServer.Models
     {
         public int UserId { get; set; }
 
+        public string AccountType { get; set; }
+
         public int AssetId { get; set; }
 
         public int OperationTypeId { get; set; }

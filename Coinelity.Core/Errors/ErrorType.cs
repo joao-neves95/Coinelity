@@ -20,6 +20,8 @@ namespace Coinelity.Core.Errors
         LoginError,
         ProvidedPassDoesNotMatch,
         CouldNotChangePassword,
+        WrongAccountType,
+        InsufficientFunds,
         NotFound,
         UnknownError
     }

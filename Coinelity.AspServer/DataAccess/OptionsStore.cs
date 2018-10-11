@@ -8,7 +8,7 @@ using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer.DataAccess
 {
-    public class OptionsStore
+    public class OptionsStore : IDisposable
     {
         private readonly SqlConnection _connection;
 
@@ -24,12 +24,13 @@ namespace Coinelity.AspServer.DataAccess
 
         /// <summary>
         /// 
-        /// Inserts a new order and returns the number of affected rows. Should be 1. If it's 0 there was an error. 
+        /// Inserts a new order (creates a new open order) and returns the number of affected rows. 
+        /// Should return 1. If it's 0 or -1 there was an error. 
         /// 
         /// </summary>
         /// <param name="placeOrderDTO"></param>
         /// <returns></returns>
-        public async Task<int> InsertOrderAsync(PlaceOrderDTO placeOrderDTO)
+        public async Task<int> OpenOrderAsync(PlaceOrderDTO placeOrderDTO)
         {
             int payoutPercent = await GetOptionPayoutPercentByAssetId( placeOrderDTO.AssetId );
 
@@ -56,7 +57,7 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="orderId"> The Id of the order. </param>
         /// <param name="userId"> Optional (RECOMENDED). Confirm that the order belongs to the user.</param>
-        public async Task<Dictionary<string, object>> GetOrderAsync(int orderId, int? userId = null)
+        public async Task<Dictionary<string, object>> GetOpenOrderAsync(int orderId, int? userId = null)
         {
             string query = @"SELECT *
                              FROM dbo.ActiveOption

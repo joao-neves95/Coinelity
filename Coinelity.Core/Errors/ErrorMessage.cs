@@ -39,6 +39,12 @@ namespace Coinelity.Core.Errors
                 case ErrorType.CouldNotChangePassword:
                     ERROR = ErrorMessages.CouldNotChangePassword;
                     break;
+                case ErrorType.WrongAccountType:
+                    ERROR = ErrorMessages.WrongAccountType;
+                    break;
+                case ErrorType.InsufficientFunds:
+                    ERROR = ErrorMessages.InsufficientFunds;
+                    break;
                 case ErrorType.NotFound:
                     ERROR = ErrorMessages.NotFound;
                     break;

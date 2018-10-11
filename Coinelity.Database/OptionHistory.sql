@@ -6,12 +6,12 @@
     OperationTypeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OperationType( Id ),
     LifetimeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionLifetime( Id ),
     PayoutPercentId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionPayout( Id ),
-    StrikePrice DECIMAL NOT NULL,
+    StrikePrice DECIMAL(16,4) NOT NULL,
     InvestmentAmount FLOAT NOT NULL,
     OpenTimestamp DATETIME2 NOT NULL,
     CloseTimestamp DATETIME2 NOT NULL,
-    ClosePrice DECIMAL NOT NULL,
-    ProfitLossFiat DECIMAL NOT NULL,
+    ClosePrice DECIMAL(16,4) NOT NULL,
+    ProfitLossFiat DECIMAL(16,4) NOT NULL,
     ProfitLossPercent FLOAT NOT NULL
 )
 GO

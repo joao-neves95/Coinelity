@@ -17,6 +17,7 @@ CREATE TABLE dbo.ApplicationUser
     GoogleCode NVARCHAR(100) NULL DEFAULT '',
     PhoneNumber NVARCHAR(40) NULL UNIQUE DEFAULT '',
     PhoneNumberConfirmed BIT NOT NULL DEFAULT 0,
+    -- TODO: Add country, birth date, etc.
     LockoutEnabledEnabled BIT NOT NULL DEFAULT 0,
     LockoutEnd DATETIME NULL,
     CreateDate DATETIME NOT NULL DEFAULT GETUTCDATE()

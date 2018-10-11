@@ -225,6 +225,12 @@ namespace Coinelity.Core.Data
 
         #region TRANSACTION
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="sqlCommands"> Use MSSQLClient.ParameterizeCommand() </param>
+        /// <returns></returns>
         public static async Task<bool> NonQueryTransactionOnceAsync(SqlConnection connection, SqlCommand[] sqlCommands)
         {
             try
@@ -248,6 +254,12 @@ namespace Coinelity.Core.Data
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="sqlCommands"> Use MSSQLClient.ParameterizeCommand() </param>
+        /// <returns></returns>
         public static async Task<bool> NonQueryTransactionAsync(SqlConnection connection, SqlCommand[] sqlCommands)
         {
             try

@@ -6,7 +6,7 @@
     OperationTypeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OperationType( Id ),
     LifetimeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionLifetime( Id ),
     PayoutPercent TINYINT NOT NULL CHECK (PayoutPercent > 0),
-    StrikePrice DECIMAL NOT NULL,
+    StrikePrice DECIMAL(16,4) NOT NULL,
     InvestmentAmount FLOAT NOT NULL,
     OpenTimestamp DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME() CHECK (OpenTimestamp >= SYSUTCDATETIME())
 )

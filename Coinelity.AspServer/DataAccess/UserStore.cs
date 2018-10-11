@@ -65,20 +65,20 @@ namespace Coinelity.AspServer.DataAccess
                     }),
                 new SqlCommand(
                     $@"INSERT INTO dbo.ApplicationUserRoles (UserId)
-                       VALUES (({ userIdQuery }))",
+                       VALUES ({ userIdQuery })",
                     connection),
                 new SqlCommand(
                     $@"INSERT INTO dbo.ApplicationUserSettings (UserId, LastUpdate)
-                      VALUES (({ userIdQuery }), GETUTCDATE())",
+                      VALUES ({ userIdQuery }, GETUTCDATE())",
                     connection),
                 new SqlCommand(
                     $@"INSERT INTO dbo.ApplicationUserAccount (UserId)
-                      VALUES (({ userIdQuery }))",
+                      VALUES ({ userIdQuery })",
                     connection),
                 MSSQLClient.ParameterizeCommand(
                     connection,
                     $@"INSERT INTO dbo.AuditLog (UserId, EventTypeId, UserIP)
-                       VALUES (({ userIdQuery }), { (int)EventType.Register }, @IpAddress)",
+                       VALUES ({ userIdQuery }, { (int)EventType.Register }, @IpAddress)",
                     new Dictionary<string, object>
                     {
                         { "@IpAddress", user.IpAddress }
@@ -95,7 +95,7 @@ namespace Coinelity.AspServer.DataAccess
 
         /// <summary>
         /// 
-        /// NOT IMPLEMENTED.
+        /// USERS WILL NOT BE DELETED.
         /// 
         /// </summary>
         /// <param name="user"></param>
