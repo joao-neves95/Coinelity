@@ -22,6 +22,7 @@ namespace Coinelity.Core.Errors
         CouldNotChangePassword,
         WrongAccountType,
         InsufficientFunds,
+        UnknownExchange,
         NotFound,
         UnknownError
     }

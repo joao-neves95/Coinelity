@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using Coinelity.Core;
 using Coinelity.Core.Data;
 using Coinelity.AspServer.Models;
 
@@ -12,9 +13,9 @@ namespace Coinelity.AspServer.DataAccess
     {
         private readonly SqlConnection _connection;
 
-        public OptionsStore()
+        public OptionsStore( bool createConnection = true )
         {
-            this._connection = Env.GetMSSQLConnection();
+            this._connection = createConnection ? Env.GetMSSQLConnection() : null;
         }
 
         public void Dispose()
@@ -24,17 +25,19 @@ namespace Coinelity.AspServer.DataAccess
 
         /// <summary>
         /// 
-        /// Inserts a new order (creates a new open order) and returns the number of affected rows. 
-        /// Should return 1. If it's 0 or -1 there was an error. 
+        /// The command for opening a new order.
         /// 
         /// </summary>
         /// <param name="placeOrderDTO"></param>
+        /// <param name="connection"> If null, it defaults to this class on creation's connection, and if not null it's used the provided connection instead </param>
         /// <returns></returns>
-        public async Task<int> OpenOrderAsync(PlaceOrderDTO placeOrderDTO)
+        public async Task<SqlCommand> OpenOrderCmdAsync(PlaceOrderDTO placeOrderDTO, SqlConnection connection = null)
         {
             int payoutPercent = await GetOptionPayoutPercentByAssetId( placeOrderDTO.AssetId );
 
-            return await MSSQLClient.CommandOnceAsync( _connection,
+            connection = connection == null ? _connection : connection;
+
+            return MSSQLClient.ParameterizeCommand( connection,
                 @"INSERT INTO dbo.ActiveOption (UserId, AssetId, OperationTypeId, LifetimeId, PayoutPercent, StrikePrice, InvestmentAmount)
                   VALUES (@UserId, @AssetId, @OperationTypeId, @LifetimeId, @PayoutPercent, @StrikePrice, @InvestmentAmount)",
                 new Dictionary<string, object>
@@ -52,12 +55,27 @@ namespace Coinelity.AspServer.DataAccess
 
         /// <summary>
         /// 
+        /// Inserts a new order (creates a new open order) and returns the number of affected rows. 
+        /// Should return 1. If it's 0 or -1 there was an error. 
+        /// 
+        /// </summary>
+        /// <param name="placeOrderDTO"></param>
+        /// <returns></returns>
+        public async Task<int> OpenOrderAsync(PlaceOrderDTO placeOrderDTO)
+        {
+            return await MSSQLClient.CommandOnceAsync( _connection, await OpenOrderCmdAsync( placeOrderDTO ) );
+        }
+
+        /// <summary>
+        /// 
         /// Get order by id.
+        /// 
+        /// It retruns an empty Dictionary if not found.
         /// 
         /// </summary>
         /// <param name="orderId"> The Id of the order. </param>
         /// <param name="userId"> Optional (RECOMENDED). Confirm that the order belongs to the user.</param>
-        public async Task<Dictionary<string, object>> GetOpenOrderAsync(int orderId, int? userId = null)
+        public async Task<ActiveOption> GetActiveOrderAsync(int orderId, int? userId = null)
         {
             string query = @"SELECT *
                              FROM dbo.ActiveOption
@@ -70,11 +88,41 @@ namespace Coinelity.AspServer.DataAccess
             if (userId != null)
             {
                 query += " AND UserId = @UserId";
-                parameters.Add( "UserId", userId );
+                parameters.Add( "@UserId", userId );
             }
 
             IList<Dictionary<string, object>> orderListDict = await MSSQLClient.QueryOnceAsync( _connection, query, parameters );
-            return orderListDict[0];
+
+            return orderListDict.Count > 0 ? orderListDict[0].ToObject<ActiveOption>() : new ActiveOption();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"> If null it returns relative to all users instead of a specific user </param>
+        /// <param name="connection"> If null, it defaults to this class on creation's connection, and if not null it's used the provided connection instead </param>
+        /// <returns></returns>
+        public async Task<int> GetLastActiveOrderAsync(int? userId = null, SqlConnection connection = null)
+        {
+            connection = connection == null ? _connection : connection;
+
+            string query = @"SELECT MAX(Id) AS Id
+                             FROM dbo.ActiveOption
+                             WHERE UserId = @UserId";
+
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+
+            const string whereClause = " WHERE UserId = @UserId";
+
+            if (userId != null)
+            {
+                query += whereClause;
+                parameters.Add( "@UserId", userId );
+            }
+
+            IList<Dictionary<string, object>> activeOrderIdListDict = await MSSQLClient.QueryOnceAsync( connection, query, parameters );
+
+            return Convert.ToInt32( activeOrderIdListDict[0]["Id"] );
         }
 
         public async Task<IList<Dictionary<string, object>>> GetUserOrderHistoryAsync(int userId)
@@ -111,10 +159,10 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
-        public async Task<int> GetOptionPayoutPercentByAssetId(int assetId)
+        public Task<int> GetOptionPayoutPercentByAssetId(int assetId)
         {
             const string whereClause = "WHERE AssetId = @Id";
-            return await GetOptionPayoutPercent( whereClause, assetId );
+            return GetOptionPayoutPercent( whereClause, assetId );
         }
 
         /// <summary>
@@ -136,10 +184,28 @@ namespace Coinelity.AspServer.DataAccess
                     { "@Id", id }
                 } );
 
-            if (payoutListDict.Count <= 0)
-                return -1;
+            return payoutListDict.Count > 0 ? Convert.ToInt16( payoutListDict[0]["Payout"] ) : -1;
+        }
 
-            return Convert.ToInt16( payoutListDict[0]["Payout"] );
+        /// <summary>
+        /// 
+        /// Returns -1 if not found.
+        /// 
+        /// </summary>
+        /// <param name="optionLifetimeId"></param>
+        /// <returns></returns>
+        public async Task<int> GetLifetimeById(int optionLifetimeId)
+        {
+            IList<Dictionary<string, object>> lifetimeListDict = await MSSQLClient.QueryOnceAsync( _connection,
+                $@"SELECT LifetimeMinutes
+                   FROM dbo.OptionLifetime
+                   WHERE Id = @LifetimeId",
+                new Dictionary<string, object>
+                {
+                    { "@LifetimeId", optionLifetimeId }
+                } );
+
+            return lifetimeListDict.Count > 0 ? Convert.ToInt32( lifetimeListDict[0]["LifetimeMinutes"] ) : -1;
         }
     }
 }

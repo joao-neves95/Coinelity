@@ -1,6 +1,6 @@
 ﻿CREATE TABLE dbo.ActiveOption
 (
-    OrderId INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     UserId INT NOT NULL FOREIGN KEY REFERENCES dbo.ApplicationUser( Id ),
     AssetId INT NOT NULL FOREIGN KEY REFERENCES dbo.Asset( Id ),
     OperationTypeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OperationType( Id ),

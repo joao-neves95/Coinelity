@@ -20,5 +20,10 @@ namespace Coinelity.AspServer.Models
         public decimal StrikePrice { get; set; }
 
         public float InvestmentAmount { get; set; }
+
+        /// <summary>
+        /// To be used when sending the place order success response.
+        /// </summary>
+        public int ActiveOrderId { get; set; }
     }
 }

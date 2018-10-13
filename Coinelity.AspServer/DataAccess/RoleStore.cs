@@ -20,7 +20,7 @@ using Coinelity.Core.Data;
 
 namespace Coinelity.AspServer.DataAccess
 {
-    public class RoleStore : IRoleStore<ApplicationRole>
+    public class RoleStore : IDisposable, IRoleStore<ApplicationRole>
     {
         private readonly SqlConnection _connection;
 

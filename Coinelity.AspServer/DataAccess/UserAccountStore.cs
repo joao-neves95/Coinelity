@@ -12,9 +12,9 @@ namespace Coinelity.AspServer.DataAccess
     {
         private readonly SqlConnection _connection;
 
-        public UserAccountStore()
+        public UserAccountStore( bool createConnection = true )
         {
-            this._connection = Env.GetMSSQLConnection();
+            this._connection = createConnection ? Env.GetMSSQLConnection() : null;
         }
 
         public void Dispose()
@@ -58,19 +58,18 @@ namespace Coinelity.AspServer.DataAccess
 
         /// <summary>
         /// 
-        /// If successful returns 2 (number of updated rows), if no rows where changed it returns 0, and if an error occured it returns -1.
-        /// 
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="userAccountType"></param>
         /// <param name="amountToFreeze"></param>
+        /// <param name="connection"> If null, it defaults to this classes's on creation connection, and if not null it's used the provided connection instead </param>
         /// <returns></returns>
-        public Task<int> FreezeUserBalance(int userId, UserAccountType userAccountType, decimal amountToFreeze)
+        public SqlCommand FreezeUserBalanceCmd(int userId, UserAccountType userAccountType, decimal amountToFreeze, SqlConnection connection = null)
         {
             const string accountType = nameof( userAccountType );
+            connection = connection == null ? _connection : connection;
 
-            return MSSQLClient.CommandOnceAsync(
-                _connection,
+            return MSSQLClient.ParameterizeCommand( connection,
                 $@"UPDATE dbo.ApplicationUserAccount
                    SET
                        dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} - @AmmountToFreeze),
@@ -84,11 +83,25 @@ namespace Coinelity.AspServer.DataAccess
             );
         }
 
-        public void UpdateBalance(int userId, UserAccountType userAccountType, decimal amountToUpdate)
+        /// <summary>
+        /// 
+        /// If successful returns 2 (number of updated rows), if no rows where changed it returns 0, and if an error occured it returns -1.
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="userAccountType"></param>
+        /// <param name="amountToFreeze"></param>
+        /// <returns></returns>
+        public Task<int> FreezeUserBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToFreeze)
+        {
+            return MSSQLClient.CommandOnceAsync( _connection, FreezeUserBalanceCmd( userId, userAccountType, amountToFreeze ) );
+        }
+
+        public void UpdateBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUpdate)
         {
         }
 
-        public Task UpdateAndUnfreezeBalance(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false)
+        public Task UpdateAndUnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false)
         {
             const string accountType = nameof( userAccountType );
             string addToBalanceStatement;

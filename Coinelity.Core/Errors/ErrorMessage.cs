@@ -45,6 +45,9 @@ namespace Coinelity.Core.Errors
                 case ErrorType.InsufficientFunds:
                     ERROR = ErrorMessages.InsufficientFunds;
                     break;
+                case ErrorType.UnknownExchange:
+                    ERROR = ErrorMessages.UnknownExchange;
+                    break;
                 case ErrorType.NotFound:
                     ERROR = ErrorMessages.NotFound;
                     break;

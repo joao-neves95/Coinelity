@@ -31,7 +31,7 @@ namespace Coinelity.Core.Errors
 
         public const string MinPasswordLength = "The Password must have at least 8 characters.";
 
-        public const string ProvidedPassDoesNotMatch = "The provided password does not match with the current password.";
+        public const string ProvidedPassDoesNotMatch = "The provided password does not match the current password.";
 
         public const string CouldNotChangePassword = "There was an error while changing the password.";
 
@@ -40,6 +40,8 @@ namespace Coinelity.Core.Errors
         public const string WrongAccountType = "Wrong account type ( send: \"realBalance\" or \"paperBalance\" ).";
 
         public const string InsufficientFunds = "Not enough funds to complete the operation.";
+
+        public const string UnknownExchange = "Unknown exchange name. The provided exchange name is not valid or not supported by Coinelity.";
 
         public const string NotFound = "Not Found";
 

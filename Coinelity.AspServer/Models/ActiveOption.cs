@@ -7,7 +7,7 @@ namespace Coinelity.AspServer.Models
 {
     public class ActiveOption
     {
-        public int OrderId { get; set; }
+        public int Id { get; set; }
 
         public int UserId { get; set; }
 
@@ -16,6 +16,8 @@ namespace Coinelity.AspServer.Models
         public int OperationTypeId { get; set; }
 
         public int LifetimeId { get; set; }
+
+        public short PayoutPercent { get; set; }
 
         public decimal StrikePrice { get; set; }
 
