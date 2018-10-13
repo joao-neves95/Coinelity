@@ -34,11 +34,11 @@ Type safe Class List(): let list = new List('string' | 'number' | 'int' | 'float
 */
 
 class Errors {
-  static get existingKey() { throw new Error('An item with the same key has already been added.'); };
+  static get existingKey() { throw new Error( 'An item with the same key has already been added.' ); };
 
-  static get noTypeProvided() { throw new Error('No type provided on Collection instantiation.') };
+  static get noTypeProvided() { throw new Error( 'No type provided on Collection instantiation.' ) };
 
-  static wrongType(type) { throw new Error(`The value is not from the same type as the List<${type}>`); };
+  static wrongType( type ) { throw new Error( `The value is not from the same type as the List<${type}>` ); };
 }
 
 class Collection {
@@ -127,7 +127,7 @@ class Dictionary extends Collection {
 
   remove( key ) {
     const index = this.findIndexOfKey( key );
-    if ( !index )
+    if ( index === false )
       return false;
 
     this.splice( index );
@@ -151,20 +151,31 @@ class Dictionary extends Collection {
     return Object.keys( this.elements[index] )[0];
   }
 
+  /**
+   * Returns the value by key or <false> if not found.
+   * @param { any } key
+   * @returns { any | false }
+   */
   getByKey( key ) {
     try {
-      return this.elements[this.findIndexOfKey( key )][key];
+      const keyIdx = this.findIndexOfKey( key );
+
+      if ( keyIdx === false )
+        return false;
+
+      return this.elements[keyIdx][key];
+
     } catch ( e ) {
       console.error( e );
     }
-  };
+  }
 
-  findIndexOfKey( key, Callback ) {
+  findIndexOfKey( key ) {
     for ( let i = 0; i < this.elements.length; i++ ) {
-      if ( Object.keys( this.elements[i] )[0] === key ) {
+      if ( Object.keys( this.elements[i] )[0] === key )
         return i;
-      }
     }
+
     return false;
   }
 }
@@ -177,15 +188,15 @@ class List extends Collection {
    * ('string' | 'number' | 'int' | 'float' | 'boolean' | 'any')
    * @param {String} type
    */
-  constructor(type) {
-    super(false, type);
+  constructor( type ) {
+    super( false, type );
   }
 
   /**
    * Add a new item to the List<T>.
    * @param {Type} value
    */
-  add(value) {
+  add( value ) {
     switch ( this.type ) {
       case 'any':
         this.push( value );
@@ -196,15 +207,15 @@ class List extends Collection {
           break;
         }
       case 'float':
-        if (this.isFloat(value)) {
-          this.push(value);
+        if ( this.isFloat( value ) ) {
+          this.push( value );
           break;
         }
       default:
-        if (typeof value === this.type && value !== 'float' && value !== 'int')
-          this.push(value);
+        if ( typeof value === this.type && value !== 'float' && value !== 'int' )
+          this.push( value );
         else
-          throw Errors.wrongType(this.type);
+          throw Errors.wrongType( this.type );
     }
   }
 
@@ -212,16 +223,16 @@ class List extends Collection {
    * Remove an new item from the List<T> by index.
    * @param {Number} index
    */
-  remove(index) {
-    this.splice(index);
+  remove( index ) {
+    this.splice( index );
   };
 
   /**
    * (private)
    * @param {Number} value
    */
-  isInt(value) {
-    if (typeof value !== 'number')
+  isInt( value ) {
+    if ( typeof value !== 'number' )
       return false;
 
     return value % 1 === 0;
@@ -231,12 +242,10 @@ class List extends Collection {
    * (private)
    * @param {Number} value
    */
-  isFloat(value) {
-    if (typeof value !== 'number')
+  isFloat( value ) {
+    if ( typeof value !== 'number' )
       return false;
 
     return value % 1 !== 0;
   }
 }
-
-// #endregion

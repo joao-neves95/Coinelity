@@ -24,7 +24,7 @@ using Coinelity.Core.Data;
 using Coinelity.Core.Models;
 using Coinelity.Core.Errors;
 
-// TODO: Pass the methods to the Coinelity.Core.
+// TODO: Pass the methods to the Coinelity.Core and modularize them.
 namespace Coinelity.AspServer.Hubs
 {
     public class BinaryOptionsHub : Hub
@@ -60,7 +60,7 @@ namespace Coinelity.AspServer.Hubs
                 else if (accountTypeReq == nameof( UserAccountType.PaperBalance ))
                     accountType = UserAccountType.PaperBalance;
                 else
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
 
                 decimal userBalance = 0.0M;
                 using (userAccountStore = new UserAccountStore())
@@ -71,7 +71,7 @@ namespace Coinelity.AspServer.Hubs
                 if (Convert.ToDecimal( order.InvestmentAmount ) > userBalance)
                 {
                     // If he does not have enough money, send failed response.
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.InsufficientFunds ) } ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.InsufficientFunds ) } ).ToJSON() );
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace Coinelity.AspServer.Hubs
                     using (exchange = new Exchange( "KRAKEN" ))
                     {
                         if (exchange.API == null)
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
+                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
 
                         order.StrikePrice = await exchange.GetLastPrice( "BTC/EUR" );
                     }
@@ -103,7 +103,7 @@ namespace Coinelity.AspServer.Hubs
                         {
                             order.ActiveOrderId = await optionsStore.GetLastActiveOrderAsync( userId, connection );
 
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse",
+                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult",
                                 new ApiResponse( null, null, null,
                                     new object[] { new Dictionary<string, object>
                                         {
@@ -116,7 +116,7 @@ namespace Coinelity.AspServer.Hubs
                         }
                         else
                         {
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
                         }
                     }
                 }
@@ -125,7 +125,7 @@ namespace Coinelity.AspServer.Hubs
             {
                 // TODO: Exeption handling.
                 Console.WriteLine( e );
-                return Clients.Caller.SendAsync( "ReceivePlaceOrderResponse", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+                return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
             }
             finally
             {
@@ -136,9 +136,10 @@ namespace Coinelity.AspServer.Hubs
             }
         }
 
-        public async Task CheckOrder(string orderIdReq)
+        public async Task<Task> CheckOrder(string orderIdReq)
         {
             OptionsStore optionsStore = null;
+            Exchange exchange = null;
 
             int userId = Convert.ToInt32( Utils.GetUserClaim( Context.User, "id" ) );
             int orderId = -1;
@@ -155,31 +156,73 @@ namespace Coinelity.AspServer.Hubs
 
                     // If the InvestmentAmount is 0 it's because the query returned an empty ActiveOption (ActiveOption not found).
                     if (activeOption.InvestmentAmount == 0)
-                        // Send error. Order not found.
-                        return;
+                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 404, "Not Found", new object[] { /* Order not found. */ } ).ToJSON() );
                 }
 
                 using (optionsStore = new OptionsStore())
                 {
                     lifetimeMinutes = await optionsStore.GetLifetimeById( activeOption.LifetimeId );
 
-                    // If the InvestmentAmount is 0 it's because the query returned an empty ActiveOption (ActiveOption not found).
                     if (lifetimeMinutes == -1)
-                        // Send error. Invalid lifetime.
-                        return;
+                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", new object[] { /* Invalid lifetime id. */ } ).ToJSON() );
                 }
 
                 DateTime currentUtcTimestamp = DateTime.UtcNow;
-                // The .AddMinutes() mothod does not change change the value. It returns a **new** DateTime.
+                // The .AddMinutes() mothod does not change change the value of the timestamp. It returns a **new** DateTime.
                 DateTime closeUtcTimestamp = activeOption.OpenTimestamp.AddMinutes( lifetimeMinutes );
 
                 if ( DateTimeOffset.Compare(currentUtcTimestamp, closeUtcTimestamp ) < 0)
                 {
-                    // The option maturity (expiration timestamp) as not yet been met.
+                    // The option maturity (expiration timestamp) has not yet been met.
+                    return Clients.Caller.SendAsync( "ReceiveCheckOrderResult",
+                        new ApiResponse( null, null, null,
+                            new object[] { new Dictionary<string, object>
+                                {
+                                    { "Message", "The option has not yet been expired." },
+                                    { "Order", activeOption }
+                                }
+                            }
+                        ).ToJSON()
+                    );
                 }
                 else
                 {
+                    decimal currentPrice;
+
                     // Check the current price vs. strike price.
+                    // Both Exchange and Symbol are **temporarily** hardcoded.
+                    using (exchange = new Exchange( "KRAKEN" ))
+                    {
+                        if (exchange.API == null)
+                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
+
+                        currentPrice = await exchange.GetLastPrice( "BTC/EUR" );
+                    }
+
+                    // Win/Loss.
+                    switch (activeOption.OperationTypeId)
+                    {
+                        case (int)OperationType.Call:
+                            if (currentPrice < activeOption.StrikePrice)
+                            {
+                                // User lost.
+                            }
+                            else
+                            {
+                                // User won.
+                            }
+                            break;
+                        case (int)OperationType.Put:
+                            if( currentPrice > activeOption.StrikePrice )
+                            {
+                                // User lost.
+                            }
+                            else
+                            {
+                                // User won.
+                            }
+                            break;
+                    }
                 }
             }
             catch (FormatException)
@@ -195,6 +238,7 @@ namespace Coinelity.AspServer.Hubs
             finally
             {
                 optionsStore?.Dispose();
+                exchange?.Dispose();
             }
         }
 
