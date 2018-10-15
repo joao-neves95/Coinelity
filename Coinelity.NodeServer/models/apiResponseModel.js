@@ -8,8 +8,16 @@
  */
 
 class ApiResponseModel {
-  constructor( code, error, data ) {
-    this.code = code;
+  /**
+   * 
+   * @param { number } statusCode Defaults to 200.
+   * @param { string } statusMessage
+   * @param {string[]} error
+   * @param {string[]} data
+   */
+  constructor( statusCode = 200, statusMessage, error = [], data = [] ) {
+    this.statusCode = code.toString();
+    this.statusMessage = statusMessage;
     this.error = error;
     this.data = data;
   }

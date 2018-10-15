@@ -56,6 +56,7 @@ namespace Coinelity.AspServer.Hubs
                 UserAccountType? accountType = Utils.UserAccountTypeResolver( order.AccountType );
 
                 if (accountType == null)
+                    // TODO: Change from the error objects to only error strings (<string[]>) in all responses.
                     return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
 
                 decimal userBalance = 0.0M;
@@ -91,7 +92,7 @@ namespace Coinelity.AspServer.Hubs
                         bool success = await MSSQLClient.NonQueryTransactionAsync( connection,
                             new SqlCommand[]
                             {
-                                userAccountStore.FreezeUserBalanceCmd( userId, accountType, Convert.ToDecimal( order.InvestmentAmount ), connection ),
+                                userAccountStore.FreezeUserBalanceCmd( userId, accountType.Value, Convert.ToDecimal( order.InvestmentAmount ), connection ),
                                 await optionsStore.OpenOrderCmdAsync( order, connection )
                             } );
 

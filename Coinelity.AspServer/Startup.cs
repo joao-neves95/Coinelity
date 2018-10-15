@@ -166,9 +166,9 @@ namespace Coinelity.AspServer
 
             app.UseSignalR( routes =>
              {
-                 routes.MapHub<BinaryOptionsHub>( "/hubs/binary-options" );
-                 routes.MapHub<CFDHub>( "/hubs/cfd" );
-                 routes.MapHub<ChatHub>( "/hubs/chat" );
+                 routes.MapHub<BinaryOptionsHub>( "/binary-options" );
+                 routes.MapHub<CFDHub>( "/cfd" );
+                 routes.MapHub<ChatHub>( "/chat" );
              } );
 
             app.UseMvc();

@@ -8,13 +8,18 @@
  */
 
 'use strict';
-const express = require( 'express' );
-const app = express();
+require( 'dotenv' ).config()
+const app = require( 'express' )();
+const io = require( 'socket.io' )( app );
 const cors = require( 'cors' );
 const corsOptions = require( './middleware/corsOptions' );
 const logger = require( 'morgan' );
+const RequestControl = require( './middleware/requestControl' );
+const requestControl = new RequestControl();
 const apiRoute = require( './routes/index' );
+const commonApiResponses = require( './routes/commonApiResponses' );
 const ApiResponseModel = require( './models/apiResponseModel' );
+
 const PORT = 3003;
 
 app.use( cors( corsOptions ) );
@@ -23,13 +28,52 @@ app.use( logger( 'combined' ) );
 app.use( function ( req, res, next ) {
   res.setHeader( 'X-Powered-By', 'anonymous' );
 
-  next();
+  // TODO: Add the user to the request.
+  req.theUser = '';
+  
+} );
+
+const chat = io
+  .of( '/chat' )
+  .use( function ( socket, next ) {
+
+    const req = socket.request;
+
+    requestControl.control( req, console.log, ( result ) => {
+
+      switch ( result ) {
+        case RequestControlResult.AuthFailed:
+          return commonApiResponses.notAuthorized();
+
+        case RequestControlResult.Blacklisted:
+          return commonApiResponses.blacklisted();
+
+        case RequestControlResult.Accepted:
+          return next();
+      }
+
+    } );
+
+    socket.to( socket.id ).emit('')
+    
+    next();
+  } )
+  .on( 'connection', function ( socket ) {
+    socket.emit( 'Hello-World', { hello: 'world' } );
+
+    socket.on( 'client event', function ( data ) {
+      console.log( data );
+    } );
+
+    socket.on( 'disconnect', function () {
+      io.emit( 'user disconnected' );
+    } );
 } );
 
 app.use( '/api', apiRoute );
 
 app.use( '*', ( req, res ) => {
-  return res.status( 404 ).send( JSON.stringify( new ApiResponseModel( 404, 'Resource not found.', null ) ) );
+  return res.status( 404 ).send( JSON.stringify( new ApiResponseModel( 404, 'Not Found', ['Resource not found.'] ) ) );
 } );
 
 app.listen( PORT, () => {

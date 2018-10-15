@@ -28,6 +28,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="enums\requestControlResult.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="middleware\corsOptions.js">
       <SubType>Code</SubType>
     </Compile>
@@ -37,10 +40,10 @@
     <Compile Include="middleware\requestControl.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="models\apiResponseModel.js">
+    <Compile Include="middleware\utils.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="models\changeModel.js">
+    <Compile Include="models\apiResponseModel.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="models\ipControlModel.js">
@@ -49,19 +52,26 @@
     <Compile Include="models\requestControlModel.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="models\spreadPricesModel.js">
+    <Compile Include="models\userModel.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="routes\commonApiResponses.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="server.js" />
     <Compile Include="routes\index.js">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include=".env">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="models\" />
     <Folder Include="middleware\" />
+    <Folder Include="enums\" />
     <Folder Include="routes\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->

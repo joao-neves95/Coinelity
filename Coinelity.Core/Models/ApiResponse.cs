@@ -35,14 +35,7 @@ namespace Coinelity.Core.Models
 
         public string ToJSON()
         {
-            return JsonConvert.SerializeObject(
-                new ApiResponse(
-                    this.StatusCode,
-                    this.StatusMessage,
-                    this.Errors,
-                    this.Data
-                ),
-            Formatting.Indented );
+            return JsonConvert.SerializeObject( this, Formatting.Indented );
         }
     }
 }
