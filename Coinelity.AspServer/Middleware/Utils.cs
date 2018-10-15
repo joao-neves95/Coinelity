@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
+using Coinelity.AspServer.Enums;
 
 namespace Coinelity.AspServer.Middleware
 {
@@ -32,6 +33,26 @@ namespace Coinelity.AspServer.Middleware
             }
 
             return errors;
+        }
+
+        /// <summary>
+        /// 
+        /// Returns <null> if the a account type is not valid.
+        /// 
+        /// </summary>
+        /// <param name="accountType"> UserAccountType string (pascal case) or JSON (camel case) representation </param>
+        /// <returns></returns>
+        public static UserAccountType? UserAccountTypeResolver(string accountType, bool isJson = true)
+        {
+            if (isJson)
+                accountType = char.ToUpper( accountType[0] ) + accountType.Substring( 1 );
+
+            if (accountType == nameof( UserAccountType.RealBalance ))
+                return UserAccountType.RealBalance;
+            else if (accountType == nameof( UserAccountType.PaperBalance ))
+                return UserAccountType.PaperBalance;
+            else
+                return null;
         }
 
         /// <summary>

@@ -46,26 +46,22 @@ namespace Coinelity.AspServer.Hubs
 
             try
             {
+                // TODO: Handle Deserialization exceptions.
                 // TODO: Test if not having the strike price on the placeOrderDTO gives an error.
                 // TODO: Validate placeOrderDTO.
                 PlaceOrderDTO order = JsonConvert.DeserializeObject<PlaceOrderDTO>( placeOrderDTO );
 
                 // Check if user has enough money.
                 int userId = Convert.ToInt32( Utils.GetUserClaim( Context.User, "id" ) );
-                string accountTypeReq = char.ToUpper( order.AccountType[0] ) + order.AccountType.Substring( 1 );
-                UserAccountType accountType;
+                UserAccountType? accountType = Utils.UserAccountTypeResolver( order.AccountType );
 
-                if (accountTypeReq == nameof( UserAccountType.RealBalance ))
-                    accountType = UserAccountType.RealBalance;
-                else if (accountTypeReq == nameof( UserAccountType.PaperBalance ))
-                    accountType = UserAccountType.PaperBalance;
-                else
+                if (accountType == null)
                     return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
 
                 decimal userBalance = 0.0M;
                 using (userAccountStore = new UserAccountStore())
                 {
-                    userBalance = await userAccountStore.GetUserBalanceAsync( userId, accountType );
+                    userBalance = await userAccountStore.GetUserBalanceAsync( userId, accountType.Value );
                 }
 
                 if (Convert.ToDecimal( order.InvestmentAmount ) > userBalance)
@@ -136,36 +132,35 @@ namespace Coinelity.AspServer.Hubs
             }
         }
 
-        public async Task<Task> CheckOrder(string orderIdReq)
+        public async Task<Task> CheckOrder(string checkOrderDTO)
         {
+            // TODO: Handle Deserialization exceptions.
+            CheckOrderDTO order = JsonConvert.DeserializeObject<CheckOrderDTO>( checkOrderDTO );
             OptionsStore optionsStore = null;
+            UserAccountStore userAccountStore = null;
             Exchange exchange = null;
 
             int userId = Convert.ToInt32( Utils.GetUserClaim( Context.User, "id" ) );
-            int orderId = -1;
-            int lifetimeMinutes;
 
             try
             {
-                orderId = Convert.ToInt32( orderIdReq );
-                ActiveOption activeOption;
+                UserAccountType? userAccountType = Utils.UserAccountTypeResolver( order.AccountType );
+
+                if (userAccountType == null)
+                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
+
+                ActiveOptionJoined activeOption;
 
                 using (optionsStore = new OptionsStore())
                 {
-                    activeOption = await optionsStore.GetActiveOrderAsync( Convert.ToInt32( orderId ), userId );
+                    activeOption = await optionsStore.GetActiveOrderAsync( Convert.ToInt32( order.OrderId ), userId );
 
                     // If the InvestmentAmount is 0 it's because the query returned an empty ActiveOption (ActiveOption not found).
                     if (activeOption.InvestmentAmount == 0)
                         return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 404, "Not Found", new object[] { /* Order not found. */ } ).ToJSON() );
                 }
 
-                using (optionsStore = new OptionsStore())
-                {
-                    lifetimeMinutes = await optionsStore.GetLifetimeById( activeOption.LifetimeId );
-
-                    if (lifetimeMinutes == -1)
-                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", new object[] { /* Invalid lifetime id. */ } ).ToJSON() );
-                }
+                int lifetimeMinutes = activeOption.Lifetime;
 
                 DateTime currentUtcTimestamp = DateTime.UtcNow;
                 // The .AddMinutes() mothod does not change change the value of the timestamp. It returns a **new** DateTime.
@@ -189,45 +184,62 @@ namespace Coinelity.AspServer.Hubs
                 {
                     decimal currentPrice;
 
-                    // Check the current price vs. strike price.
-                    // Both Exchange and Symbol are **temporarily** hardcoded.
-                    using (exchange = new Exchange( "KRAKEN" ))
+                    using (exchange = new Exchange( activeOption.ExchangeName ))
                     {
                         if (exchange.API == null)
                             return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
 
-                        currentPrice = await exchange.GetLastPrice( "BTC/EUR" );
+                        currentPrice = await exchange.GetLastPrice( activeOption.Symbol );
                     }
 
-                    // Win/Loss.
+                    decimal investmentAmount = Convert.ToDecimal( activeOption.InvestmentAmount );
+                    decimal payoutValue = ( activeOption.PayoutPercent * investmentAmount ) / 100;
+
+                    // Win/Loss Logic.
                     switch (activeOption.OperationTypeId)
                     {
                         case (int)OperationType.Call:
                             if (currentPrice < activeOption.StrikePrice)
                             {
                                 // User lost.
+                                using (userAccountStore = new UserAccountStore())
+                                {
+                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false);
+                                    // TODO: Send lost balance to Coinelity's bank account.
+                                }
                             }
                             else
                             {
                                 // User won.
+                                using (userAccountStore = new UserAccountStore())
+                                {
+                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
+                                }
                             }
                             break;
+
                         case (int)OperationType.Put:
                             if( currentPrice > activeOption.StrikePrice )
                             {
                                 // User lost.
+                                using (userAccountStore = new UserAccountStore())
+                                {
+                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false );
+                                    // TODO: Send lost balance to Coinelity's bank account.
+                                }
                             }
                             else
                             {
                                 // User won.
+                                using (userAccountStore = new UserAccountStore())
+                                {
+                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
+                                    // TODO: Send lost balance to Coinelity's bank account.
+                                }
                             }
                             break;
                     }
                 }
-            }
-            catch (FormatException)
-            {
-                // Send Error (orderId is not a number).
             }
             catch (Exception e)
             {
@@ -238,6 +250,7 @@ namespace Coinelity.AspServer.Hubs
             finally
             {
                 optionsStore?.Dispose();
+                userAccountStore?.Dispose();
                 exchange?.Dispose();
             }
         }

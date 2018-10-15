@@ -101,13 +101,22 @@ namespace Coinelity.AspServer.DataAccess
         {
         }
 
-        public Task UpdateAndUnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="userAccountType"></param>
+        /// <param name="amountToUnfreeze"></param>
+        /// <param name="addToBalance"> If true, it adds the amountToUnfreeze parameter to the user's balance </param>
+        /// <param name="amountToAdd"> Optional. The amount to add to the user's balance </param>
+        /// <returns></returns>
+        public Task UnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
         {
             const string accountType = nameof( userAccountType );
             string addToBalanceStatement;
 
             if (addToBalance)
-                addToBalanceStatement = $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + @AmmountToFreeze),";
+                addToBalanceStatement = $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToUnfreeze} + {amountToAdd}),";
             else
                 addToBalanceStatement = "";
 
@@ -117,13 +126,8 @@ namespace Coinelity.AspServer.DataAccess
                    SET
                        {addToBalanceStatement}
                        dbo.ApplicationUserAccount.Freezed{accountType} = (dbo.ApplicationUserAccount.Freezed{accountType} - @AmountToUnfreeze)
-                   WHERE UserId = @UserId",
-                new Dictionary<string, object>
-                {
-                    { "@UserId", userId },
-                    { "@AmountToUnfreeze", amountToUnfreeze }
-                }
-            );
+                   WHERE UserId = {userId}"
+                );
         }
     }
 }

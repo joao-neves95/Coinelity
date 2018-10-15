@@ -75,11 +75,22 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="orderId"> The Id of the order. </param>
         /// <param name="userId"> Optional (RECOMENDED). Confirm that the order belongs to the user.</param>
-        public async Task<ActiveOption> GetActiveOrderAsync(int orderId, int? userId = null)
+        public async Task<ActiveOptionJoined> GetActiveOrderAsync(int orderId, int? userId = null)
         {
-            string query = @"SELECT *
+            //string query = @"SELECT *
+            //                 FROM dbo.ActiveOption
+            //                 WHERE Id = @OrderId";
+
+            string query = @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.OptionLifetime.LifetimeMinutes AS Lifetime, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
                              FROM dbo.ActiveOption
-                             WHERE Id = @OrderId";
+                                 INNER JOIN dbo.Asset
+                                     INNER JOIN dbo.Exchange
+                                     ON dbo.Asset.ExchangeId = dbo.Exchange.Id
+                                 ON dbo.ActiveOption.AssetId = dbo.Asset.Id
+                                 INNER JOIN dbo.OptionLifetime
+                                 ON dbo.ActiveOption.LifetimeId dbo.OptionLifetime.Id
+                             WHERE dbo.ActiveOption.Id = @OrderId";
+
             Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "@OrderId", orderId }
@@ -93,13 +104,13 @@ namespace Coinelity.AspServer.DataAccess
 
             IList<Dictionary<string, object>> orderListDict = await MSSQLClient.QueryOnceAsync( _connection, query, parameters );
 
-            return orderListDict.Count > 0 ? orderListDict[0].ToObject<ActiveOption>() : new ActiveOption();
+            return orderListDict.Count > 0 ? orderListDict[0].ToObject<ActiveOptionJoined>() : new ActiveOptionJoined();
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="userId"> If null it returns relative to all users instead of a specific user </param>
+        /// <param name="userId"> If null, it returns relative to all users instead of a specific user </param>
         /// <param name="connection"> If null, it defaults to this class on creation's connection, and if not null it's used the provided connection instead </param>
         /// <returns></returns>
         public async Task<int> GetLastActiveOrderAsync(int? userId = null, SqlConnection connection = null)

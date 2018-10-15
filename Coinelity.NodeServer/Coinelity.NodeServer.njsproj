@@ -43,13 +43,16 @@
     <Compile Include="models\changeModel.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="models\ipControlModel.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="models\requestControlModel.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="models\spreadPricesModel.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="server.js" />
-    <Compile Include="exchangeClient.js">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="routes\index.js">
       <SubType>Code</SubType>
     </Compile>

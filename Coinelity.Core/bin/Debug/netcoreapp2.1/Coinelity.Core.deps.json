@@ -1,19 +1,34 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "99cadc95181c84154de168f2c3bd1cb9e2ee2d6f"
+    "signature": "d02a251be40c216f15184b223b0da713922780cb"
   },
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v2.1": {
       "Coinelity.Core/1.0.0": {
         "dependencies": {
+          "DigitalRuby.ExchangeSharp": "0.5.8",
           "DotNetEnv": "1.2.0",
           "Isopoh.Cryptography.Argon2": "1.0.8",
           "System.Data.SqlClient": "4.5.1"
         },
         "runtime": {
           "Coinelity.Core.dll": {}
+        }
+      },
+      "DigitalRuby.ExchangeSharp/0.5.8": {
+        "dependencies": {
+          "Microsoft.AspNet.SignalR.Client": "2.3.0",
+          "NLog": "4.5.8",
+          "Newtonsoft.Json": "11.0.2",
+          "System.Configuration.ConfigurationManager": "4.5.0"
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/ExchangeSharp.dll": {
+            "assemblyVersion": "0.5.8.0",
+            "fileVersion": "0.5.8.0"
+          }
         }
       },
       "DotNetEnv/1.2.0": {
@@ -60,6 +75,17 @@
           }
         }
       },
+      "Microsoft.AspNet.SignalR.Client/2.3.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard1.3/Microsoft.AspNet.SignalR.Client.dll": {
+            "assemblyVersion": "2.3.0.0",
+            "fileVersion": "2.3.10626.1544"
+          }
+        }
+      },
       "Microsoft.Win32.Registry/4.5.0": {
         "dependencies": {
           "System.Security.AccessControl": "4.5.0",
@@ -73,6 +99,22 @@
           "runtime/win/lib/_._": {
             "rid": "win",
             "assetType": "runtime"
+          }
+        }
+      },
+      "Newtonsoft.Json/11.0.2": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "11.0.0.0",
+            "fileVersion": "11.0.2.21924"
+          }
+        }
+      },
+      "NLog/4.5.8": {
+        "runtime": {
+          "lib/netstandard2.0/NLog.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.5.8.8046"
           }
         }
       },
@@ -107,6 +149,18 @@
             "rid": "win-x86",
             "assetType": "native",
             "fileVersion": "4.6.25512.1"
+          }
+        }
+      },
+      "System.Configuration.ConfigurationManager/4.5.0": {
+        "dependencies": {
+          "System.Security.Cryptography.ProtectedData": "4.5.0",
+          "System.Security.Permissions": "4.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.6.26515.6"
           }
         }
       },
@@ -190,6 +244,33 @@
           }
         }
       },
+      "System.Security.Cryptography.ProtectedData/4.5.0": {
+        "runtime": {
+          "lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        }
+      },
+      "System.Security.Permissions/4.5.0": {
+        "dependencies": {
+          "System.Security.AccessControl": "4.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Security.Permissions.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        }
+      },
       "System.Security.Principal.Windows/4.5.0": {
         "runtimeTargets": {
           "runtime/unix/lib/_._": {
@@ -244,6 +325,13 @@
       "serviceable": false,
       "sha512": ""
     },
+    "DigitalRuby.ExchangeSharp/0.5.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wSHpGDAe+bn8+g27YaqWoiPiCCMgh76WripNlRXsO4B6P9QeIIuQYivSlGTrfvYpeiBWT0dYtE6olgXSXsBu6A==",
+      "path": "digitalruby.exchangesharp/0.5.8",
+      "hashPath": "digitalruby.exchangesharp.0.5.8.nupkg.sha512"
+    },
     "DotNetEnv/1.2.0": {
       "type": "package",
       "serviceable": true,
@@ -272,12 +360,33 @@
       "path": "isopoh.cryptography.securearray/1.0.8",
       "hashPath": "isopoh.cryptography.securearray.1.0.8.nupkg.sha512"
     },
+    "Microsoft.AspNet.SignalR.Client/2.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4yc83kBdDuL/8A3f7LQ71tmEGTZfpApiuRC2nTdjSGbCAoO2TavR8rn/By34aNxID2FufZCRAoj3EW4oOW0nkg==",
+      "path": "microsoft.aspnet.signalr.client/2.3.0",
+      "hashPath": "microsoft.aspnet.signalr.client.2.3.0.nupkg.sha512"
+    },
     "Microsoft.Win32.Registry/4.5.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-vduxuHEqRgRrTE8wYG8Wxj/+6wwzddOmZzjKZx6rFMc/91aUBxI5etAFYxesoNaIja5NpgSTcnk6cN8BeYXf9A==",
       "path": "microsoft.win32.registry/4.5.0",
       "hashPath": "microsoft.win32.registry.4.5.0.nupkg.sha512"
+    },
+    "Newtonsoft.Json/11.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
+      "path": "newtonsoft.json/11.0.2",
+      "hashPath": "newtonsoft.json.11.0.2.nupkg.sha512"
+    },
+    "NLog/4.5.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-t0NJVxerdU9QYgQQLa4XA3v1eLDBnJ5MF7AyoMxmJu38iAzrB4hVZYcCH3j0tKFKm7fOIx5jNbnAd9GD4mRTEA==",
+      "path": "nlog/4.5.8",
+      "hashPath": "nlog.4.5.8.nupkg.sha512"
     },
     "runtime.native.System.Data.SqlClient.sni/4.4.0": {
       "type": "package",
@@ -306,6 +415,13 @@
       "sha512": "sha512-YhEdSQUsTx+C8m8Bw7ar5/VesXvCFMItyZF7G1AUY+OM0VPZUOeAVpJ4Wl6fydBGUYZxojTDR3I6Bj/+BPkJNA==",
       "path": "runtime.win-x86.runtime.native.system.data.sqlclient.sni/4.4.0",
       "hashPath": "runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "System.Configuration.ConfigurationManager/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-NIY8VUJuSNeXPrV5wjQBKKMcd/vctzEGzQuY15zt3/j7Vd4PXfk/QVIOBlqU1/ONRRUu0dsdk5uUTLSSNY+now==",
+      "path": "system.configuration.configurationmanager/4.5.0",
+      "hashPath": "system.configuration.configurationmanager.4.5.0.nupkg.sha512"
     },
     "System.Data.SqlClient/4.5.1": {
       "type": "package",
@@ -369,6 +485,20 @@
       "sha512": "sha512-aVjTe36YkO8FzfNhMLoPEzv3gF9rphoW9ngFhG/MH4zzEPLx07sNrgCLwMP4Wx2leI6qarMrGv21OwQXYUKLmw==",
       "path": "system.security.accesscontrol/4.5.0",
       "hashPath": "system.security.accesscontrol.4.5.0.nupkg.sha512"
+    },
+    "System.Security.Cryptography.ProtectedData/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wZGwRoLGTuEQBOYXlZmEK41OfmO+vYWbLk7q5ePoFqs6vOKP2kUsOeviEjQoR6MbW9udlDjx9iWhcWOTzSj05w==",
+      "path": "system.security.cryptography.protecteddata/4.5.0",
+      "hashPath": "system.security.cryptography.protecteddata.4.5.0.nupkg.sha512"
+    },
+    "System.Security.Permissions/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vDQ7q30Soe0a1cPhvxn+7IFmMeTG5IP+hTQrnKQDjTNpD2epqwbZSzMM2Git5TXBr4Kwwhc/0SEtJY0qPoiegA==",
+      "path": "system.security.permissions/4.5.0",
+      "hashPath": "system.security.permissions.4.5.0.nupkg.sha512"
     },
     "System.Security.Principal.Windows/4.5.0": {
       "type": "package",
