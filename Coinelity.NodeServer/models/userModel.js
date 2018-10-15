@@ -1,7 +1,10 @@
 ﻿'use strict';
 
 class UserModel {
-  constructor() {
-
+  constructor( ip, JWTToken ) {
+    this.ip = ip;
+    this.JWTToken = JWTToken;
   }
 }
+
+module.exports = UserModel;

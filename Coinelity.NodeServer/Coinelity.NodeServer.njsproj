@@ -28,7 +28,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="enums\requestControlResult.js">
+    <Compile Include="enums\responseStatusCode.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="middleware\corsOptions.js">

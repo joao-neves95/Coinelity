@@ -150,17 +150,6 @@ namespace Coinelity.AspServer
                 OriginalHostHeaderName = "Anonymous",
             } );
 
-            app.Use( async (context, next) =>
-             {
-                 context.Response.OnStarting( () =>
-                 {
-                     context.Response.Headers.Add("Server", "Anonymous");
-                     return Task.FromResult( 0 );
-                 } );
-
-                 await next.Invoke();
-             } );
-
             app.UseHttpsRedirection();
             app.UseAuthentication();
 
@@ -169,6 +158,28 @@ namespace Coinelity.AspServer
                  routes.MapHub<BinaryOptionsHub>( "/binary-options" );
                  routes.MapHub<CFDHub>( "/cfd" );
                  routes.MapHub<ChatHub>( "/chat" );
+             } );
+
+            app.Use( async (context, _next) =>
+            {
+                await _next();
+
+                if (context.Response.StatusCode == StatusCodes.Status401Unauthorized)
+                {
+                    context.Response.Redirect( "/" );
+                    return;
+                }
+            } );
+
+            app.Use( async (context, _next) =>
+             {
+                 context.Response.OnStarting( () =>
+                 {
+                     context.Response.Headers.Add("Server", "Anonymous");
+                     return Task.FromResult( 0 );
+                 } );
+
+                 await _next.Invoke();
              } );
 
             app.UseMvc();

@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -8,9 +8,13 @@
  */
 
 'user strict';
+const isAuthenticated = require( './isAuthenticated' );
+const Utils = require( '../middleware/utils' );
 const RequestControlModel = require( '../models/requestControlModel' );
 const IpControlModel = require( '../models/ipControlModel' );
-const Utils = require( '../middleware/utils' );
+const ResponseStatusCode = require( '../enums/responseStatusCode' );
+
+// TODO: Add max auth failes.
 
 class RequestControl extends RequestControlModel {
   constructor() {
@@ -28,89 +32,102 @@ class RequestControl extends RequestControlModel {
   }
 
   /**
+   * The user get's blacklisted for (x) minutes if he reaches the rate limit or fails authentication.
    * 
-   * @param { string } ip The ip of the request.
-   * @param { Function } next Receives a <boolean> determining if the request passed or not.
+   * @param { Request } request The ip of the request.
    * 
-   * @returns { Function }
+   * @returns { Promise<ResponseStatusCode> }
    */
-  control( request, authFunction, next ) {
-    this.____dumpIfNeeded();
+  control( request ) {
+    return new Promise( async ( resolve, reject ) => {
+      this.____dumpIfNeeded();
 
-    if ( this.backlisted.includes( ip ) )
-      return next( false );
+      if ( this.backlisted.includes( ip ) )
+        return resolve( false );
 
-    const ip = Utils.getIpFromRequest( request );
-    const thisResquestTimestamp = Utils.getUTCTimestamp(); 
-    let thisIpCanPass = false;
-    let ipIsControlled = false;
-    /** @type { IpControlModel } */
-    let thisIpControl;
-    let thisIpControlIdx;
+      const ip = Utils.getIpFromRequest( request );
+      const thisRequestTimestamp = Utils.getUTCTimestamp();
+      let thisIpCanPass = false;
+      let ipIsControlled = false;
+      /** @type { IpControlModel } */
+      let thisIpControl;
+      let thisIpControlIdx;
 
-    for ( let i = 0; i < this.ipControl.length; ++i ) {
-      if ( this.ipControl[i].userIp === ip ) {
-        thisIpControl = this.ipControl[i];
-        thisIpControlIdx = i;
-        ipIsControlled = true;
+      for ( let i = 0; i < this.ipControl.length; ++i ) {
+        if ( this.ipControl[i].userIp === ip ) {
+          thisIpControl = this.ipControl[i];
+          thisIpControlIdx = i;
+          ipIsControlled = true;
+        }
       }
-    }
 
-    if ( !ipIsControlled ) {
-      thisIpControl = new IpControlModel( ip, request.theUser, 1, 1, 1, thisResquestTimestamp, thisResquestTimestamp - Utils.minutesToMiliseconds( this.authMinutesOffset + 1 ) );
-      this.ipControl.push( thisIpControl );
-      thisIpCanPass = true;
-    }
+      if ( !ipIsControlled ) {
+        // Add an offset to the lastAuthTimestamp to request authentication.
+        thisIpControl = new IpControlModel( ip, request.theUser, 1, 1, 1, thisRequestTimestamp, thisRequestTimestamp - Utils.minutesToMiliseconds( this.authMinutesOffset + 1 ) );
+        this.ipControl.push( thisIpControl );
+        thisIpCanPass = true;
+      }
 
-    if ( thisResquestTimestamp - thisIpControl.lastAuthTimestamp >= this.authMinutesOffset ) {
-      const success = this._authenticate();
-      if ( !success )
-        return next( false );
-    }
+      // Authentication.
+      if ( thisRequestTimestamp - thisIpControl.lastAuthTimestamp >= this.authMinutesOffset ) {
+        const result = await this._authenticate( JWTToken );
 
-    // Request control per second.
-    if ( thisResquestTimestamp - thisIpControl.lastRequest <= 1000 && thisIpCanPass ) {
-      if ( thisIpControl.requestsNumSecond >= this.rateLimitSecond )
-        return next( false );
+        if ( result === ResponseStatusCode.Unauthorized ) {
+          this.blacklisted.push( thisIpControl.userIp );
+          return resolve( result );
+        }
+      }
 
-    } else {
-      if ( thisIpCanPass )
-        thisIpControl.requestsNumSecond = 0;
-    }
+      // Request control per second.
+      if ( thisRequestTimestamp - thisIpControl.lastRequest <= 1000 && thisIpCanPass ) {
+        if ( thisIpControl.requestsNumSecond >= this.rateLimitSecond ) {
+          this.blacklisted.push( thisIpControl.userIp );
+          return resolve( ResponseStatusCode.Blacklisted );
+        }
 
-    // Request control per minute.
-    if ( thisResquestTimestamp - this.lastRequest <= 1000 * 60 && thisIpCanPass ) {
-      if ( thisIpControl.requestsNumMinute >= this.rateLimitMinute )
-        return next( false );
+      } else {
+        if ( thisIpCanPass )
+          thisIpControl.requestsNumSecond = 0;
+      }
 
-    } else {
-      if ( thisIpCanPass )
-        thisIpControl.requestsNumMinute = 0;
-    }
+      // Request control per minute.
+      if ( thisRequestTimestamp - this.lastRequest <= 1000 * 60 && thisIpCanPass ) {
+        if ( thisIpControl.requestsNumMinute >= this.rateLimitMinute ) {
+          this.blacklisted.push( thisIpControl.userIp );
+          return resolve( ResponseStatusCode.Blacklisted );
+        }
 
-    thisIpControl.lastRequest = thisResquestTimestamp;
-    ++thisIpControl.requestsNumSecond;
-    ++thisIpControl.requestsNumMinute;
-    ++thisIpControl.totalRequests;
-    this.ipControl[thisIpControlIdx] = thisIpControl;
+      } else {
+        if ( thisIpCanPass )
+          thisIpControl.requestsNumMinute = 0;
+      }
 
+      thisIpControl.lastRequest = thisRequestTimestamp;
+      ++thisIpControl.requestsNumSecond;
+      ++thisIpControl.requestsNumMinute;
+      ++thisIpControl.totalRequests;
+      this.ipControl[thisIpControlIdx] = thisIpControl;
+      return resolve( ResponseStatusCode.Authorized );
+    } );
   }
 
   /**
-   * @returns { boolean }
+   * @returns { Promise<ResponseStatusCode> }
    */
-  _authenticate() {
-    return true;
+  _authenticate( JWTToken ) {
+    return new Promise( async ( resolve, reject ) => {
+      return resolve( await isAuthenticated( JWTToken ) );
+    } );
   }
 
   ____dumpIfNeeded() {
     // IpControl deletion:
-    if ( Utils.milisecondsToMinutes( thisResquestTimestamp - this.lastControlDelTimstamp ) >= this.delControlMinutesOffset ) {
+    if ( Utils.milisecondsToMinutes( thisRequestTimestamp - this.lastControlDelTimstamp ) >= this.delControlMinutesOffset ) {
       this.ipControl = [];
     }
 
     // Blacklisted deletion:
-    if ( Utils.milisecondsToMinutes( thisResquestTimestamp - this.lastBacklistedDelTimestamp ) >= this.deleteBlacklistedMinutesOffset ) {
+    if ( Utils.milisecondsToMinutes( thisRequestTimestamp - this.lastBacklistedDelTimestamp ) >= this.deleteBlacklistedMinutesOffset ) {
       this.backlisted = [];
     }
   }

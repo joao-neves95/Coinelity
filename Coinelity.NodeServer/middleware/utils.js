@@ -10,9 +10,13 @@ module.exports = {
     return request.headers["x-forwarded-for"].split( ',', 1 ).join();
   },
 
-  /** @param { number } miliseconds */
+  /**
+   * Returns the floored minutes.
+   * 
+   * @param { number } miliseconds 
+   */
   milisecondsToMinutes: ( miliseconds ) => {
-    return miliseconds * 1.6667e-5;
+    return Math.floor( miliseconds * 1.6667e-5 );
   },
 
   /** @param { number } miliseconds */

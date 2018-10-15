@@ -16,7 +16,9 @@ const corsOptions = require( './middleware/corsOptions' );
 const logger = require( 'morgan' );
 const RequestControl = require( './middleware/requestControl' );
 const requestControl = new RequestControl();
+const Utils = require( './middleware/utils' );
 const apiRoute = require( './routes/index' );
+const User = require( './models/userModel' );
 const commonApiResponses = require( './routes/commonApiResponses' );
 const ApiResponseModel = require( './models/apiResponseModel' );
 
@@ -29,51 +31,49 @@ app.use( function ( req, res, next ) {
   res.setHeader( 'X-Powered-By', 'anonymous' );
 
   // TODO: Add the user to the request.
-  req.theUser = '';
+  req.theUser = new User( Utils.getIpFromRequest( req ), req.headers['Authorization'] );
   
 } );
 
 const chat = io
   .of( '/chat' )
-  .use( function ( socket, next ) {
+  .use( async ( socket, next ) => {
 
+    // TODO: Test socket.request.headers
+    socket.request.theUser = new User( Utils.getIpFromRequest( socket.request ), socket.request.headers['Authorization'] );
     const req = socket.request;
 
-    requestControl.control( req, console.log, ( result ) => {
+    const result = await requestControl.control( req );
 
-      switch ( result ) {
-        case RequestControlResult.AuthFailed:
-          return commonApiResponses.notAuthorized();
+    switch ( result ) {
+      case RequestControlResult.AuthFailed:
+        return socket.to( socket.id ).emit('request-error', commonApiResponses.notAuthorized() );
 
-        case RequestControlResult.Blacklisted:
-          return commonApiResponses.blacklisted();
+      case RequestControlResult.Blacklisted:
+        return socket.to( socket.id ).emit('request-error', commonApiResponses.blacklisted() );
 
-        case RequestControlResult.Accepted:
-          return next();
-      }
+      case RequestControlResult.Accepted:
+        return next();
+    }
 
-    } );
-
-    socket.to( socket.id ).emit('')
-    
     next();
   } )
-  .on( 'connection', function ( socket ) {
+  .on( 'connection', ( socket ) => {
     socket.emit( 'Hello-World', { hello: 'world' } );
 
-    socket.on( 'client event', function ( data ) {
+    socket.on( 'client event', ( data ) => {
       console.log( data );
     } );
 
-    socket.on( 'disconnect', function () {
-      io.emit( 'user disconnected' );
+    socket.on( 'disconnect', () => {
+      io.emit( 'user-disconnected' );
     } );
 } );
 
 app.use( '/api', apiRoute );
 
 app.use( '*', ( req, res ) => {
-  return res.status( 404 ).send( JSON.stringify( new ApiResponseModel( 404, 'Not Found', ['Resource not found.'] ) ) );
+  return res.status( 404 ).send( commonApiResponses.notFound() );
 } );
 
 app.listen( PORT, () => {

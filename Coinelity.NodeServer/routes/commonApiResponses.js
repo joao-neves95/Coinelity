@@ -1,18 +1,19 @@
 ﻿'use strict';
 
 module.exports = {
+
   notAuthorized: () => {
-    return res.status( 401 ).send( JSON.stringify(
+    return JSON.stringify(
       new ApiResponseModel(
         401,
         'Unauthorized',
         ['The authentication failed.']
       )
-    ) );
+    );
   },
 
   blacklisted: () => {
-    return res.status( 429 ).send( JSON.stringify(
+    return JSON.stringify(
       new ApiResponseModel(
         429,
         'Too Many Requests',
@@ -21,6 +22,17 @@ module.exports = {
           ' minutes.'
         ]
       )
-    ) );
+    );
+  },
+
+  notFound: () => {
+    return JSON.stringify(
+      new ApiResponseModel(
+        404,
+        'Not Found',
+        ['Resource not found.']
+      )
+    );
   }
-}
+
+};
