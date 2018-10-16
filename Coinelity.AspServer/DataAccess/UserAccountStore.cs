@@ -107,18 +107,15 @@ namespace Coinelity.AspServer.DataAccess
         /// <param name="userId"></param>
         /// <param name="userAccountType"></param>
         /// <param name="amountToUnfreeze"></param>
-        /// <param name="addToBalance"> If true, it adds the amountToUnfreeze parameter to the user's balance </param>
+        /// <param name="addToBalance"> If true, it adds the amountToUnfreeze parameter to the user's balance. If false the next parameter gets ignored </param>
         /// <param name="amountToAdd"> Optional. The amount to add to the user's balance </param>
         /// <returns></returns>
-        public Task UnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
+        public Task<int> UnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
         {
             const string accountType = nameof( userAccountType );
             string addToBalanceStatement;
 
-            if (addToBalance)
-                addToBalanceStatement = $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToUnfreeze} + {amountToAdd}),";
-            else
-                addToBalanceStatement = "";
+            addToBalanceStatement = addToBalance ? $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToUnfreeze} + {amountToAdd})," : "";
 
             return MSSQLClient.CommandOnceAsync(
                 _connection,
@@ -127,7 +124,7 @@ namespace Coinelity.AspServer.DataAccess
                        {addToBalanceStatement}
                        dbo.ApplicationUserAccount.Freezed{accountType} = (dbo.ApplicationUserAccount.Freezed{accountType} - @AmountToUnfreeze)
                    WHERE UserId = {userId}"
-                );
+            );
         }
     }
 }

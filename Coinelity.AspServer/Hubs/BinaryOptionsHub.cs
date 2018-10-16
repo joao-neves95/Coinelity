@@ -199,11 +199,12 @@ namespace Coinelity.AspServer.Hubs
                     // Win/Loss Logic.
                     switch (activeOption.OperationTypeId)
                     {
+                        // TODO: Turn the order result commands into transactions.
                         case (int)OperationType.Call:
                             if (currentPrice < activeOption.StrikePrice)
                             {
                                 // User lost.
-                                using (userAccountStore = new UserAccountStore())
+                                using ( userAccountStore = new UserAccountStore() )
                                 {
                                     await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false);
                                     // TODO: Send lost balance to Coinelity's bank account.
@@ -240,6 +241,11 @@ namespace Coinelity.AspServer.Hubs
                             }
                             break;
                     }
+
+                    using (optionsStore = new OptionsStore())
+                    {
+                        await optionsStore.DeleteActiveOrderAsync( activeOption.Id, userId );
+                    }
                 }
             }
             catch (Exception e)
@@ -265,5 +271,13 @@ namespace Coinelity.AspServer.Hubs
         {
 
         }
+    }
+}
+
+class JoaoNeves
+{
+    public JoaoNeves()
+    {
+
     }
 }

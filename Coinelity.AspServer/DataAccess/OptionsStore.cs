@@ -107,6 +107,16 @@ namespace Coinelity.AspServer.DataAccess
             return orderListDict.Count > 0 ? orderListDict[0].ToObject<ActiveOptionJoined>() : new ActiveOptionJoined();
         }
 
+        public async Task<int> DeleteActiveOrderAsync(int orderId, int? userId = null)
+        {
+            string command = $@"DELETE FROM dbo.ActiveOrders
+                  WHERE Id = {orderId} ";
+
+            command += userId == null ? "" : " AND UserId = {userId}";
+
+            return await MSSQLClient.CommandOnceAsync( _connection, command );
+        }
+
         /// <summary>
         /// 
         /// </summary>
