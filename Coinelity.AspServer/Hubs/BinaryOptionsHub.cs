@@ -34,7 +34,7 @@ namespace Coinelity.AspServer.Hubs
         /// WORK IN PROGRESS.
         /// 
         /// </summary>
-        /// <param name="placeOrderDTO">A PlaceOrderDTO instance in string format</param>
+        /// <param name="placeOrderDTO"> A PlaceOrderDTO instance in JSON string format </param>
         /// <returns></returns>
         // [Authorize]
         public async Task<Task> PlaceOrder(string placeOrderDTO)
@@ -133,6 +133,14 @@ namespace Coinelity.AspServer.Hubs
             }
         }
 
+        /// <summary>
+        /// 
+        /// WORK IN PROGRESS.
+        /// 
+        /// </summary>
+        /// <param name="checkOrderDTO"> A CheckOrderDTO instance in JSON string format </param>
+        /// <returns></returns>
+        // [Authorize]
         public async Task<Task> CheckOrder(string checkOrderDTO)
         {
             // TODO: Handle Deserialization exceptions.
@@ -167,9 +175,9 @@ namespace Coinelity.AspServer.Hubs
                 // The .AddMinutes() mothod does not change change the value of the timestamp. It returns a **new** DateTime.
                 DateTime closeUtcTimestamp = activeOption.OpenTimestamp.AddMinutes( lifetimeMinutes );
 
+                // The option maturity (expiration timestamp) has not yet been met.
                 if ( DateTimeOffset.Compare(currentUtcTimestamp, closeUtcTimestamp ) < 0)
                 {
-                    // The option maturity (expiration timestamp) has not yet been met.
                     return Clients.Caller.SendAsync( "ReceiveCheckOrderResult",
                         new ApiResponse( null, null, null,
                             new object[] { new Dictionary<string, object>
@@ -195,6 +203,7 @@ namespace Coinelity.AspServer.Hubs
 
                     decimal investmentAmount = Convert.ToDecimal( activeOption.InvestmentAmount );
                     decimal payoutValue = ( activeOption.PayoutPercent * investmentAmount ) / 100;
+                    int unfreezeResult = 0;
 
                     // Win/Loss Logic.
                     switch (activeOption.OperationTypeId)
@@ -206,7 +215,7 @@ namespace Coinelity.AspServer.Hubs
                                 // User lost.
                                 using ( userAccountStore = new UserAccountStore() )
                                 {
-                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false);
+                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false);
                                     // TODO: Send lost balance to Coinelity's bank account.
                                 }
                             }
@@ -215,7 +224,7 @@ namespace Coinelity.AspServer.Hubs
                                 // User won.
                                 using (userAccountStore = new UserAccountStore())
                                 {
-                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
+                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
                                 }
                             }
                             break;
@@ -226,7 +235,7 @@ namespace Coinelity.AspServer.Hubs
                                 // User lost.
                                 using (userAccountStore = new UserAccountStore())
                                 {
-                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false );
+                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false );
                                     // TODO: Send lost balance to Coinelity's bank account.
                                 }
                             }
@@ -235,16 +244,23 @@ namespace Coinelity.AspServer.Hubs
                                 // User won.
                                 using (userAccountStore = new UserAccountStore())
                                 {
-                                    await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
+                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
                                     // TODO: Send lost balance to Coinelity's bank account.
                                 }
                             }
                             break;
                     }
 
-                    using (optionsStore = new OptionsStore())
+                    if (unfreezeResult > 0)
                     {
-                        await optionsStore.DeleteActiveOrderAsync( activeOption.Id, userId );
+                        using (optionsStore = new OptionsStore())
+                        {
+                            await optionsStore.DeleteActiveOrderAsync( activeOption.Id, userId );
+                        }
+                    }
+                    else
+                    {
+                        return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Error", new object[] { /* new ErrorMessage( <Error processing the request> ) */  } ).ToJSON() );
                     }
                 }
             }
@@ -271,13 +287,5 @@ namespace Coinelity.AspServer.Hubs
         {
 
         }
-    }
-}
-
-class JoaoNeves
-{
-    public JoaoNeves()
-    {
-
     }
 }
