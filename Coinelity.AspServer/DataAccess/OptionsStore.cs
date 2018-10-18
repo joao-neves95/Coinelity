@@ -77,10 +77,6 @@ namespace Coinelity.AspServer.DataAccess
         /// <param name="userId"> Optional (RECOMENDED). Confirm that the order belongs to the user.</param>
         public async Task<ActiveOptionJoined> GetActiveOrderAsync(int orderId, int? userId = null)
         {
-            //string query = @"SELECT *
-            //                 FROM dbo.ActiveOption
-            //                 WHERE Id = @OrderId";
-
             string query = @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.OptionLifetime.LifetimeMinutes AS Lifetime, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
                              FROM dbo.ActiveOption
                                  INNER JOIN dbo.Asset
@@ -107,14 +103,19 @@ namespace Coinelity.AspServer.DataAccess
             return orderListDict.Count > 0 ? orderListDict[0].ToObject<ActiveOptionJoined>() : new ActiveOptionJoined();
         }
 
-        public async Task<int> DeleteActiveOrderAsync(int orderId, int? userId = null)
+        public string DeleteActiveOrderCmd(int orderId, int? userId = null)
         {
             string command = $@"DELETE FROM dbo.ActiveOrders
                   WHERE Id = {orderId} ";
 
             command += userId == null ? "" : " AND UserId = {userId}";
 
-            return await MSSQLClient.CommandOnceAsync( _connection, command );
+            return command;
+        }
+
+        public async Task<int> DeleteActiveOrderAsync(int orderId, int? userId = null)
+        {
+            return await MSSQLClient.CommandOnceAsync( _connection, DeleteActiveOrderCmd( orderId, userId ) );
         }
 
         /// <summary>

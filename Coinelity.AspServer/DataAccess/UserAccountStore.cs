@@ -101,6 +101,20 @@ namespace Coinelity.AspServer.DataAccess
         {
         }
 
+        public string UnfreezeBalanceCmd(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
+        {
+            const string accountType = nameof( userAccountType );
+            string addToBalanceStatement;
+
+            addToBalanceStatement = addToBalance ? $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToUnfreeze} + {amountToAdd})," : "";
+
+            return $@"UPDATE dbo.ApplicationUserAccount
+                      SET
+                          {addToBalanceStatement}
+                          dbo.ApplicationUserAccount.Freezed{accountType} = (dbo.ApplicationUserAccount.Freezed{accountType} - @AmountToUnfreeze)
+                      WHERE UserId = {userId}";
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -112,19 +126,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public Task<int> UnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
         {
-            const string accountType = nameof( userAccountType );
-            string addToBalanceStatement;
-
-            addToBalanceStatement = addToBalance ? $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToUnfreeze} + {amountToAdd})," : "";
-
-            return MSSQLClient.CommandOnceAsync(
-                _connection,
-                $@"UPDATE dbo.ApplicationUserAccount
-                   SET
-                       {addToBalanceStatement}
-                       dbo.ApplicationUserAccount.Freezed{accountType} = (dbo.ApplicationUserAccount.Freezed{accountType} - @AmountToUnfreeze)
-                   WHERE UserId = {userId}"
-            );
+            return MSSQLClient.CommandOnceAsync( _connection, UnfreezeBalanceCmd( userId, userAccountType, amountToUnfreeze, addToBalance, amountToAdd ) );
         }
     }
 }

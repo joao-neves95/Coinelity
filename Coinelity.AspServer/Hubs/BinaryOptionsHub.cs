@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -24,6 +24,7 @@ using Coinelity.Core.Data;
 using Coinelity.Core.Models;
 using Coinelity.Core.Errors;
 
+// TODo: Refactor for less code repetition.
 // TODO: Pass the methods to the Coinelity.Core and modularize them.
 namespace Coinelity.AspServer.Hubs
 {
@@ -96,7 +97,11 @@ namespace Coinelity.AspServer.Hubs
                                 await optionsStore.OpenOrderCmdAsync( order, connection )
                             } );
 
-                        if (success)
+                        if (!success)
+                        {
+                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+                        }
+                        else
                         {
                             order.ActiveOrderId = await optionsStore.GetLastActiveOrderAsync( userId, connection );
 
@@ -110,10 +115,6 @@ namespace Coinelity.AspServer.Hubs
                                     }
                                 ).ToJSON()
                             );
-                        }
-                        else
-                        {
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
                         }
                     }
                 }
@@ -148,6 +149,7 @@ namespace Coinelity.AspServer.Hubs
             OptionsStore optionsStore = null;
             UserAccountStore userAccountStore = null;
             Exchange exchange = null;
+            SqlConnection connection = null;
 
             int userId = Convert.ToInt32( Utils.GetUserClaim( Context.User, "id" ) );
 
@@ -156,7 +158,7 @@ namespace Coinelity.AspServer.Hubs
                 UserAccountType? userAccountType = Utils.UserAccountTypeResolver( order.AccountType );
 
                 if (userAccountType == null)
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
 
                 ActiveOptionJoined activeOption;
 
@@ -182,7 +184,7 @@ namespace Coinelity.AspServer.Hubs
                         new ApiResponse( null, null, null,
                             new object[] { new Dictionary<string, object>
                                 {
-                                    { "Message", "The option has not yet been expired." },
+                                    { "Message", "The option has not yet expired." },
                                     { "Order", activeOption }
                                 }
                             }
@@ -196,85 +198,86 @@ namespace Coinelity.AspServer.Hubs
                     using (exchange = new Exchange( activeOption.ExchangeName ))
                     {
                         if (exchange.API == null)
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
+                            return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
 
                         currentPrice = await exchange.GetLastPrice( activeOption.Symbol );
                     }
 
                     decimal investmentAmount = Convert.ToDecimal( activeOption.InvestmentAmount );
                     decimal payoutValue = ( activeOption.PayoutPercent * investmentAmount ) / 100;
-                    int unfreezeResult = 0;
-
+                    
                     // Win/Loss Logic.
+                    bool addToBalance = false;
+
                     switch (activeOption.OperationTypeId)
                     {
-                        // TODO: Turn the order result commands into transactions.
                         case (int)OperationType.Call:
                             if (currentPrice < activeOption.StrikePrice)
-                            {
                                 // User lost.
-                                using ( userAccountStore = new UserAccountStore() )
-                                {
-                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false);
-                                    // TODO: Send lost balance to Coinelity's bank account.
-                                }
-                            }
+                                addToBalance = false;
                             else
-                            {
                                 // User won.
-                                using (userAccountStore = new UserAccountStore())
-                                {
-                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
-                                }
-                            }
+                                addToBalance = true;
                             break;
 
                         case (int)OperationType.Put:
                             if( currentPrice > activeOption.StrikePrice )
-                            {
                                 // User lost.
-                                using (userAccountStore = new UserAccountStore())
-                                {
-                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, false );
-                                    // TODO: Send lost balance to Coinelity's bank account.
-                                }
-                            }
+                                addToBalance = false;
                             else
-                            {
                                 // User won.
-                                using (userAccountStore = new UserAccountStore())
-                                {
-                                    unfreezeResult = await userAccountStore.UnfreezeBalanceAsync( userId, userAccountType.Value, investmentAmount, true, payoutValue );
-                                    // TODO: Send lost balance to Coinelity's bank account.
-                                }
-                            }
+                                addToBalance = true;
                             break;
                     }
 
-                    if (unfreezeResult > 0)
+                    bool successful;
+                    userAccountStore = new UserAccountStore( false );
+                    optionsStore = new OptionsStore( false );
+                    using (connection = Env.GetMSSQLConnection())
                     {
-                        using (optionsStore = new OptionsStore())
+                        successful = await MSSQLClient.NonQueryTransactionOnceAsync( connection, new SqlCommand[]
                         {
-                            await optionsStore.DeleteActiveOrderAsync( activeOption.Id, userId );
-                        }
+                                new SqlCommand(userAccountStore.UnfreezeBalanceCmd(userId, userAccountType.Value, investmentAmount, addToBalance, payoutValue)),
+                                // TODO: (If user lost) Send lost balance to Coinelity's bank account.
+                                new SqlCommand(optionsStore.DeleteActiveOrderCmd(activeOption.Id, userId), connection)
+                        } );
+                    }
+
+                    if (!successful)
+                    {
+                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 500, "Error", new object[] { /* new ErrorMessage( <Error processing the request> ) */  } ).ToJSON() );
                     }
                     else
                     {
-                        return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Error", new object[] { /* new ErrorMessage( <Error processing the request> ) */  } ).ToJSON() );
+                        // Send success message.
+                        string wonLost = addToBalance ? "won" : "lost";
+
+                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult",
+                            new ApiResponse( null, null, null,
+                                new object[] { new Dictionary<string, object>
+                                    {
+                                        { "Message", $"The user has {wonLost}." },
+                                        { "Order", activeOption }
+                                    }
+                                }
+                            ).ToJSON()
+                        );
                     }
+
                 }
             }
             catch (Exception e)
             {
                 // TODO: Exception Handling.
                 Console.WriteLine( e );
-                // Send Unknown Error.
+                return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
             }
             finally
             {
                 optionsStore?.Dispose();
                 userAccountStore?.Dispose();
                 exchange?.Dispose();
+                connection?.Dispose();
             }
         }
 
