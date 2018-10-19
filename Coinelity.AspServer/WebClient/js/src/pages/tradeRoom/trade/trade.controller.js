@@ -33,18 +33,22 @@ class TradeController extends ControllerBase {
     this.model.currentSymbol = symbolId;
     this.view.injectContainer();
     await this.injectChart();
-    // TODO: tradeTools give a bug on the chart. They turn it static.
-    // this.injectTradeTools();
+    this.injectTradeTools();
   }
 
   injectChart() {
     return new Promise( async ( resolve, reject ) => {
-
       this.view.injectChartTemplate();
-
       const chartData = await this.model.getChartData();
 
-      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout, { responsive: true, scrollZoom: true, showLink: false, displaylogo: false } );
+      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout,
+        {
+          responsive: true,
+          scrollZoom: true,
+          showLink: false,
+          displaylogo: false,
+          modeBarButtonsToRemove: ['sendDataToCloud']
+        } );
 
       resolve();
     } );
@@ -52,7 +56,7 @@ class TradeController extends ControllerBase {
 
   startChartCandleUpdate() {
     chartUpdatePriceInterval = setInterval( () => {
-      this.model.getLastOHLCV( this.model.currentSymbol, ( OHLCV ) => {
+      this.model.getOHLCV( ( OHLCV ) => {
         if ( OHLCV )
           // TODO: Update for the new charting lib.
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
@@ -74,7 +78,6 @@ class TradeController extends ControllerBase {
   }
 
   injectTradeTools() {
-    this.view.injectTradingTools( TradingToolsType.BinaryOptions );
+    this.view.injectTradingTools( this.model.currentTradeMode );
   }
-
 }

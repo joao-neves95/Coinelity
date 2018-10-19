@@ -58,4 +58,23 @@ class DOM {
   static elemById( id ) {
     return document.getElementById( id );
   }
+
+  /**
+   * 
+   * @param { number } px
+   * @param { number } bodyTextSizePx
+   */
+  static pxToEm( px, bodyTextSizePx = 16 ) {
+    return px / bodyTextSizePx;
+
+  }
+
+  /**
+   * 
+   * @param { number } em
+   * @param { number } bodyTextSizePx
+   */
+  static emToPx( em, bodyTextSizePx = 16 ) {
+    return em * bodyTextSizePx;
+  }
 }

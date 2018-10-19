@@ -1,4 +1,6 @@
-﻿#trade {
+﻿@import 'variables.less';
+
+#trade {
     width: 100%;
     height: 100%;
     position: relative;
@@ -7,9 +9,19 @@
         width: 100%;
         height: 100%;
 
-        #trading-chart {
-            width: 100%;
+        .trading-chart-wrapper {
+             width: 80%;
+
+            #trading-chart {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .trading-tools-wrapper {
+            width: 20%;
             height: 100%;
+            background-color: @grey-ligth;
         }
     }
 }

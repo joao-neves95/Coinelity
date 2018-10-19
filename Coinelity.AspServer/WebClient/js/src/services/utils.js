@@ -19,6 +19,31 @@ class Utils {
   static decodeCoinSymbolUri( symbol ) {
     return symbol.replace( '-', '/' );
   }
+
+  /**
+   * Returns the corresponding NavItemId or false.
+   * 
+   * @param { string } stringRepresentation NavItemId string representation.
+   * 
+   * @returns { NavItemID }
+   */
+  static getNavItemIDFromString( stringRepresentation ) {
+    switch ( stringRepresentation ) {
+      case NavItemID.Dashboard:
+        return NavItemID.Dashboard;
+      case NavItemID.Settings:
+        return NavItemID.Settings;
+      case NavItemID.Markets:
+        return NavItemID.Markets;
+      case NavItemID.Trade:
+        return NavItemID.Trade;
+      case NavItemID.TradeRoom:
+        return NavItemID.TradeRoom;
+
+      default:
+        return false;
+    }
+  }
 }
 
 // #region COLLECTIONS

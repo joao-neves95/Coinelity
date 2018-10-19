@@ -11,12 +11,14 @@
 //
 // @import '/enums/environmentType'
 // @import '/enums/colors'
+// @import '/enums/buttonType'
 // @import '/enums/navbarItemType'
 // @import '/enums/navItemID'
 // @import '/enums/gridOrientationType'
 // @import '/enums/requestType'
 // @import '/enums/fiatSymbol'
-// @import '/enums/tradingToolsType'
+// @import '/enums/tradingMode'
+// @import '/models/selectInputOptions'
 // @import '/models/httpClientResponse'
 // @import '/models/changePasswordDTO'
 // @import '/models/spreadPricesModel'
@@ -87,6 +89,14 @@ const Colors = Object.freeze({
   DarkGrey: '#3D3D3D',
   LightBlue: '#78BBFF'
 });
+﻿const ButtonType = Object.freeze( {
+  /** Green */
+  Success: 'success',
+  /** Red */
+  Alert: 'alert',
+  /** Yellow */
+  Warning: 'warning'
+} );
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -173,10 +183,16 @@ const FiatSymbol = Object.freeze( {
  *
  */
 
-const TradingToolsType = Object.freeze( {
+const TradingMode = Object.freeze( {
   BinaryOptions: 1,
   CFD: 2
 } );
+﻿class SelectInputOptions {
+  constructor( label, value ) {
+    this.label = label;
+    this.value = value;
+  }
+}
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -336,6 +352,31 @@ class Utils {
   static decodeCoinSymbolUri( symbol ) {
     return symbol.replace( '-', '/' );
   }
+
+  /**
+   * Returns the corresponding NavItemId or false.
+   * 
+   * @param { string } stringRepresentation NavItemId string representation.
+   * 
+   * @returns { NavItemID }
+   */
+  static getNavItemIDFromString( stringRepresentation ) {
+    switch ( stringRepresentation ) {
+      case NavItemID.Dashboard:
+        return NavItemID.Dashboard;
+      case NavItemID.Settings:
+        return NavItemID.Settings;
+      case NavItemID.Markets:
+        return NavItemID.Markets;
+      case NavItemID.Trade:
+        return NavItemID.Trade;
+      case NavItemID.TradeRoom:
+        return NavItemID.TradeRoom;
+
+      default:
+        return false;
+    }
+  }
 }
 
 // #region COLLECTIONS
@@ -351,11 +392,11 @@ Type safe Class List(): let list = new List('string' | 'number' | 'int' | 'float
 */
 
 class Errors {
-  static get existingKey() { throw new Error('An item with the same key has already been added.'); };
+  static get existingKey() { throw new Error( 'An item with the same key has already been added.' ); };
 
-  static get noTypeProvided() { throw new Error('No type provided on Collection instantiation.') };
+  static get noTypeProvided() { throw new Error( 'No type provided on Collection instantiation.' ) };
 
-  static wrongType(type) { throw new Error(`The value is not from the same type as the List<${type}>`); };
+  static wrongType( type ) { throw new Error( `The value is not from the same type as the List<${type}>` ); };
 }
 
 class Collection {
@@ -444,7 +485,7 @@ class Dictionary extends Collection {
 
   remove( key ) {
     const index = this.findIndexOfKey( key );
-    if ( !index )
+    if ( index === false )
       return false;
 
     this.splice( index );
@@ -468,20 +509,31 @@ class Dictionary extends Collection {
     return Object.keys( this.elements[index] )[0];
   }
 
+  /**
+   * Returns the value by key or <false> if not found.
+   * @param { any } key
+   * @returns { any | false }
+   */
   getByKey( key ) {
     try {
-      return this.elements[this.findIndexOfKey( key )][key];
+      const keyIdx = this.findIndexOfKey( key );
+
+      if ( keyIdx === false )
+        return false;
+
+      return this.elements[keyIdx][key];
+
     } catch ( e ) {
       console.error( e );
     }
-  };
+  }
 
-  findIndexOfKey( key, Callback ) {
+  findIndexOfKey( key ) {
     for ( let i = 0; i < this.elements.length; i++ ) {
-      if ( Object.keys( this.elements[i] )[0] === key ) {
+      if ( Object.keys( this.elements[i] )[0] === key )
         return i;
-      }
     }
+
     return false;
   }
 }
@@ -494,15 +546,15 @@ class List extends Collection {
    * ('string' | 'number' | 'int' | 'float' | 'boolean' | 'any')
    * @param {String} type
    */
-  constructor(type) {
-    super(false, type);
+  constructor( type ) {
+    super( false, type );
   }
 
   /**
    * Add a new item to the List<T>.
    * @param {Type} value
    */
-  add(value) {
+  add( value ) {
     switch ( this.type ) {
       case 'any':
         this.push( value );
@@ -513,15 +565,15 @@ class List extends Collection {
           break;
         }
       case 'float':
-        if (this.isFloat(value)) {
-          this.push(value);
+        if ( this.isFloat( value ) ) {
+          this.push( value );
           break;
         }
       default:
-        if (typeof value === this.type && value !== 'float' && value !== 'int')
-          this.push(value);
+        if ( typeof value === this.type && value !== 'float' && value !== 'int' )
+          this.push( value );
         else
-          throw Errors.wrongType(this.type);
+          throw Errors.wrongType( this.type );
     }
   }
 
@@ -529,16 +581,16 @@ class List extends Collection {
    * Remove an new item from the List<T> by index.
    * @param {Number} index
    */
-  remove(index) {
-    this.splice(index);
+  remove( index ) {
+    this.splice( index );
   };
 
   /**
    * (private)
    * @param {Number} value
    */
-  isInt(value) {
-    if (typeof value !== 'number')
+  isInt( value ) {
+    if ( typeof value !== 'number' )
       return false;
 
     return value % 1 === 0;
@@ -548,15 +600,13 @@ class List extends Collection {
    * (private)
    * @param {Number} value
    */
-  isFloat(value) {
-    if (typeof value !== 'number')
+  isFloat( value ) {
+    if ( typeof value !== 'number' )
       return false;
 
     return value % 1 !== 0;
   }
 }
-
-// #endregion
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -616,6 +666,25 @@ class DOM {
 
   static elemById( id ) {
     return document.getElementById( id );
+  }
+
+  /**
+   * 
+   * @param { number } px
+   * @param { number } bodyTextSizePx
+   */
+  static pxToEm( px, bodyTextSizePx = 16 ) {
+    return px / bodyTextSizePx;
+
+  }
+
+  /**
+   * 
+   * @param { number } em
+   * @param { number } bodyTextSizePx
+   */
+  static emToPx( em, bodyTextSizePx = 16 ) {
+    return em * bodyTextSizePx;
   }
 }
 ﻿/*
@@ -1069,6 +1138,40 @@ class PageTemplates {
       <a id="${id}" class="success button ${addicionalClasses}">${label}</a>
     `;
   }
+
+  /**
+   * 
+   * @param {any} label
+   * @param {any} id
+   * @param { ButtonType } buttonType
+   * @param {any} addicionalClasses
+   */
+  static button( label, id, buttonType, addicionalClasses = '' ) {
+    return `
+      <a id="${id}" class="${buttonType} button ${addicionalClasses}">${label}</a>
+    `;
+  }
+
+  /**
+   * 
+   * @param { string } label
+   * @param { SelectInputOptions[] } options
+   */
+  static selectInput( selectId, label, options ) {
+    let optionsHtml = '';
+
+    for ( let i = 0; i < options.length; ++i ) {
+      optionsHtml += `<option value="${options[i].value}">${options[i].label}</option>`;
+    }
+
+    return `
+      <label>${label}
+        <select id="${selectId}">
+          ${optionsHtml}
+        </select>
+      </label>
+    `;
+  }
 }
 ﻿/*
  *
@@ -1227,6 +1330,9 @@ class DashboardView extends ViewBase {
 
 let dashboardController = null;
 
+/**
+ * The Dashboard page controller.
+ */
 class DashboardController extends ControllerBase {
   constructor() {
     if ( dashboardController )
@@ -1263,6 +1369,12 @@ class TradeTemplates {
     return `
       <section id="trade" clas="grid-container">
         <div class="grid-x grid-padding-x trade-content-wrapper">
+      
+          <section class="cell trading-chart-wrapper">
+          </section>
+        
+          <section class="cell trading-tools-wrapper">
+          </section>
 
         </div>
       </section>
@@ -1271,28 +1383,30 @@ class TradeTemplates {
 
   static chart() {
     return `
-      <section class="cell">
         <article id="${TradeTemplates.chartElemId}">
         </article>
-      </section>
-    `;
-  }
-
-  static toolsWrapper() {
-    return `
-      <section class="cell trading-tools-wrapper"></section>
     `;
   }
 
   static binaryOptionsTools() {
     return `
-      <article class="cell"></article>
+      <form class="cell">
+        <p>Current Price <span id="current-price">5048</span>€<p>
+        ${
+          PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )] ) +
+    PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )] ) +
+          PageTemplates.inputNumElem('Investement Amount', 'investmentAmount', 0, '', '') +
+          PageTemplates.button( 'Call', 'call', ButtonType.Success ) +
+          PageTemplates.button( 'Put', 'put', ButtonType.Alert )
+         }
+      </form>
     `;
   }
 
   static CFDTools() {
     return `
-      <article class="cell"></article>
+      <article class="cell">
+      </article>
     `;
   }
 }
@@ -1314,6 +1428,10 @@ class TradeModel extends ModelBase {
 
     super( '', '', '', '' );
 
+    this.currentTradeMode = TradingMode.BinaryOptions;
+    this.currentSymbol = null;
+    this.currentTimeframe = '1d';
+
     this.chartLayout = {
       dragmode: 'zoom',
       heigth: 2000,
@@ -1333,7 +1451,7 @@ class TradeModel extends ModelBase {
       yaxis: {
         autorange: true,
         domain: [0, 1],
-        range: [114.609999778, 137.410004222],
+        // range: [1000, 2000],
         type: 'linear'
       }
     };
@@ -1352,8 +1470,6 @@ class TradeModel extends ModelBase {
       close: []
     };
 
-    this.currentSymbol = null;
-    this.currentTimeframe = '1d';
 
     tradeModel = this;
     Object.seal( tradeModel );
@@ -1363,7 +1479,7 @@ class TradeModel extends ModelBase {
 
   getChartData() {
     return new Promise( async ( resolve, reject ) => {
-      const OHLCVArray = await this.getOHLCV( this.currentSymbol );
+      const OHLCVArray = await this.getOHLCV();
       
       if ( !OHLCVArray )
         return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
@@ -1386,10 +1502,10 @@ class TradeModel extends ModelBase {
    * @param { Function } Callback Optional (<OHLCV | undefined>)
    * 
    */
-  getOHLCV( symbol, Callback ) {
+  getOHLCV( Callback ) {
     return new Promise( ( resolve, reject ) => {
 
-      ExchangeClient._.getOHLCV( 'KRAKEN', symbol, this.currentTimeframe, ( OHLCVArray ) => {
+      ExchangeClient._.getOHLCV( 'KRAKEN', this.currentSymbol, this.currentTimeframe, ( OHLCVArray ) => {
         if ( Callback )
           return Callback( OHLCVArray );
 
@@ -1421,28 +1537,24 @@ class TradeView extends ViewBase {
   }
 
   get tradeContentWrapper() { return document.getElementsByClassName('trade-content-wrapper')[0]; }
+  get tradingChartWrapper() { return document.getElementsByClassName('trading-chart-wrapper')[0]; }
 
   injectContainer() {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
   }
 
   injectChartTemplate() {
-    this.tradeContentWrapper.innerHTML += TradeTemplates.chart();
+    this.tradingChartWrapper.innerHTML += TradeTemplates.chart();
   }
 
   /**
    * 
-   * @param { TradingToolsType } tradingToolsType
+   * @param { TradingMode } tradingToolsType
    */
   injectTradingTools( tradingToolsType ) {
-    // const tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' );
-
-    // if ( tradingToolsWrapper.length <= 0 )
-    this.tradeContentWrapper.innerHTML += TradeTemplates.toolsWrapper();
-
     let tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' )[0];
 
-    if ( tradingToolsType === TradingToolsType.BinaryOptions )
+    if ( tradingToolsType === TradingMode.BinaryOptions )
       tradingToolsWrapper.innerHTML = TradeTemplates.binaryOptionsTools();
     else
       tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
@@ -1483,18 +1595,22 @@ class TradeController extends ControllerBase {
     this.model.currentSymbol = symbolId;
     this.view.injectContainer();
     await this.injectChart();
-    // TODO: tradeTools give a bug on the chart. They turn it static.
-    // this.injectTradeTools();
+    this.injectTradeTools();
   }
 
   injectChart() {
     return new Promise( async ( resolve, reject ) => {
-
       this.view.injectChartTemplate();
-
       const chartData = await this.model.getChartData();
 
-      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout, { responsive: true, scrollZoom: true, showLink: false, displaylogo: false } );
+      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout,
+        {
+          responsive: true,
+          scrollZoom: true,
+          showLink: false,
+          displaylogo: false,
+          modeBarButtonsToRemove: ['sendDataToCloud']
+        } );
 
       resolve();
     } );
@@ -1502,7 +1618,7 @@ class TradeController extends ControllerBase {
 
   startChartCandleUpdate() {
     chartUpdatePriceInterval = setInterval( () => {
-      this.model.getLastOHLCV( this.model.currentSymbol, ( OHLCV ) => {
+      this.model.getOHLCV( ( OHLCV ) => {
         if ( OHLCV )
           // TODO: Update for the new charting lib.
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
@@ -1524,9 +1640,8 @@ class TradeController extends ControllerBase {
   }
 
   injectTradeTools() {
-    this.view.injectTradingTools( TradingToolsType.BinaryOptions );
+    this.view.injectTradingTools( this.model.currentTradeMode );
   }
-
 }
 ﻿/*
  *
@@ -1727,7 +1842,7 @@ class MarketsController extends ControllerBase {
     this.view.injectContainer();
 
     for ( let i = 0; i < 10; ++i ) {
-      // TODO: Add [symbols + fiatSymbol + exchange + images] to the database and get from there.
+      // TODO: Add [symbols + fiatSymbol + exchange + images] to the database and get them from there.
       // Simulation. Temporary.
       const thisCoinSymbol = 'BTC/EUR' + i.toString();
       this.model.symbols.add( thisCoinSymbol );
@@ -1866,6 +1981,9 @@ class TradeRoomView extends ViewBase {
 
 let tradeRoomController = null;
 
+/**
+ * The Trade Room page controller.
+ */
 class TradeRoomController extends ControllerBase {
   constructor() {
     if ( tradeRoomController )
@@ -1928,6 +2046,8 @@ class SettingsTemplates {
   constructor() {
     throw DevErrors.cantInstantiateStatic( 'SettingsTemplates' );
   }
+
+  // TODO: Change to an Accordion Menu.
 
   static theForm( content ) {
     return `
@@ -2100,12 +2220,23 @@ class SettingsView extends ViewBase {
  *
  */
 
+let settingsController = null;
+
+/**
+ * The Settings page controller.
+ */
 class SettingsController extends ControllerBase {
   constructor() {
+    if ( settingsController )
+      throw DevErrors.singleIntance( 'SettingsController' );
+
     super(
       new SettingsModel(),
       new SettingsView()
     );
+
+    settingsController = this;
+    Object.freeze( settingsController );
   }
 
   setEventListeners() {
@@ -2139,12 +2270,10 @@ class SettingsController extends ControllerBase {
 
 class NavbarTemplates {
   constructor() {
-    throw new Error( 'You can not instantiate NavbarTemplates (static class)' );
+    throw DevErrors.cantInstantiateStatic( 'NavbarTemplates' );
   }
 
   static toggleButton() {
-    // "&laquo;" == "«"
-    // "&raquo;" == "»"
     return `
       <li class="cell li-toggle">
         <a id="sidenav-toggle">
@@ -2165,7 +2294,7 @@ class NavbarTemplates {
   static iconLink(url, label, linkTo) {
     return `
       <li class="cell">
-        <a href="${ BASE_URL + linkTo }" class="grid-x align-middle">
+        <a href="${ BASE_URL + linkTo}" class="grid-x align-middle" id="${linkTo}_btn">
           <img class="icon cell large-6" src="${ url }" alt"=${ label } Icon" />
           <figcaption class="icon-label large-6">${ label }</figcaption>
         </a>  
@@ -2255,13 +2384,10 @@ class NavbarView {
   static get _() { return navbarView; };
 
   get element() { return document.getElementById( 'sidenav' ); }
-
   get iconContainer() { return document.getElementById( 'icon-container' ); }
-
-  static get pageContainer() { return document.getElementById( 'page-container' ); }
-
   get toggleButtonElem() { return document.getElementById( 'sidenav-toggle' ); }
   get toggleButtonPElem() { return document.getElementById( 'sidenav-toggle-p' ); }
+  static get pageContainer() { return document.getElementById( 'page-container' ); }
 
   getIconLabels() { return document.getElementsByClassName( 'icon-label' ); }
 
@@ -2274,10 +2400,12 @@ class NavbarView {
   }
 
   minimize() {
+    // "&raquo;" == "»"
     this.resize( SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
   }
 
   maximize() {
+    // "&laquo;" == "«"
     this.resize( SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
   }
 
@@ -2287,6 +2415,7 @@ class NavbarView {
     this.element.style.width = width;
     this.toggleButtonPElem.innerHTML = toggleButtonLabel;
     NavbarView.pageContainer.style.marginLeft = width;
+    NavbarView.pageContainer.style.maxWidth = `calc(100% - ${width})`;
 
     const labels = this.getIconLabels();
     for ( let i = 0; i < labels.length; ++i ) {
@@ -2329,8 +2458,8 @@ let navbarController = null;
  * */
 class NavbarController {
   constructor() {
-    if (navbarController)
-      throw new Error( 'There can only be one instance of NavBarController.' );
+    if ( navbarController )
+      throw DevErrors.singleIntance( 'NavBarController' );
 
     /**
      * @type { NavbarView }
@@ -2341,15 +2470,6 @@ class NavbarController {
      * @type { NavbarModel }
      * */
     this.model = new NavbarModel();
-
-    /**
-     * Dictionary mapping the pages and components.
-     * key: string (unique id of the Page | NavbarPanelItem. To be used by the router)
-     * value:  Instance of Page | NavbarPanelItem.
-     */
-    //this.items = new Dictionary(true);
-    //this.activePageId = null;
-    //this.activeNavbarPanelItemId = null;
 
     navbarController = this;
     Object.freeze( navbarController );
@@ -2528,6 +2648,8 @@ class Themes {
     document.getElementById( 'sidenav' ).style.backgroundColor = theme.sidenav;
     document.getElementsByClassName( 'top-bar' )[0].style.backgroundColor = theme.topbar;
   }
+
+  static update() {}
 }
 ﻿/*
  *
@@ -2552,9 +2674,18 @@ whenDomReady(() => {
   NavbarController._.init();
 
   // This will give an error if it exists more than 1 cookie.
-  //const requestedPage = document.cookie.split( '=' )[1].replace( '%2F', '/' ).replace( '%2F', '/' );
-  //page( NavItemID.Dashboard, requestedPage );
-  //document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
+  console.debug( document.cookie );
+  const requestedPage = document.cookie.split( '=' )[1].substring(3).replace( '%2F', '/' );
+  const page = Utils.getNavItemIDFromString( requestedPage );
+  console.debug( requestedPage );
+  console.debug( page );
+
+  if ( !page )
+    console.info('404 - Not Found.'); // Show 404 page.
+  else
+    document.getElementById( page + '_btn' ).click();
+
+  document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
 });
 ﻿/*
  *

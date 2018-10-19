@@ -16,3 +16,14 @@ D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.1\UserSecretsAssemblyInfo.cs
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.1\Coinelity.AspServer.AssemblyInfoInputs.cache
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.1\Coinelity.AspServer.AssemblyInfo.cs
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.1\Coinelity.AspServer.deps.json
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.1\Coinelity.AspServer.runtimeconfig.json
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.1\Coinelity.AspServer.runtimeconfig.dev.json
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.1\Coinelity.AspServer.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.1\Coinelity.AspServer.pdb
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.1\Coinelity.Core.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.1\Coinelity.Core.pdb
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.1\Coinelity.AspServer.RazorTargetAssemblyInfo.cache
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.1\Coinelity.AspServer.csproj.CopyComplete
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.1\Coinelity.AspServer.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.1\Coinelity.AspServer.pdb

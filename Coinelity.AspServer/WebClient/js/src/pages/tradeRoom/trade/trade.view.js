@@ -21,28 +21,24 @@ class TradeView extends ViewBase {
   }
 
   get tradeContentWrapper() { return document.getElementsByClassName('trade-content-wrapper')[0]; }
+  get tradingChartWrapper() { return document.getElementsByClassName('trading-chart-wrapper')[0]; }
 
   injectContainer() {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
   }
 
   injectChartTemplate() {
-    this.tradeContentWrapper.innerHTML += TradeTemplates.chart();
+    this.tradingChartWrapper.innerHTML += TradeTemplates.chart();
   }
 
   /**
    * 
-   * @param { TradingToolsType } tradingToolsType
+   * @param { TradingMode } tradingToolsType
    */
   injectTradingTools( tradingToolsType ) {
-    // const tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' );
-
-    // if ( tradingToolsWrapper.length <= 0 )
-    this.tradeContentWrapper.innerHTML += TradeTemplates.toolsWrapper();
-
     let tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' )[0];
 
-    if ( tradingToolsType === TradingToolsType.BinaryOptions )
+    if ( tradingToolsType === TradingMode.BinaryOptions )
       tradingToolsWrapper.innerHTML = TradeTemplates.binaryOptionsTools();
     else
       tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();

@@ -37,13 +37,10 @@ class NavbarView {
   static get _() { return navbarView; };
 
   get element() { return document.getElementById( 'sidenav' ); }
-
   get iconContainer() { return document.getElementById( 'icon-container' ); }
-
-  static get pageContainer() { return document.getElementById( 'page-container' ); }
-
   get toggleButtonElem() { return document.getElementById( 'sidenav-toggle' ); }
   get toggleButtonPElem() { return document.getElementById( 'sidenav-toggle-p' ); }
+  static get pageContainer() { return document.getElementById( 'page-container' ); }
 
   getIconLabels() { return document.getElementsByClassName( 'icon-label' ); }
 
@@ -56,10 +53,12 @@ class NavbarView {
   }
 
   minimize() {
+    // "&raquo;" == "»"
     this.resize( SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
   }
 
   maximize() {
+    // "&laquo;" == "«"
     this.resize( SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
   }
 
@@ -69,6 +68,7 @@ class NavbarView {
     this.element.style.width = width;
     this.toggleButtonPElem.innerHTML = toggleButtonLabel;
     NavbarView.pageContainer.style.marginLeft = width;
+    NavbarView.pageContainer.style.maxWidth = `calc(100% - ${width})`;
 
     const labels = this.getIconLabels();
     for ( let i = 0; i < labels.length; ++i ) {

@@ -20,8 +20,14 @@ whenDomReady(() => {
 
   NavbarController._.init();
 
-  // This will give an error if it exists more than 1 cookie.
-  //const requestedPage = document.cookie.split( '=' )[1].replace( '%2F', '/' ).replace( '%2F', '/' );
-  //page( NavItemID.Dashboard, requestedPage );
-  //document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
+  // This gives an error if it exists more than 1 cookie (of course).
+  const requestedPage = document.cookie.split( '=' )[1].substring(3).replace( '%2F', '/' );
+  const page = Utils.getNavItemIDFromString( requestedPage );
+
+  if ( !page )
+    console.info('404 - Not Found.'); // Show 404 page.
+  else
+    document.getElementById( page + '_btn' ).click();
+
+  document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
 });

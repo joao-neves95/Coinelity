@@ -55,16 +55,18 @@ namespace Coinelity.AspServer.Controllers
         [Route( "/dashboard" )]
         [Route( "/settings" )]
         [Route( "/traderoom" )]
-        [Route( "/traderoom/markets" )]
-        [Route( "/traderoom/trade/{symbol}" )]
+        [Route( "/trade-room/markets" )]
+        [Route( "/trade-room/trade/{symbol}" )]
         [HttpGet]
         // [Authorize]
         public IActionResult GetPrivate()
         {
             try
             {
-                // Response.Cookies.Append( "Requested-Path", Request.Path.ToString() );
                 Response.ContentType = "text/html";
+                Response.Headers.Add( "Cache-Control", "no-cache, no-store" );
+                Response.Headers.Add( "Expires", "-1" );
+                Response.Cookies.Append( "Requested-Path", Request.Path.ToString() );
                 string index = Path.Combine(Directory.GetCurrentDirectory(), "WebClient", "dashboard.html");
                 return PhysicalFile(index, "text/html");
             }

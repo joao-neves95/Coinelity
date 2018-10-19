@@ -41,4 +41,38 @@ class PageTemplates {
       <a id="${id}" class="success button ${addicionalClasses}">${label}</a>
     `;
   }
+
+  /**
+   * 
+   * @param {any} label
+   * @param {any} id
+   * @param { ButtonType } buttonType
+   * @param {any} addicionalClasses
+   */
+  static button( label, id, buttonType, addicionalClasses = '' ) {
+    return `
+      <a id="${id}" class="${buttonType} button ${addicionalClasses}">${label}</a>
+    `;
+  }
+
+  /**
+   * 
+   * @param { string } label
+   * @param { SelectInputOptions[] } options
+   */
+  static selectInput( selectId, label, options ) {
+    let optionsHtml = '';
+
+    for ( let i = 0; i < options.length; ++i ) {
+      optionsHtml += `<option value="${options[i].value}">${options[i].label}</option>`;
+    }
+
+    return `
+      <label>${label}
+        <select id="${selectId}">
+          ${optionsHtml}
+        </select>
+      </label>
+    `;
+  }
 }

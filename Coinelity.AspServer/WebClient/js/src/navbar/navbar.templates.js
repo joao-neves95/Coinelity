@@ -9,12 +9,10 @@
 
 class NavbarTemplates {
   constructor() {
-    throw new Error( 'You can not instantiate NavbarTemplates (static class)' );
+    throw DevErrors.cantInstantiateStatic( 'NavbarTemplates' );
   }
 
   static toggleButton() {
-    // "&laquo;" == "«"
-    // "&raquo;" == "»"
     return `
       <li class="cell li-toggle">
         <a id="sidenav-toggle">
@@ -35,7 +33,7 @@ class NavbarTemplates {
   static iconLink(url, label, linkTo) {
     return `
       <li class="cell">
-        <a href="${ BASE_URL + linkTo }" class="grid-x align-middle">
+        <a href="${ BASE_URL + linkTo}" class="grid-x align-middle" id="${linkTo}_btn">
           <img class="icon cell large-6" src="${ url }" alt"=${ label } Icon" />
           <figcaption class="icon-label large-6">${ label }</figcaption>
         </a>  

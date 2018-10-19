@@ -16,6 +16,10 @@ class TradeModel extends ModelBase {
 
     super( '', '', '', '' );
 
+    this.currentTradeMode = TradingMode.BinaryOptions;
+    this.currentSymbol = null;
+    this.currentTimeframe = '1d';
+
     this.chartLayout = {
       dragmode: 'zoom',
       heigth: 2000,
@@ -35,7 +39,7 @@ class TradeModel extends ModelBase {
       yaxis: {
         autorange: true,
         domain: [0, 1],
-        range: [114.609999778, 137.410004222],
+        // range: [1000, 2000],
         type: 'linear'
       }
     };
@@ -54,8 +58,6 @@ class TradeModel extends ModelBase {
       close: []
     };
 
-    this.currentSymbol = null;
-    this.currentTimeframe = '1d';
 
     tradeModel = this;
     Object.seal( tradeModel );
@@ -65,7 +67,7 @@ class TradeModel extends ModelBase {
 
   getChartData() {
     return new Promise( async ( resolve, reject ) => {
-      const OHLCVArray = await this.getOHLCV( this.currentSymbol );
+      const OHLCVArray = await this.getOHLCV();
       
       if ( !OHLCVArray )
         return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
@@ -88,10 +90,10 @@ class TradeModel extends ModelBase {
    * @param { Function } Callback Optional (<OHLCV | undefined>)
    * 
    */
-  getOHLCV( symbol, Callback ) {
+  getOHLCV( Callback ) {
     return new Promise( ( resolve, reject ) => {
 
-      ExchangeClient._.getOHLCV( 'KRAKEN', symbol, this.currentTimeframe, ( OHLCVArray ) => {
+      ExchangeClient._.getOHLCV( 'KRAKEN', this.currentSymbol, this.currentTimeframe, ( OHLCVArray ) => {
         if ( Callback )
           return Callback( OHLCVArray );
 

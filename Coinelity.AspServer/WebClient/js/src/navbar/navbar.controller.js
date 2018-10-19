@@ -21,8 +21,8 @@ let navbarController = null;
  * */
 class NavbarController {
   constructor() {
-    if (navbarController)
-      throw new Error( 'There can only be one instance of NavBarController.' );
+    if ( navbarController )
+      throw DevErrors.singleIntance( 'NavBarController' );
 
     /**
      * @type { NavbarView }
@@ -33,15 +33,6 @@ class NavbarController {
      * @type { NavbarModel }
      * */
     this.model = new NavbarModel();
-
-    /**
-     * Dictionary mapping the pages and components.
-     * key: string (unique id of the Page | NavbarPanelItem. To be used by the router)
-     * value:  Instance of Page | NavbarPanelItem.
-     */
-    //this.items = new Dictionary(true);
-    //this.activePageId = null;
-    //this.activeNavbarPanelItemId = null;
 
     navbarController = this;
     Object.freeze( navbarController );
