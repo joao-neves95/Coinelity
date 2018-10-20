@@ -1,4 +1,13 @@
-﻿SET IDENTITY_INSERT dbo.EventType ON;
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+SET IDENTITY_INSERT dbo.EventType ON;
 GO
 
 INSERT INTO dbo.OperationType (Id, Name)

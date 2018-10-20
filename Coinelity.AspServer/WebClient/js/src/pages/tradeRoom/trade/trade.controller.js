@@ -7,6 +7,9 @@
  *
  */
 
+// Add chart candlesticks with Plotly.extendTraces
+// Update existing chart candlesticks with Plotly.restyle
+
 let tradeController = null;
 let chartUpdateCandleInterval = null;
 let chartUpdatePriceInterval = null;
