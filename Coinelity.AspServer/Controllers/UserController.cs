@@ -37,11 +37,13 @@ namespace Coinelity.AspServer.Controllers
             _userManager = userManager;
         }
 
+        #region AUTH
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody]RegisterDTO registerDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ).Value);
+                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
             bool userExists = false;
 
@@ -53,18 +55,48 @@ namespace Coinelity.AspServer.Controllers
             }
 
             if (userExists)
-                return BadRequest(Json( new ErrorMessage(ErrorType.EmailAlreadyInUse) ).Value);
+                return BadRequest( Json( new ErrorMessage( ErrorType.EmailAlreadyInUse ) ).Value );
 
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
             // When in localhost it returns "::1".
-            user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            user.IpAddress = Utils.GetUserIp( _httpContextAccessor );
 
-            IdentityResult registerSuccess = await _userManager.CreateAsync(user, user.Password);
+            IdentityResult registerSuccess = await _userManager.CreateAsync( user, user.Password );
 
             if (!registerSuccess.Succeeded)
                 // TODO: Error handling.
                 // return StatusCode( 500 );
                 return StatusCode( 500, registerSuccess.Errors.ToList() );
+
+            // Do not await. Ignore warning.
+            Task.Run( async () =>
+            {
+                AuditLogStore auditLogStore = null;
+                UserStore userStore = null;
+                string userId;
+
+                try
+                {
+                    using (userStore = new UserStore())
+                    {
+                        userId = await userStore.GetUserIdByEmailAsync( registerDTO.Email );
+                    }
+
+                    using (auditLogStore = new AuditLogStore())
+                    {
+                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Register, Utils.GetUserIp( _httpContextAccessor ) );
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine( $"Exception in \"/register\" - InsertNewLog():\n{e.Message}", e );
+                }
+                finally
+                {
+                    userStore?.Dispose();
+                    auditLogStore?.Dispose();
+                }
+            } );
 
             return StatusCode(201, Json( "User successfully registered." ).Value );
         }
@@ -82,12 +114,35 @@ namespace Coinelity.AspServer.Controllers
             Microsoft.AspNetCore.Identity.SignInResult signInResult = await AppSignInManager.PasswordSignInAsync(userEmail, loginDTO.Password, false, false);
 
             if (!signInResult.Succeeded)
-                return BadRequest(Json( new ErrorMessage(ErrorType.LoginError) ).Value);
+                return BadRequest( Json( new ErrorMessage( ErrorType.LoginError ) ).Value );
 
             string userId = await userStore.GetUserIdByEmailAsync( userEmail );
             userStore.Dispose();
 
-            return Ok(Json( new jwtDTO { AccessToken = JWTTokens.Generate(userEmail, userId) } ).Value);
+            // Do not await. Ignore warning.
+            Task.Run( async () =>
+            {
+                 AuditLogStore auditLogStore = null;
+
+                 try
+                 {
+                     using (auditLogStore = new AuditLogStore())
+                     {
+                        // TODO: Get user IP.
+                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Login, Utils.GetUserIp( _httpContextAccessor ) );
+                     }
+                 }
+                 catch (Exception e)
+                 {
+                     Console.WriteLine( $"Exception in \"/login\" - InsertNewLog():\n{e.Message}", e );
+                 }
+                 finally
+                 {
+                     auditLogStore?.Dispose();
+                 }
+            } );
+
+            return Ok( Json( new jwtDTO { AccessToken = JWTTokens.Generate( userEmail, userId ) } ).Value );
         }
 
         [Authorize]
@@ -101,26 +156,33 @@ namespace Coinelity.AspServer.Controllers
         [HttpGet("roles")]
         public async Task<IActionResult> GetRoles()
         {
-            RoleStore roleStore = new RoleStore();
+            RoleStore roleStore = null;
+            string userIdClaim;
             List<ApplicationRoleDTO> applicationUserRoles = new List<ApplicationRoleDTO>();
+
             try
             {
-                string userIdClaim = Utils.GetUserClaim( User, "id" );
-                applicationUserRoles = await roleStore.GetUserRolesByUserIdAsync( userIdClaim );
+                using (roleStore = new RoleStore())
+                {
+                    userIdClaim = Utils.GetUserIdClaim( User );
+                }
 
-                return Ok(Json( applicationUserRoles ).Value);
+                applicationUserRoles = await roleStore.GetUserRolesByUserIdAsync( userIdClaim );
+                return Ok( Json( applicationUserRoles ).Value );
             }
             catch (Exception e)
             {
                 // TODO: Exception handling.
                 Console.WriteLine( $"ERROR:\nIn: api/users/roles\n{ e.Message }" );
-                return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
+                return StatusCode( 500, Json( new ErrorMessage( ErrorType.UnknownError ) ).Value );
             }
             finally
             {
-                roleStore.Dispose();
+                roleStore?.Dispose();
             }
         }
+
+        #endregion
 
         #region SETTINGS
 
@@ -139,18 +201,41 @@ namespace Coinelity.AspServer.Controllers
             if (!ModelState.IsValid)
                 return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
-            string userIdClaim = Utils.GetUserClaim( User, "id" );
+            string userIdClaim = Utils.GetUserIdClaim( User );
             UserStore userStore = new UserStore();
             string result = await userStore.ChangePasswordAsync( userIdClaim, setPasswordDTO.CurrentPassword, setPasswordDTO.NewPassword );
 
-            if (result == "Success")
-                return Ok( Json( "Successfully changed the password" ).Value );
 
             if (result == ErrorMessages.ProvidedPassDoesNotMatch)
                 return BadRequest( Json( new ErrorMessage( ErrorType.ProvidedPassDoesNotMatch ) ).Value );
             if (result == ErrorMessages.CouldNotChangePassword)
                 return BadRequest( Json( new ErrorMessage( ErrorType.CouldNotChangePassword ) ).Value );
 
+            if (result == "Success")
+            {
+                // Do not await. Ignore warning.
+                Task.Run( async () =>
+                {
+                    AuditLogStore auditLogStore = null;
+
+                    try
+                    {
+                        using (auditLogStore = new AuditLogStore())
+                        {
+                            await auditLogStore.InsertNewLog( Convert.ToInt32( userIdClaim ), EventType.Password_Change, Utils.GetUserIp( _httpContextAccessor ) );
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine( $"Exception in \"/password\" - PutPassword():\n{e.Message}", e );
+                    }
+                    finally
+                    {
+                        auditLogStore?.Dispose();
+                    }
+                } );
+                return Ok( Json( "Successfully changed the password" ).Value );
+            }
             return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
         }
 
@@ -168,7 +253,7 @@ namespace Coinelity.AspServer.Controllers
             if (!ModelState.IsValid)
                 return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
-            string userId = Utils.GetUserClaim( User, "id" );
+            string userId = Utils.GetUserIdClaim( User );
 
             UserStore userStore = new UserStore();
             int result = await userStore.SetMaxloginFailsAsync( userId, setMaxLoginFailsDTO.MaxLoginFails.ToString() );

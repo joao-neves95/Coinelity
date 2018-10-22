@@ -47,10 +47,10 @@ const chat = io
 
     switch ( result ) {
       case RequestControlResult.AuthFailed:
-        return socket.to( socket.id ).emit('request-error', commonApiResponses.notAuthorized() );
+        return socket.to( socket.client.id ).emit('request-error', commonApiResponses.notAuthorized() );
 
       case RequestControlResult.Blacklisted:
-        return socket.to( socket.id ).emit('request-error', commonApiResponses.blacklisted() );
+        return socket.to( socket.client.id ).emit('request-error', commonApiResponses.blacklisted() );
 
       case RequestControlResult.Accepted:
         return next();
@@ -58,17 +58,37 @@ const chat = io
 
     next();
   } )
-  .on( 'connection', ( socket ) => {
+  .on( 'GENERAL_connection', ( socket ) => {
+    socket.join( 'GENERAL' );
     socket.emit( 'Hello-World', { hello: 'world' } );
 
     socket.on( 'client event', ( data ) => {
       console.log( data );
     } );
 
-    socket.on( 'disconnect', () => {
+    socket.on( 'message', ( data ) => {
+      socket.to('GENERAL').emit( data );
+      console.log( "Broadcast GENERAL Message: ", data );
+    } );
+
+    socket.on( 'GENERAL_disconnect', () => {
+      socket.leave( 'GENERAL' );
       io.emit( 'user-disconnected' );
     } );
-} );
+  } )
+  .on( 'BTC_connection', ( socket ) => {
+    socket.join( 'BTC' );
+
+    socket.on( 'message', ( data ) => {
+      socket.to( 'BTC' ).emit( data );
+      console.log( "Broadcast GENERAL Message: ", data );
+    } );
+
+    socket.on( 'BTC_disconnect', () => {
+      socket.leave( 'BTC' );
+      io.emit( 'user-disconnected' );
+    } );
+  });
 
 app.use( '/api', apiRoute );
 

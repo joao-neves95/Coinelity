@@ -32,6 +32,11 @@ namespace Coinelity.AspServer.DataAccess
             GC.SuppressFinalize( this );
         }
 
+        ~OptionsStore()
+        {
+            this.Dispose();
+        }
+
         /// <summary>
         /// 
         /// The command for opening a new order.

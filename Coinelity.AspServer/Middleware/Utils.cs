@@ -9,10 +9,10 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Coinelity.AspServer.Enums;
 
@@ -96,6 +96,16 @@ namespace Coinelity.AspServer.Middleware
         public static string GetUserClaim(ClaimsPrincipal userClaims, string claim)
         {
             return userClaims.Claims.Where( c => c.Type == claim ).First().Value;
+        }
+
+        public static string GetUserIdClaim(ClaimsPrincipal userClaims)
+        {
+            return GetUserClaim( userClaims, "id" );
+        }
+
+        public static string GetUserIp(IHttpContextAccessor httpContextAccessor)
+        {
+            return httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
         }
     }
 }
