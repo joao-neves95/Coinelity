@@ -60,7 +60,7 @@ class PageTemplates {
    * @param { string } label
    * @param { SelectInputOptions[] } options
    */
-  static selectInput( selectId, label, options ) {
+  static selectInput( selectId, label, options, selectAddicionalClasses = '' ) {
     let optionsHtml = '';
 
     for ( let i = 0; i < options.length; ++i ) {
@@ -69,7 +69,7 @@ class PageTemplates {
 
     return `
       <label>${label}
-        <select id="${selectId}">
+        <select id="${selectId}" class="${selectAddicionalClasses}">
           ${optionsHtml}
         </select>
       </label>

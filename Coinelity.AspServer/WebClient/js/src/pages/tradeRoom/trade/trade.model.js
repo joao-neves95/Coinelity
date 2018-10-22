@@ -21,7 +21,7 @@ class TradeModel extends ModelBase {
     this.currentTimeframe = '1d';
 
     this.chartLayout = {
-      dragmode: 'zoom',
+      dragmode: 'pan',
       heigth: 2000,
       margin: {
         r: 10,

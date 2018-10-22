@@ -1,16 +1,24 @@
 ﻿@import 'variables.less';
+@import 'utilities.less';
 
 #trade {
     width: 100%;
     height: 100%;
     position: relative;
+    overflow: hidden;
 
     .trade-content-wrapper {
         width: 100%;
         height: 100%;
 
         .trading-chart-wrapper {
-             width: 80%;
+            width: 80%;
+            padding: 0;
+
+            @media only screen and (max-width: @mobile-width-max) {
+                width: 100%;
+                height: 50%;
+            }
 
             #trading-chart {
                 width: 100%;
@@ -19,9 +27,51 @@
         }
 
         .trading-tools-wrapper {
+            background-color: @grey-ligth;
+            color: white !important;
             width: 20%;
             height: 100%;
-            background-color: @grey-ligth;
+            min-height: 20em;
+            position: relative;
+
+            @media only screen and (max-width: @mobile-width-max) {
+                width: 100%;
+                height: 20%;
+            }
+
+            form {
+                position: relative;
+
+                label {
+                    color: white;
+
+                    select {
+                        display: block;
+                    }
+                }
+
+                .btn {
+                    display: block;
+                    color: white;
+                    height: 4em;
+
+                    .icon {
+                        width: 2em;
+                        height: 2em;
+                        font-weight: 400;
+                        display: inline-block;
+                        margin-right: 1em;
+                    }
+
+                    .call {
+                        background: url( "@{PUBLIC_IMGS_URL}arrow-up-white.svg" ) no-repeat 100%;
+                    }
+
+                    .put {
+                        background: url( "@{PUBLIC_IMGS_URL}arrow-down-white.svg" ) no-repeat 100%;
+                    }
+                }
+            }
         }
     }
 }

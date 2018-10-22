@@ -89,7 +89,16 @@ const Colors = Object.freeze({
   DarkGrey: '#3D3D3D',
   LightBlue: '#78BBFF'
 });
-﻿const ButtonType = Object.freeze( {
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+const ButtonType = Object.freeze( {
   /** Green */
   Success: 'success',
   /** Red */
@@ -187,7 +196,16 @@ const TradingMode = Object.freeze( {
   BinaryOptions: 1,
   CFD: 2
 } );
-﻿class SelectInputOptions {
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+class SelectInputOptions {
   constructor( label, value ) {
     this.label = label;
     this.value = value;
@@ -1157,7 +1175,7 @@ class PageTemplates {
    * @param { string } label
    * @param { SelectInputOptions[] } options
    */
-  static selectInput( selectId, label, options ) {
+  static selectInput( selectId, label, options, selectAddicionalClasses = '' ) {
     let optionsHtml = '';
 
     for ( let i = 0; i < options.length; ++i ) {
@@ -1166,7 +1184,7 @@ class PageTemplates {
 
     return `
       <label>${label}
-        <select id="${selectId}">
+        <select id="${selectId}" class="${selectAddicionalClasses}">
           ${optionsHtml}
         </select>
       </label>
@@ -1393,11 +1411,11 @@ class TradeTemplates {
       <form class="cell">
         <p>Current Price <span id="current-price">5048</span>€<p>
         ${
-          PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )] ) +
-    PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )] ) +
-          PageTemplates.inputNumElem('Investement Amount', 'investmentAmount', 0, '', '') +
-          PageTemplates.button( 'Call', 'call', ButtonType.Success ) +
-          PageTemplates.button( 'Put', 'put', ButtonType.Alert )
+          PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
+          PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
+          PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+          PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
+          PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
       </form>
     `;
@@ -1433,7 +1451,7 @@ class TradeModel extends ModelBase {
     this.currentTimeframe = '1d';
 
     this.chartLayout = {
-      dragmode: 'zoom',
+      dragmode: 'pan',
       heigth: 2000,
       margin: {
         r: 10,
@@ -1568,6 +1586,9 @@ class TradeView extends ViewBase {
  * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
  *
  */
+
+// Add chart candlesticks with Plotly.extendTraces
+// Update existing chart candlesticks with Plotly.restyle
 
 let tradeController = null;
 let chartUpdateCandleInterval = null;
@@ -2673,12 +2694,9 @@ whenDomReady(() => {
 
   NavbarController._.init();
 
-  // This will give an error if it exists more than 1 cookie.
-  console.debug( document.cookie );
+  // This gives an error if it exists more than 1 cookie (of course).
   const requestedPage = document.cookie.split( '=' )[1].substring(3).replace( '%2F', '/' );
   const page = Utils.getNavItemIDFromString( requestedPage );
-  console.debug( requestedPage );
-  console.debug( page );
 
   if ( !page )
     console.info('404 - Not Found.'); // Show 404 page.
