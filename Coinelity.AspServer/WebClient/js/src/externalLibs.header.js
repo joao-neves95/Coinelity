@@ -13,4 +13,8 @@
 // $import 'sweetalert2/dist/sweetalert2.all.min'
 // $import 'ccxt/build/ccxt.browser'
 // $import '@aspnet/signalr/dist/browser/signalr.min'
+// Temporary. For development only.
+// TODO: Make a custom build for production.
+// %import<<GH 'apache/incubator-echarts/master/dist/echarts.js'
+// TODO: Remove Plotly.js after migration.
 // $import 'plotly.js-finance-dist/plotly-finance'

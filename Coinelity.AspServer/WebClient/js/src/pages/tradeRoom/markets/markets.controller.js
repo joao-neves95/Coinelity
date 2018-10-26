@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -8,7 +8,6 @@
  */
 
 let marketsController = null;
-let cardUpdateInterval = null;
 
 class MarketsController extends ControllerBase {
   constructor() {
@@ -45,7 +44,7 @@ class MarketsController extends ControllerBase {
     /** @type { List } */
     const symbols = this.model.symbols;
 
-    cardUpdateInterval = setInterval( () => {
+    this.model.cardUpdateInterval = setInterval( () => {
       for ( let i = 0; i < symbols.length; ++i ) {
         const thisSymbol = symbols.get( i );
 
@@ -72,11 +71,12 @@ class MarketsController extends ControllerBase {
       } );
 
     }
-
   }
 
   stopCardUpdate() {
-    if ( cardUpdateInterval )
-      clearInterval( cardUpdateInterval );
+    if ( this.model.cardUpdateInterval ) {
+      clearInterval( this.model.cardUpdateInterval );
+      this.model.cardUpdateInterval = null;
+    }
   }
 }

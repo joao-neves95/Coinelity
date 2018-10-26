@@ -63,6 +63,7 @@
 // @import 'trader.main'
 // @import '/services/traderRoutes'
 'use strict';
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -76,6 +77,7 @@ const EnvironmentType = Object.freeze( {
   Development: 'DEVELOPMENT',
   Production: 'PRODUCTION'
 } );
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -89,6 +91,7 @@ const Colors = Object.freeze({
   DarkGrey: '#3D3D3D',
   LightBlue: '#78BBFF'
 });
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -106,6 +109,7 @@ const ButtonType = Object.freeze( {
   /** Yellow */
   Warning: 'warning'
 } );
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -120,6 +124,7 @@ const NavbarItemType = Object.freeze({
   NavbarPanelItem: 2,
   Modal: 3
 });
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -139,6 +144,7 @@ const NavItemID = Object.freeze( {
   Trade: 'trade-room/trade',
   Settings: 'settings'
 });
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -152,6 +158,7 @@ const GridOrientationType = Object.freeze( {
   Y: 'grid-y',
   X: 'grid-x'
 } );
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -167,6 +174,7 @@ const RequestType = Object.freeze( {
   Put: 'PUT',
   Delete: 'DELETE'
 } );
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -183,6 +191,7 @@ const FiatSymbol = Object.freeze( {
   Pound: '&pound;',
   Yen: '&yen;'
 } );
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -196,6 +205,7 @@ const TradingMode = Object.freeze( {
   BinaryOptions: 1,
   CFD: 2
 } );
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -211,6 +221,7 @@ class SelectInputOptions {
     this.value = value;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -226,6 +237,7 @@ class HttpClientResponse {
     this.data = data;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -241,6 +253,7 @@ class ChangePasswordDTO {
     this.newPassword = newPassword;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -258,6 +271,7 @@ class SpreadPricesModel {
     this.spreadPercentDiff = spreadPercentDiff;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -274,6 +288,7 @@ class ChangeModel {
     this.percent = percent;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -295,6 +310,7 @@ const BASE_NODEJS_PORT = '3003';
 const BASE_NODEJS_URL = `http://localhost:${BASE_NODEJS_PORT}/`;
 const BASE_NODEJS_API = BASE_NODEJS_URL + 'api/';
 
+const FETCH_CHART_DATA_MAX_ATTEMPTS = 3;
 const MARKETS_UPDATE_RATE = 5000;
 const TRADE_OHLCV_UPDATE_RATE = 2000;
 
@@ -306,6 +322,7 @@ const SETTINGS_ICON_URL = `${PUBLIC_IMGS_URL}settings-icon-white.svg`;
 // This sizes are the same as in "variables.less".
 const SIDEBAR_MOBILE_WIDTH = '3em';
 const SIDEBAR_DESKTOP_WIDTH = '10em';
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -349,6 +366,7 @@ class DevErrors {
     DevErrors.throw( `The function, method, class or opertion has not yet been implemented.\n${additionalInfo}` );
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -625,6 +643,7 @@ class List extends Collection {
     return value % 1 !== 0;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -705,6 +724,7 @@ class DOM {
     return em * bodyTextSizePx;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -800,6 +820,7 @@ class HttpClient {
       } )();
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -829,7 +850,7 @@ class ExchangeClient {
     this.kraken = new ccxt.kraken( { rateLimit: true } );
 
     if ( !this.kraken.has['CORS'] )
-      this.kraken.proxy = 'https://cors-escape.herokuapp.com/';
+      this.kraken.proxy = 'https://coinelity-proxy.glitch.me/'; // 'https://cors-escape.herokuapp.com/';
 
     exchangeClient = this;
     Object.seal( exchangeClient );
@@ -956,21 +977,28 @@ class ExchangeClient {
    * @param { string } symbol The asset symbol.
    * @param { string } timeframe 1m, 5m, 15m, 30m, 1h, 4h, 1d, 7d, 1M.
    * @param { Function } Callback Receives a <string[]> representation of the last OHLC candle.
+   * 
+   * @returns { Promise<string[] | Error> }
    */
   getOHLCV( exchangeName, symbol, timeframe, Callback ) {
-    ( async () => {
+    return new Promise( async ( resolve, reject ) => {
       let OHLCVArray = undefined;
 
       try {
         OHLCVArray = await this.getExchangeObject( exchangeName ).fetchOHLCV( symbol, timeframe );
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        if ( Callback )
+          return Callback( e, undefined );
 
+        return reject( e );
       }
 
-      return Callback( OHLCVArray );
-    } )();
+      if ( Callback )
+        return Callback( null, OHLCVArray );
+
+      return resolve( OHLCVArray );
+    } );
   }
 
   /**
@@ -1047,6 +1075,7 @@ class ExchangeClient {
 
 
 new ExchangeClient();
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1113,6 +1142,7 @@ class NavbarItemBase {
 
   // #endregion
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1191,6 +1221,7 @@ class PageTemplates {
     `;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1215,6 +1246,7 @@ class ModelBase {
     this.navIconURL = navIconURL;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1240,6 +1272,7 @@ class ViewBase {
     document.getElementById( 'page-container' ).firstElementChild.id = id;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1267,6 +1300,7 @@ class ControllerBase extends NavbarItemBase {
     this.view = view;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1281,6 +1315,7 @@ class DashboardTemplates {
     throw new Error( 'You can not instantiate DashboardTemplates (static class)' );
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1309,6 +1344,7 @@ class DashboardModel extends ModelBase {
 
   static get _() { return dashboardModel; }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1337,6 +1373,7 @@ class DashboardView extends ViewBase {
 
   static get _() { return dashboardView; }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1367,6 +1404,7 @@ class DashboardController extends ControllerBase {
 
   static get _() { return dashboardController; }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1385,8 +1423,8 @@ class TradeTemplates {
 
   static container() {
     return `
-      <section id="trade" clas="grid-container">
-        <div class="grid-x grid-padding-x trade-content-wrapper">
+      <section id="trade" class="grid-container fluid">
+        <div class="grid-x trade-content-wrapper">
       
           <section class="cell trading-chart-wrapper">
           </section>
@@ -1409,11 +1447,11 @@ class TradeTemplates {
   static binaryOptionsTools() {
     return `
       <form class="cell">
-        <p>Current Price <span id="current-price">5048</span>€<p>
         ${
-          PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
+          // PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
           PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+          '<p>Current Price <span id="current-price">5048</span>€<p>' +
           PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
           PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
@@ -1428,6 +1466,7 @@ class TradeTemplates {
     `;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1447,47 +1486,93 @@ class TradeModel extends ModelBase {
     super( '', '', '', '' );
 
     this.currentTradeMode = TradingMode.BinaryOptions;
-    this.currentSymbol = null;
+    this.currentSymbol = 'BTC/EUR';
+    this.currentExchange = 'KRAKEN';
     this.currentTimeframe = '1d';
 
-    this.chartLayout = {
-      dragmode: 'pan',
-      heigth: 2000,
-      margin: {
-        r: 10,
-        t: 25,
-        b: 40,
-        l: 60
-      },
-      showlegend: false,
-      xaxis: {
-        autorange: true,
-        domain: [0, 1],
-        title: 'Date',
-        type: 'date'
-      },
-      yaxis: {
-        autorange: true,
-        domain: [0, 1],
-        // range: [1000, 2000],
-        type: 'linear'
-      }
+    this.chart = {};
+
+    this.chartData = {
+      categoryData: [],
+      values: []
     };
 
-    this.chartTrace = {
-      type: 'candlestick',
-      increasing: { line: { color: '#26A69A' } },
-      decreasing: { line: { color: '#EF5350' } },
-      xaxis: 'x',
-      yaxis: 'y',
-      // DATA:
-      x: [],
-      open: [],
-      high: [],
-      low: [],
-      close: []
+    // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
+    this.chartConfig = {
+      //backgroundColor: '#21202D',
+      title: {
+        text: 'BTC/EUR',
+        left: 0 // 'center'
+      },
+      animation: true,
+      grid: {
+        left: '10%',
+        right: '10%',
+        bottom: '15%'
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          animation: true
+        }
+      },
+      xAxis: {
+        type: 'category',
+        data: this.chartData.categoryData,
+        scale: true,
+        boundaryGap: false,
+        axisLine: { onZero: false },
+        splitLine: { show: false },
+        splitNumber: 20,
+        min: 'dataMin',
+        max: 'dataMax'
+      },
+      yAxis: {
+        scale: true,
+        splitArea: {
+          show: true
+        }
+      },
+      dataZoom: [
+        {
+          type: 'inside',
+          start: 90,
+          end: 100
+        },
+        {
+          show: true,
+          type: 'slider',
+          y: '90%',
+          start: 50,
+          end: 100
+        }
+      ],
+      series: [
+        {
+          type: 'candlestick',
+          data: this.chartData.values,
+          itemStyle: {
+            // Bullish candles.
+            color: '#26A69A',
+            // Bearish candles.
+            color0: '#EF5350'
+          }
+        }//,
+        //{
+        //  name: 'MA10',
+        //  type: 'line',
+        //  data: calculateMA( 10, data ),
+        //  smooth: true,
+        //  showSymbol: false,
+        //  lineStyle: {
+        //    normal: {
+        //      width: 1
+        //    }
+        //  }
+        //},
+      ]
     };
-
 
     tradeModel = this;
     Object.seal( tradeModel );
@@ -1495,43 +1580,67 @@ class TradeModel extends ModelBase {
 
   get _() { return tradeModel; }
 
-  getChartData() {
+  getInitChartData() {
     return new Promise( async ( resolve, reject ) => {
-      const OHLCVArray = await this.getOHLCV();
-      
-      if ( !OHLCVArray )
-        return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
+      let OHLCVArray;
 
-      for ( let i = 0; i < OHLCVArray.length; ++i ) {
-        this.chartTrace.x.push( moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY-MM-DD" ) );
-        this.chartTrace.open.push( OHLCVArray[i][1] );
-        this.chartTrace.high.push( OHLCVArray[i][2] );
-        this.chartTrace.low.push( OHLCVArray[i][3] );
-        this.chartTrace.close.push( OHLCVArray[i][4] );
+      try {
+        OHLCVArray = await this.getOHLCV();
+
+      } catch (e) {
+        // TODO: Send notification.
+        return console.error( 'There was an error while trying to connect to the data provider. Please, try again.' );
       }
 
-      return resolve( [this.chartTrace] );
+      for ( let i = 0; i < OHLCVArray.length; ++i ) {
+        const humanDate = moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY/MM/DD" );
+        this.chartData.categoryData.push( humanDate );
+        // date, open，close, lowest, highest.
+        this.chartData.values.push( [ OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2] ] );
+      }
+
+      return resolve( [this.chartData] );
     } );
   }
 
   /**
    * 
-   * @param {any} symbol
    * @param { Function } Callback Optional (<OHLCV | undefined>)
-   * 
+   * @returns { Promise<string[]> }
    */
-  getOHLCV( Callback ) {
-    return new Promise( ( resolve, reject ) => {
+  getOHLCV() {
+    let success = false;
+    let lastError = null;
+    let attemptNum = 0;
+    let OHLCVArray;
 
-      ExchangeClient._.getOHLCV( 'KRAKEN', this.currentSymbol, this.currentTimeframe, ( OHLCVArray ) => {
-        if ( Callback )
-          return Callback( OHLCVArray );
+    return new Promise( async ( resolve, reject ) => {
 
-        resolve( OHLCVArray );
-      } );
+      while ( !success ) {
+        try {
+          OHLCVArray = await ExchangeClient._.getOHLCV( this.currentExchange, this.currentSymbol, this.currentTimeframe );
+
+        } catch ( e ) {
+          ++attemptNum;
+          lastError = e;
+
+        } finally {
+          if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
+            console.error( 'There was an error while fetching the data.', lastError );
+            return reject( lastError );
+          }
+
+          // Just to confirm.
+          if ( Array.isArray( OHLCVArray ) )
+            success = true;
+        }
+      }
+
+      return resolve( OHLCVArray );
     } );
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1578,6 +1687,7 @@ class TradeView extends ViewBase {
       tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1622,26 +1732,19 @@ class TradeController extends ControllerBase {
   injectChart() {
     return new Promise( async ( resolve, reject ) => {
       this.view.injectChartTemplate();
-      const chartData = await this.model.getChartData();
-
-      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout,
-        {
-          responsive: true,
-          scrollZoom: true,
-          showLink: false,
-          displaylogo: false,
-          modeBarButtonsToRemove: ['sendDataToCloud']
-        } );
+      await this.model.getInitChartData();
+      this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
+      this.model.chart.setOption( this.model.chartConfig );
 
       resolve();
     } );
   }
 
+  // TODO: REDO.
   startChartCandleUpdate() {
     chartUpdatePriceInterval = setInterval( () => {
       this.model.getOHLCV( ( OHLCV ) => {
         if ( OHLCV )
-          // TODO: Update for the new charting lib.
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
 
       } );
@@ -1664,6 +1767,7 @@ class TradeController extends ControllerBase {
     this.view.injectTradingTools( this.model.currentTradeMode );
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1682,7 +1786,7 @@ class MarketsTemplates {
 
   static container() {
     return `
-      <section id="markets" clas="grid-container">
+      <section id="markets" class="">
         <h3>Markets</h3>
         <div class="grid-x grid-padding-x markets-cards-wrapper">
 
@@ -1724,6 +1828,7 @@ class MarketsTemplates {
     `;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1743,6 +1848,7 @@ class MarketsModel extends ModelBase {
     super( '', '', '', '' );
 
     this.symbols = new List( 'string' );
+    this.cardUpdateInterval = null;
 
     marketsModel = this;
     Object.seal( marketsModel );
@@ -1769,6 +1875,7 @@ class MarketsModel extends ModelBase {
     } );
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1831,6 +1938,7 @@ class MarketsView extends ViewBase {
     this.marketsContent.innerHTML = '';
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1841,7 +1949,6 @@ class MarketsView extends ViewBase {
  */
 
 let marketsController = null;
-let cardUpdateInterval = null;
 
 class MarketsController extends ControllerBase {
   constructor() {
@@ -1878,7 +1985,7 @@ class MarketsController extends ControllerBase {
     /** @type { List } */
     const symbols = this.model.symbols;
 
-    cardUpdateInterval = setInterval( () => {
+    this.model.cardUpdateInterval = setInterval( () => {
       for ( let i = 0; i < symbols.length; ++i ) {
         const thisSymbol = symbols.get( i );
 
@@ -1905,14 +2012,16 @@ class MarketsController extends ControllerBase {
       } );
 
     }
-
   }
 
   stopCardUpdate() {
-    if ( cardUpdateInterval )
-      clearInterval( cardUpdateInterval );
+    if ( this.model.cardUpdateInterval ) {
+      console.debug( 'stop card update' );
+      clearInterval( this.model.cardUpdateInterval );
+    }
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1927,6 +2036,7 @@ class TradeRoomTemplates {
     DevErrors.cantInstantiateStatic( 'TradeRoomTemplates' );
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1953,6 +2063,7 @@ class TradeRoomModel extends ModelBase {
 
   static get _() { return tradeRoomModel; }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -1991,6 +2102,7 @@ class TradeRoomView extends ViewBase {
     this.element.innerHTML = '';
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2054,6 +2166,7 @@ class TradeRoomController extends ControllerBase {
     this.tradeController.stopChartUpdate();
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2139,6 +2252,7 @@ class SettingsTemplates {
     // return ``;
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2185,6 +2299,7 @@ class SettingsModel extends ModelBase {
       });
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2232,6 +2347,7 @@ class SettingsView extends ViewBase {
     return new ChangePasswordDTO( currentPasswordInput, newPasswordInput );
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2280,6 +2396,7 @@ class SettingsController extends ControllerBase {
     this.setEventListeners();
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2326,6 +2443,7 @@ class NavbarTemplates {
     throw DevErrors.notImplemented();
   }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2366,6 +2484,7 @@ class NavbarModel {
 
   static get _() { return navbarModel; }
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2456,7 +2575,8 @@ class NavbarView {
   }
 
   // #endregion
-}﻿/*
+}
+﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -2593,6 +2713,7 @@ class NavbarController {
 }
 
 new NavbarController();
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2606,6 +2727,7 @@ const ThemeType = Object.freeze({
   Light: 1,
   Dark: 2
 });
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2672,6 +2794,7 @@ class Themes {
 
   static update() {}
 }
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2705,6 +2828,7 @@ whenDomReady(() => {
 
   document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
 });
+
 ﻿/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
@@ -2737,3 +2861,4 @@ page( `/${NavItemID.Trade}/:assetID`, ( ctx ) => {
 page( `/${NavItemID.Settings}`, () => {
   NavbarController._.activateItem( NavItemID.Settings );
 } );
+

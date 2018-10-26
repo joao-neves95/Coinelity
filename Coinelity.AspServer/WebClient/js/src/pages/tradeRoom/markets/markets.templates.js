@@ -16,7 +16,7 @@ class MarketsTemplates {
 
   static container() {
     return `
-      <section id="markets" clas="grid-container">
+      <section id="markets" class="">
         <h3>Markets</h3>
         <div class="grid-x grid-padding-x markets-cards-wrapper">
 

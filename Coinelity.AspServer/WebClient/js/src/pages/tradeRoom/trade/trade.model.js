@@ -17,47 +17,93 @@ class TradeModel extends ModelBase {
     super( '', '', '', '' );
 
     this.currentTradeMode = TradingMode.BinaryOptions;
-    this.currentSymbol = null;
+    this.currentSymbol = 'BTC/EUR';
+    this.currentExchange = 'KRAKEN';
     this.currentTimeframe = '1d';
 
-    this.chartLayout = {
-      dragmode: 'pan',
-      heigth: 2000,
-      margin: {
-        r: 10,
-        t: 25,
-        b: 40,
-        l: 60
-      },
-      showlegend: false,
-      xaxis: {
-        autorange: true,
-        domain: [0, 1],
-        title: 'Date',
-        type: 'date'
-      },
-      yaxis: {
-        autorange: true,
-        domain: [0, 1],
-        // range: [1000, 2000],
-        type: 'linear'
-      }
+    this.chart = {};
+
+    this.chartData = {
+      categoryData: [],
+      values: []
     };
 
-    this.chartTrace = {
-      type: 'candlestick',
-      increasing: { line: { color: '#26A69A' } },
-      decreasing: { line: { color: '#EF5350' } },
-      xaxis: 'x',
-      yaxis: 'y',
-      // DATA:
-      x: [],
-      open: [],
-      high: [],
-      low: [],
-      close: []
+    // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
+    this.chartConfig = {
+      //backgroundColor: '#21202D',
+      title: {
+        text: 'BTC/EUR',
+        left: 0 // 'center'
+      },
+      animation: true,
+      grid: {
+        left: '10%',
+        right: '10%',
+        bottom: '15%'
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          animation: true
+        }
+      },
+      xAxis: {
+        type: 'category',
+        data: this.chartData.categoryData,
+        scale: true,
+        boundaryGap: false,
+        axisLine: { onZero: false },
+        splitLine: { show: false },
+        splitNumber: 20,
+        min: 'dataMin',
+        max: 'dataMax'
+      },
+      yAxis: {
+        scale: true,
+        splitArea: {
+          show: true
+        }
+      },
+      dataZoom: [
+        {
+          type: 'inside',
+          start: 90,
+          end: 100
+        },
+        {
+          show: true,
+          type: 'slider',
+          y: '90%',
+          start: 50,
+          end: 100
+        }
+      ],
+      series: [
+        {
+          type: 'candlestick',
+          data: this.chartData.values,
+          itemStyle: {
+            // Bullish candles.
+            color: '#26A69A',
+            // Bearish candles.
+            color0: '#EF5350'
+          }
+        }//,
+        //{
+        //  name: 'MA10',
+        //  type: 'line',
+        //  data: calculateMA( 10, data ),
+        //  smooth: true,
+        //  showSymbol: false,
+        //  lineStyle: {
+        //    normal: {
+        //      width: 1
+        //    }
+        //  }
+        //},
+      ]
     };
-
 
     tradeModel = this;
     Object.seal( tradeModel );
@@ -65,40 +111,63 @@ class TradeModel extends ModelBase {
 
   get _() { return tradeModel; }
 
-  getChartData() {
+  getInitChartData() {
     return new Promise( async ( resolve, reject ) => {
-      const OHLCVArray = await this.getOHLCV();
-      
-      if ( !OHLCVArray )
-        return console.error( 'ERROR GETTING THE HISTORICAL CANDLE DATA.' );
+      let OHLCVArray;
 
-      for ( let i = 0; i < OHLCVArray.length; ++i ) {
-        this.chartTrace.x.push( moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY-MM-DD" ) );
-        this.chartTrace.open.push( OHLCVArray[i][1] );
-        this.chartTrace.high.push( OHLCVArray[i][2] );
-        this.chartTrace.low.push( OHLCVArray[i][3] );
-        this.chartTrace.close.push( OHLCVArray[i][4] );
+      try {
+        OHLCVArray = await this.getOHLCV();
+
+      } catch {
+        // TODO: Send notification.
+        return console.error( 'There was an error while trying to connect to the data provider. Please, try again.' );
       }
 
-      return resolve( [this.chartTrace] );
+      for ( let i = 0; i < OHLCVArray.length; ++i ) {
+        const humanDate = moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY/MM/DD" );
+        this.chartData.categoryData.push( humanDate );
+        // date, open，close, lowest, highest.
+        this.chartData.values.push( [ OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2] ] );
+      }
+
+      return resolve( [this.chartData] );
     } );
   }
 
   /**
    * 
-   * @param {any} symbol
    * @param { Function } Callback Optional (<OHLCV | undefined>)
-   * 
+   * @returns { Promise<string[]> }
    */
-  getOHLCV( Callback ) {
-    return new Promise( ( resolve, reject ) => {
+  getOHLCV() {
+    let success = false;
+    let lastError = null;
+    let attemptNum = 0;
+    let OHLCVArray;
 
-      ExchangeClient._.getOHLCV( 'KRAKEN', this.currentSymbol, this.currentTimeframe, ( OHLCVArray ) => {
-        if ( Callback )
-          return Callback( OHLCVArray );
+    return new Promise( async ( resolve, reject ) => {
 
-        resolve( OHLCVArray );
-      } );
+      while ( !success ) {
+        try {
+          OHLCVArray = await ExchangeClient._.getOHLCV( this.currentExchange, this.currentSymbol, this.currentTimeframe );
+
+        } catch ( e ) {
+          ++attemptNum;
+          lastError = e;
+
+        } finally {
+          if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
+            console.error( 'There was an error while fetching the data.', lastError );
+            return reject( lastError );
+          }
+
+          // Just to confirm.
+          if ( Array.isArray( OHLCVArray ) )
+            success = true;
+        }
+      }
+
+      return resolve( OHLCVArray );
     } );
   }
 }

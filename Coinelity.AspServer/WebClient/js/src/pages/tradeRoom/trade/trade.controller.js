@@ -42,26 +42,19 @@ class TradeController extends ControllerBase {
   injectChart() {
     return new Promise( async ( resolve, reject ) => {
       this.view.injectChartTemplate();
-      const chartData = await this.model.getChartData();
-
-      Plotly.plot( TradeTemplates.chartElemId, chartData, this.model.chartLayout,
-        {
-          responsive: true,
-          scrollZoom: true,
-          showLink: false,
-          displaylogo: false,
-          modeBarButtonsToRemove: ['sendDataToCloud']
-        } );
+      await this.model.getInitChartData();
+      this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
+      this.model.chart.setOption( this.model.chartConfig );
 
       resolve();
     } );
   }
 
+  // TODO: REDO.
   startChartCandleUpdate() {
     chartUpdatePriceInterval = setInterval( () => {
       this.model.getOHLCV( ( OHLCV ) => {
         if ( OHLCV )
-          // TODO: Update for the new charting lib.
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
 
       } );

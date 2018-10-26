@@ -17,6 +17,7 @@ class MarketsModel extends ModelBase {
     super( '', '', '', '' );
 
     this.symbols = new List( 'string' );
+    this.cardUpdateInterval = null;
 
     marketsModel = this;
     Object.seal( marketsModel );

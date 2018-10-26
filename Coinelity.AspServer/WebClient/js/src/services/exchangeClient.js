@@ -27,7 +27,7 @@ class ExchangeClient {
     this.kraken = new ccxt.kraken( { rateLimit: true } );
 
     if ( !this.kraken.has['CORS'] )
-      this.kraken.proxy = 'https://cors-escape.herokuapp.com/';
+      this.kraken.proxy = 'https://coinelity-proxy.glitch.me/'; // 'https://cors-escape.herokuapp.com/';
 
     exchangeClient = this;
     Object.seal( exchangeClient );
@@ -154,21 +154,28 @@ class ExchangeClient {
    * @param { string } symbol The asset symbol.
    * @param { string } timeframe 1m, 5m, 15m, 30m, 1h, 4h, 1d, 7d, 1M.
    * @param { Function } Callback Receives a <string[]> representation of the last OHLC candle.
+   * 
+   * @returns { Promise<string[] | Error> }
    */
   getOHLCV( exchangeName, symbol, timeframe, Callback ) {
-    ( async () => {
+    return new Promise( async ( resolve, reject ) => {
       let OHLCVArray = undefined;
 
       try {
         OHLCVArray = await this.getExchangeObject( exchangeName ).fetchOHLCV( symbol, timeframe );
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        if ( Callback )
+          return Callback( e, undefined );
 
+        return reject( e );
       }
 
-      return Callback( OHLCVArray );
-    } )();
+      if ( Callback )
+        return Callback( null, OHLCVArray );
+
+      return resolve( OHLCVArray );
+    } );
   }
 
   /**
