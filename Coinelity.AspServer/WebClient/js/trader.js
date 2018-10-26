@@ -1405,7 +1405,7 @@ class DashboardController extends ControllerBase {
   static get _() { return dashboardController; }
 }
 
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -1451,7 +1451,7 @@ class TradeTemplates {
           // PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
           PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
-          '<p>Current Price <span id="current-price">5048</span>€<p>' +
+          '<p>Current Price: <span id="current-price">5048</span>€<p>' +
           PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
           PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
@@ -1587,7 +1587,7 @@ class TradeModel extends ModelBase {
       try {
         OHLCVArray = await this.getOHLCV();
 
-      } catch (e) {
+      } catch {
         // TODO: Send notification.
         return console.error( 'There was an error while trying to connect to the data provider. Please, try again.' );
       }
@@ -1939,7 +1939,7 @@ class MarketsView extends ViewBase {
   }
 }
 
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -2016,8 +2016,8 @@ class MarketsController extends ControllerBase {
 
   stopCardUpdate() {
     if ( this.model.cardUpdateInterval ) {
-      console.debug( 'stop card update' );
       clearInterval( this.model.cardUpdateInterval );
+      this.model.cardUpdateInterval = null;
     }
   }
 }
