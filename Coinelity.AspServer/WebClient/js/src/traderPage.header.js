@@ -9,20 +9,8 @@
 
 // MergerJS imports:
 //
-// @import '/enums/environmentType'
-// @import '/enums/colors'
-// @import '/enums/buttonType'
-// @import '/enums/navbarItemType'
-// @import '/enums/navItemID'
-// @import '/enums/gridOrientationType'
-// @import '/enums/requestType'
-// @import '/enums/fiatSymbol'
-// @import '/enums/tradingMode'
-// @import '/models/selectInputOptions'
-// @import '/models/httpClientResponse'
-// @import '/models/changePasswordDTO'
-// @import '/models/spreadPricesModel'
-// @import '/models/changeModel'
+// @import<<DIR '/enums/'
+// @import<<DIR '/models/'
 // @import 'constants'
 // @import '/services/devErrors'
 // @import '/services/utils'

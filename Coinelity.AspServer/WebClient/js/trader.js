@@ -9,20 +9,8 @@
 
 // MergerJS imports:
 //
-// @import '/enums/environmentType'
-// @import '/enums/colors'
-// @import '/enums/buttonType'
-// @import '/enums/navbarItemType'
-// @import '/enums/navItemID'
-// @import '/enums/gridOrientationType'
-// @import '/enums/requestType'
-// @import '/enums/fiatSymbol'
-// @import '/enums/tradingMode'
-// @import '/models/selectInputOptions'
-// @import '/models/httpClientResponse'
-// @import '/models/changePasswordDTO'
-// @import '/models/spreadPricesModel'
-// @import '/models/changeModel'
+// @import<<DIR '/enums/'
+// @import<<DIR '/models/'
 // @import 'constants'
 // @import '/services/devErrors'
 // @import '/services/utils'
@@ -73,9 +61,13 @@
  *
  */
 
-const EnvironmentType = Object.freeze( {
-  Development: 'DEVELOPMENT',
-  Production: 'PRODUCTION'
+const ButtonType = Object.freeze( {
+  /** Green */
+  Success: 'success',
+  /** Red */
+  Alert: 'alert',
+  /** Yellow */
+  Warning: 'warning'
 } );
 
 ﻿/*
@@ -101,13 +93,40 @@ const Colors = Object.freeze({
  *
  */
 
-const ButtonType = Object.freeze( {
-  /** Green */
-  Success: 'success',
-  /** Red */
-  Alert: 'alert',
-  /** Yellow */
-  Warning: 'warning'
+const EnvironmentType = Object.freeze( {
+  Development: 'DEVELOPMENT',
+  Production: 'PRODUCTION'
+} );
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+const FiatSymbol = Object.freeze( {
+  Euro: '&euro;',
+  Dolar: '&dollar;',
+  Cent: '&cent;',
+  Pound: '&pound;',
+  Yen: '&yen;'
+} );
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+const GridOrientationType = Object.freeze( {
+  Y: 'grid-y',
+  X: 'grid-x'
 } );
 
 ﻿/*
@@ -154,20 +173,6 @@ const NavItemID = Object.freeze( {
  *
  */
 
-const GridOrientationType = Object.freeze( {
-  Y: 'grid-y',
-  X: 'grid-x'
-} );
-
-﻿/*
- *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
- *
- */
-
 const RequestType = Object.freeze( {
   Post: 'POST',
   Get: 'GET',
@@ -184,13 +189,10 @@ const RequestType = Object.freeze( {
  *
  */
 
-const FiatSymbol = Object.freeze( {
-  Euro: '&euro;',
-  Dolar: '&dollar;',
-  Cent: '&cent;',
-  Pound: '&pound;',
-  Yen: '&yen;'
-} );
+const ThemeType = Object.freeze({
+  Light: 1,
+  Dark: 2
+});
 
 ﻿/*
  *
@@ -215,10 +217,14 @@ const TradingMode = Object.freeze( {
  *
  */
 
-class SelectInputOptions {
-  constructor( label, value ) {
-    this.label = label;
-    this.value = value;
+class AssetModel {
+  constructor(id, symbol, exchange, fiatSymbol, cryptoSymbol, logoURL) {
+    this.id = id;
+    this.symbol = symbol;
+    this.exchange = exchange;
+    this.fiatSymbol = fiatSymbol;
+    this.cryptoSymbol = cryptoSymbol;
+    this.logoURL = logoURL;
   }
 }
 
@@ -231,10 +237,11 @@ class SelectInputOptions {
  *
  */
 
-class HttpClientResponse {
-  constructor( error, data ) {
-    this.error = error;
-    this.data = data;
+class ChangeModel {
+  constructor( currentPrice, price, percent ) {
+    this.currentPrice = currentPrice;
+    this.price = price;
+    this.percent = percent;
   }
 }
 
@@ -263,12 +270,10 @@ class ChangePasswordDTO {
  *
  */
 
-class SpreadPricesModel {
-  constructor( bid, ask, spreadPriceDiff, spreadPercentDiff ) {
-    this.bid = bid;
-    this.ask = ask;
-    this.spreadPriceDiff = spreadPriceDiff;
-    this.spreadPercentDiff = spreadPercentDiff;
+class HttpClientResponse {
+  constructor( error, data ) {
+    this.error = error;
+    this.data = data;
   }
 }
 
@@ -281,11 +286,28 @@ class SpreadPricesModel {
  *
  */
 
-class ChangeModel {
-  constructor( currentPrice, price, percent ) {
-    this.currentPrice = currentPrice;
-    this.price = price;
-    this.percent = percent;
+class SelectInputOptions {
+  constructor( label, value ) {
+    this.label = label;
+    this.value = value;
+  }
+}
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+class SpreadPricesModel {
+  constructor( bid, ask, spreadPriceDiff, spreadPercentDiff ) {
+    this.bid = bid;
+    this.ask = ask;
+    this.spreadPriceDiff = spreadPriceDiff;
+    this.spreadPercentDiff = spreadPercentDiff;
   }
 }
 
