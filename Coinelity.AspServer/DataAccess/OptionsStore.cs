@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -82,24 +82,41 @@ namespace Coinelity.AspServer.DataAccess
 
         /// <summary>
         /// 
-        /// Get order by id.
+        /// It does not come appended with any WHERE clause.
         /// 
-        /// It retruns an empty Dictionary if not found.
+        /// </summary>
+        /// <returns></returns>
+        public string GetActiveOrderCmd()
+        {
+            return @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.OptionLifetime.LifetimeMinutes AS Lifetime, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
+                     FROM dbo.ActiveOption
+                         INNER JOIN dbo.Asset
+                             INNER JOIN dbo.Exchange
+                             ON dbo.Asset.ExchangeId = dbo.Exchange.Id
+                         ON dbo.ActiveOption.AssetId = dbo.Asset.Id
+                         INNER JOIN dbo.OptionLifetime
+                         ON dbo.ActiveOption.LifetimeId dbo.OptionLifetime.Id ";
+        }
+
+        public async Task<List<ActiveOptionJoined>> GetActiveOrdersAsync(int userId)
+        {
+            string query = GetActiveOrderCmd() + $"WHERE dbo.ActiveOption.UserId = {userId}";
+
+            IList<Dictionary<string, object>> orderListDict = await MSSQLClient.QueryOnceAsync( _connection, query );
+            return orderListDict.ToObjectList<ActiveOptionJoined>();
+        }
+
+        /// <summary>
+        /// 
+        /// Get order by id.
+        /// It retruns a new empty ActiveOptionJoined instance if not found.
         /// 
         /// </summary>
         /// <param name="orderId"> The Id of the order. </param>
         /// <param name="userId"> Optional (RECOMENDED). Confirm that the order belongs to the user.</param>
         public async Task<ActiveOptionJoined> GetActiveOrderAsync(int orderId, int? userId = null)
         {
-            string query = @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.OptionLifetime.LifetimeMinutes AS Lifetime, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
-                             FROM dbo.ActiveOption
-                                 INNER JOIN dbo.Asset
-                                     INNER JOIN dbo.Exchange
-                                     ON dbo.Asset.ExchangeId = dbo.Exchange.Id
-                                 ON dbo.ActiveOption.AssetId = dbo.Asset.Id
-                                 INNER JOIN dbo.OptionLifetime
-                                 ON dbo.ActiveOption.LifetimeId dbo.OptionLifetime.Id
-                             WHERE dbo.ActiveOption.Id = @OrderId";
+            string query = GetActiveOrderCmd() + "WHERE dbo.ActiveOption.Id = @OrderId";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
@@ -108,7 +125,7 @@ namespace Coinelity.AspServer.DataAccess
 
             if (userId != null)
             {
-                query += " AND UserId = @UserId";
+                query += " AND dbo.ActiveOption.UserId = @UserId";
                 parameters.Add( "@UserId", userId );
             }
 

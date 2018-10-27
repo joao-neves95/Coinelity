@@ -53,7 +53,7 @@ namespace Coinelity.AspServer.Hubs
                 PlaceOrderDTO order = JsonConvert.DeserializeObject<PlaceOrderDTO>( placeOrderDTO );
 
                 // Check if user has enough money.
-                int userId = Convert.ToInt32( Utils.GetUserClaim( Context.User, "id" ) );
+                int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( Context.User ) );
                 UserAccountType? accountType = Utils.UserAccountTypeResolver( order.AccountType );
 
                 if (accountType == null)
@@ -63,7 +63,7 @@ namespace Coinelity.AspServer.Hubs
                 decimal userBalance = 0.0M;
                 using (userAccountStore = new UserAccountStore())
                 {
-                    userBalance = await userAccountStore.GetUserBalanceAsync( userId, accountType.Value );
+                    userBalance = await userAccountStore.GetUserBalanceAsync( thisUserId, accountType.Value );
                 }
 
                 if (Convert.ToDecimal( order.InvestmentAmount ) > userBalance)
@@ -93,7 +93,7 @@ namespace Coinelity.AspServer.Hubs
                         bool success = await MSSQLClient.NonQueryTransactionAsync( connection,
                             new SqlCommand[]
                             {
-                                userAccountStore.FreezeUserBalanceCmd( userId, accountType.Value, Convert.ToDecimal( order.InvestmentAmount ), connection ),
+                                userAccountStore.FreezeUserBalanceCmd( thisUserId, accountType.Value, Convert.ToDecimal( order.InvestmentAmount ), connection ),
                                 await optionsStore.OpenOrderCmdAsync( order, connection )
                             } );
 
@@ -103,7 +103,7 @@ namespace Coinelity.AspServer.Hubs
                         }
                         else
                         {
-                            order.ActiveOrderId = await optionsStore.GetLastActiveOrderAsync( userId, connection );
+                            order.ActiveOrderId = await optionsStore.GetLastActiveOrderAsync( thisUserId, connection );
 
                             return Clients.Caller.SendAsync( "ReceivePlaceOrderResult",
                                 new ApiResponse( null, null, null,
@@ -151,7 +151,7 @@ namespace Coinelity.AspServer.Hubs
             Exchange exchange = null;
             SqlConnection connection = null;
 
-            int userId = Convert.ToInt32( Utils.GetUserClaim( Context.User, "id" ) );
+            int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( Context.User ) );
 
             try
             {
@@ -164,7 +164,7 @@ namespace Coinelity.AspServer.Hubs
 
                 using (optionsStore = new OptionsStore())
                 {
-                    activeOption = await optionsStore.GetActiveOrderAsync( Convert.ToInt32( order.OrderId ), userId );
+                    activeOption = await optionsStore.GetActiveOrderAsync( Convert.ToInt32( order.OrderId ), thisUserId );
 
                     // If the InvestmentAmount is 0 it's because the query returned an empty ActiveOption (ActiveOption not found).
                     if (activeOption.InvestmentAmount == 0)
@@ -205,7 +205,7 @@ namespace Coinelity.AspServer.Hubs
 
                     decimal investmentAmount = Convert.ToDecimal( activeOption.InvestmentAmount );
                     decimal payoutValue = ( activeOption.PayoutPercent * investmentAmount ) / 100;
-                    
+
                     // Win/Loss Logic.
                     bool addToBalance = false;
 
@@ -237,9 +237,9 @@ namespace Coinelity.AspServer.Hubs
                     {
                         successful = await MSSQLClient.NonQueryTransactionOnceAsync( connection, new SqlCommand[]
                         {
-                                new SqlCommand(userAccountStore.UnfreezeBalanceCmd(userId, userAccountType.Value, investmentAmount, addToBalance, payoutValue)),
+                                new SqlCommand(userAccountStore.UnfreezeBalanceCmd(thisUserId, userAccountType.Value, investmentAmount, addToBalance, payoutValue)),
                                 // TODO: (If user lost) Send lost balance to Coinelity's bank account.
-                                new SqlCommand(optionsStore.DeleteActiveOrderCmd(activeOption.Id, userId), connection)
+                                new SqlCommand(optionsStore.DeleteActiveOrderCmd(activeOption.Id, thisUserId), connection)
                         } );
                     }
 
@@ -281,9 +281,31 @@ namespace Coinelity.AspServer.Hubs
             }
         }
 
-        public async Task SyncOrders()
+        public async Task<Task> SyncOrders()
         {
+            OptionsStore optionsStore = null;
 
+            try
+            {
+                int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( Context.User ) );
+                List<ActiveOptionJoined> activeOptions = await optionsStore.GetActiveOrdersAsync( thisUserId );
+
+                if (activeOptions.Count <= 0)
+                    return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 200, "Ok", new object[] { /* new ErrorMessage( ErrorType ) */ } ).ToJSON() );
+
+                // TODO: Continue.
+                return new Task(() => { } );
+            }
+            catch (Exception e)
+            {
+                // TODO: Exception Handling.
+                Console.WriteLine( e );
+                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+            }
+            finally
+            {
+                optionsStore?.Dispose();
+            }
         }
 
         public async Task CloseOrder(string orderId)
