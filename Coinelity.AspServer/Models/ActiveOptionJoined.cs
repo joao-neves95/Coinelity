@@ -26,7 +26,9 @@ namespace Coinelity.AspServer.Models
 
         public int OperationTypeId { get; set; }
 
-        public int Lifetime { get; set; }
+        public int TimeMinutes { get; set; }
+
+        public int LifetimeLabel { get; set; }
 
         public short PayoutPercent { get; set; }
 

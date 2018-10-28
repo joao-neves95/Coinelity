@@ -75,9 +75,12 @@
     <Build Include="OperationType.sql" />
     <Build Include="OptionPayout.sql" />
     <Build Include="OptionLifetime.sql" />
+    <Build Include="LifetimeLabel.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Inserts\ApplicationRole_Inserts.sql" />
     <None Include="Inserts\OperationType_Inserts.sql" />
+    <None Include="Inserts\OptionLifetime_Inserts.sql" />
+    <None Include="Inserts\LifetimeLabel_Inserts.sql" />
   </ItemGroup>
 </Project>

@@ -88,14 +88,16 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public string GetActiveOrderCmd()
         {
-            return @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.OptionLifetime.LifetimeMinutes AS Lifetime, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
+            return @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.OptionLifetime.TimeMinutes, dbo.LifetimeLabel.Name AS LifetimeLabel, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
                      FROM dbo.ActiveOption
                          INNER JOIN dbo.Asset
                              INNER JOIN dbo.Exchange
                              ON dbo.Asset.ExchangeId = dbo.Exchange.Id
                          ON dbo.ActiveOption.AssetId = dbo.Asset.Id
                          INNER JOIN dbo.OptionLifetime
-                         ON dbo.ActiveOption.LifetimeId dbo.OptionLifetime.Id ";
+                         ON dbo.ActiveOption.LifetimeId = dbo.OptionLifetime.Id
+                         INNER JOIN dbo.LifetimeLabel
+                         ON dbo.ActiveOption.LifetimeId = dbo.LifetimeLabel.Id";
         }
 
         public async Task<List<ActiveOptionJoined>> GetActiveOrdersAsync(int userId)
@@ -250,7 +252,7 @@ namespace Coinelity.AspServer.DataAccess
         public async Task<int> GetLifetimeById(int optionLifetimeId)
         {
             IList<Dictionary<string, object>> lifetimeListDict = await MSSQLClient.QueryOnceAsync( _connection,
-                $@"SELECT LifetimeMinutes
+                $@"SELECT TimeMinutes
                    FROM dbo.OptionLifetime
                    WHERE Id = @LifetimeId",
                 new Dictionary<string, object>

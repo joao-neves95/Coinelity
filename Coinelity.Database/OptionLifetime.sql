@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
@@ -10,5 +10,6 @@
 CREATE TABLE dbo.OptionLifetime
 (
     Id INT NOT NULL PRIMARY KEY,
-    LifetimeMinutes INT NOT NULL CHECK (LifetimeMinutes > 0)
+    LabelId INT NOT NULL FOREIGN KEY REFERENCES dbo.LifetimeLabel(Id),
+    TimeMinutes INT NOT NULL CHECK (TimeMinutes > 0),
 )
