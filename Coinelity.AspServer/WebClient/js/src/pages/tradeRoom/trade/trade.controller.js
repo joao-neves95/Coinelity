@@ -11,8 +11,6 @@
 // Update existing chart candlesticks with Plotly.restyle
 
 let tradeController = null;
-let chartUpdateCandleInterval = null;
-let chartUpdatePriceInterval = null;
 
 class TradeController extends ControllerBase {
   constructor() {
@@ -45,6 +43,8 @@ class TradeController extends ControllerBase {
       await this.model.getInitChartData();
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
+      this.model.initEventHandlers();
+      this.startChartPriceUpdate();
 
       resolve();
     } );
@@ -52,25 +52,59 @@ class TradeController extends ControllerBase {
 
   // TODO: REDO.
   startChartCandleUpdate() {
-    chartUpdatePriceInterval = setInterval( () => {
+    this.model.chartUpdateCandleInterval = setInterval( () => {
       this.model.getOHLCV( ( OHLCV ) => {
         if ( OHLCV )
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
+
+        // option.xAxis.data.shift();
+        // option.xAxis.data.push( date );
+        // option.series[0].data.shift();
+        // option.series[0].data.push( newCandle );
+        // chart.setOption( option );
 
       } );
     }, 1000 * 60 );
   }
 
   startChartPriceUpdate() {
-    chartUpdatePriceInterval = setInterval();
+    this.model.chartUpdatePriceInterval = setInterval( async () => {
+      let ticker = undefined;
+
+      try {
+        ticker = await this.model.getTicker();
+
+        if ( ticker === undefined )
+          throw new Error();
+
+        const lastPrice = parseFloat( ticker.last );
+        const allCandles = this.model.chartConfig.series[0].data;
+        const lastCandle = allCandles[allCandles.length - 1];
+        // Close
+        lastCandle[1] = lastPrice;
+        // Low
+        if ( lastPrice < parseFloat( lastCandle[2] ) )
+          lastCandle[2] = lastPrice;
+        // High
+        if ( lastPrice > parseFloat( lastCandle[3] ) )
+          lastCandle[3] = lastPrice;
+       
+        this.model.chart.setOption( this.model.chartConfig );
+        this.model.updateTradingToolsCurrPrice( lastPrice.toString() );
+
+      } catch {
+        // TODO: Send error notification.
+        return console.error( 'There was an error while trying to connect to the data provider.' );
+      }
+    }, TRADE_PRICE_UPDATE_RATE );
   }
 
   stopChartUpdate() {
-    if ( chartUpdateCandleInterval )
-      clearInterval( chartUpdateCandleInterval );
+    if ( this.model.chartUpdateCandleInterval )
+      clearInterval( this.model.chartUpdateCandleInterval );
 
-    if ( chartUpdatePriceInterval )
-      clearInterval( chartUpdatePriceInterval );
+    if ( this.model.chartUpdatePriceInterval )
+      clearInterval( this.model.chartUpdatePriceInterval );
   }
 
   injectTradeTools() {

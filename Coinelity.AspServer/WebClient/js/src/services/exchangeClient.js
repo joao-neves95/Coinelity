@@ -17,6 +17,8 @@ const exchangeClientUtils = Object.freeze( {
   }
 } );
 
+// TODO: Add support for multiple exchanges.
+
 let exchangeClient = null;
 
 class ExchangeClient {
@@ -65,7 +67,7 @@ class ExchangeClient {
 
   /**
    * 
-   * Returns <string> (example):
+   * Returns Promise<string{} | undefined> (example):
     {
       'symbol':        string symbol of the market ('BTC/USD', 'ETH/BTC', ...)
       'info':        { the original non-modified unparsed reply from exchange API },
@@ -88,11 +90,14 @@ class ExchangeClient {
       'baseVolume':    float, // volume of base currency traded for last 24 hours
       'quoteVolume':   float, // volume of quote currency traded for last 24 hours
      }
+   *
+   * @param { string } exchangeName
    * @param { string } symbol
-   * @param { Function } Callback
+   * @param { Function } Callback (string{} | undefined)
+   * @returns { Promise<string{} | undefined> }
    */
   getLastTicker( exchangeName, symbol, Callback ) {
-    ( async () => {
+    return new Promise( async ( resolve, reject ) => {
       let ticker = undefined;
 
       try {
@@ -102,8 +107,11 @@ class ExchangeClient {
         console.error( `EXCEPTION: \n${e}` );
       }
 
-      return Callback( ticker );
-    } )();
+      if ( Callback )
+        return Callback( ticker );
+
+      return resolve( ticker );
+    } );
   }
 
   /**

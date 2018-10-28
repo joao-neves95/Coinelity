@@ -18,8 +18,9 @@ class TradeModel extends ModelBase {
 
     this.currentTradeMode = TradingMode.BinaryOptions;
     this.currentSymbol = 'BTC/EUR';
+    this.currentFiatSymbol = FiatSymbol.Euro;
     this.currentExchange = 'KRAKEN';
-    this.currentTimeframe = '1d';
+    this.currentTimeframe = '1m';// '1d';
 
     this.chart = {};
 
@@ -32,14 +33,33 @@ class TradeModel extends ModelBase {
     this.chartConfig = {
       //backgroundColor: '#21202D',
       title: {
-        text: 'BTC/EUR',
-        left: 0 // 'center'
+        text: this.currentSymbol,
+        left: 'center'
       },
       animation: true,
       grid: {
         left: '10%',
         right: '10%',
         bottom: '15%'
+      },
+      toolbox: {
+        show: true,
+        right: 10,
+        feature: {
+          saveAsImage: {
+            title: 'Save image as'
+          },
+          dataZoom: {
+            yAxisIndex: 'none',
+            title: {
+              zoom: 'Area zoom',
+              back: 'Restore area zoom'
+            }
+          },
+          restore: {
+            title: 'Restore'
+          }
+        }
       },
       tooltip: {
         trigger: 'axis',
@@ -105,11 +125,16 @@ class TradeModel extends ModelBase {
       ]
     };
 
+    this.chartUpdatePriceInterval = null;
+    this.chartUpdateCandleInterval = null;
+
     tradeModel = this;
     Object.seal( tradeModel );
   }
 
   get _() { return tradeModel; }
+
+  get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
 
   getInitChartData() {
     return new Promise( async ( resolve, reject ) => {
@@ -119,19 +144,45 @@ class TradeModel extends ModelBase {
         OHLCVArray = await this.getOHLCV();
 
       } catch {
-        // TODO: Send notification.
-        return console.error( 'There was an error while trying to connect to the data provider. Please, try again.' );
+        // TODO: Send error notification.
+        return console.error( 'There was an error while trying to connect to the data provider.' );
       }
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
         const humanDate = moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY/MM/DD" );
         this.chartData.categoryData.push( humanDate );
-        // date, open，close, lowest, highest.
-        this.chartData.values.push( [ OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2] ] );
+        // open，close, lowest, highest.
+        this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }
 
       return resolve( [this.chartData] );
     } );
+  }
+
+  initEventHandlers() {
+    this.chart.on( 'datazoom', ( e ) => {
+      if ( e.batch === undefined ) {
+        this.chartConfig.dataZoom[0].start = e.start;
+        this.chartConfig.dataZoom[0].end = e.end;
+
+      } else {
+        const eventValues = e.batch[0];
+        this.chartConfig.dataZoom[0].start = eventValues.start;
+        this.chartConfig.dataZoom[0].end = eventValues.end;
+      }
+    } );
+
+    this.chart.on( 'restore', async () => {
+      // TODO: Control the restore (rate limit).
+      this.chartData.categoryData = [];
+      this.chartData.values = [];
+      await this.getInitChartData();
+      this.chart.setOption( this.chartConfig );
+    } );
+  }
+
+  updateTradingToolsCurrPrice( price ) {
+    this.tradingToolsPriceElem.innerText = price;
   }
 
   /**
@@ -140,12 +191,11 @@ class TradeModel extends ModelBase {
    * @returns { Promise<string[]> }
    */
   getOHLCV() {
-    let success = false;
-    let lastError = null;
-    let attemptNum = 0;
-    let OHLCVArray;
-
     return new Promise( async ( resolve, reject ) => {
+      let success = false;
+      let lastError = null;
+      let attemptNum = 0;
+      let OHLCVArray;
 
       while ( !success ) {
         try {
@@ -168,6 +218,37 @@ class TradeModel extends ModelBase {
       }
 
       return resolve( OHLCVArray );
+    } );
+  }
+
+  getTicker() {
+    return new Promise( async ( resolve, reject ) => {
+      let success = false;
+      let lastError = null;
+      let attemptNum = 0;
+      let ticker;
+
+      while ( !success ) {
+        try {
+          ticker = await ExchangeClient._.getLastTicker( this.currentExchange, this.currentSymbol );
+
+        } catch ( e ) {
+          ++attemptNum;
+          lastError = e;
+
+        } finally {
+          if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
+            console.error( 'There was an error while fetching the data.', lastError );
+            return reject( lastError );
+          }
+
+          // Just to confirm.
+          if ( typeof ticker === 'object' )
+            success = true;
+        }
+      }
+
+      return resolve( ticker );
     } );
   }
 }

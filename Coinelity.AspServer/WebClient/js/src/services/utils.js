@@ -7,6 +7,10 @@
  *
  */
 
+Array.prototype.last = () => {
+  return this[this.length - 1];
+};
+
 class Utils {
   constructor() {
     throw DevErrors.cantInstantiateStatic( 'Utils' );

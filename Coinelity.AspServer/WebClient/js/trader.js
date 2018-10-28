@@ -12,16 +12,18 @@
 // @import<<DIR '/enums/'
 // @import<<DIR '/models/'
 // @import 'constants'
+// @import '/services/externalLibs'
 // @import '/services/devErrors'
-// @import '/services/utils'
 // @import '/services/DOM'
+// @import '/services/utils'
+// @import '/services/errorHandler'
 // @import '/services/httpClient'
 // @import '/services/exchangeClient'
+// @import '/services/traderRoutes'
+// @import '/services/loadingPage'
+// @import '/services/notifications'
 // @import '/navbar/navbarItemBase'
-// @import '/interfaces/pageTemplates'
-// @import '/interfaces/modelBase'
-// @import '/interfaces/viewBase'
-// @import '/interfaces/controllerBase'
+// @import<<DIR '/interfaces/'
 // @import '/pages/dashboard/dashboard.templates'
 // @import '/pages/dashboard/dashboard.model'
 // @import '/pages/dashboard/dashboard.view'
@@ -46,7 +48,6 @@
 // @import '/navbar/navbar.model'
 // @import '/navbar/navbar.view'
 // @import '/navbar/navbar.controller'
-// @import '/enums/themeType'
 // @import '/services/themes'
 // @import 'trader.main'
 // @import '/services/traderRoutes'
@@ -334,7 +335,8 @@ const BASE_NODEJS_API = BASE_NODEJS_URL + 'api/';
 
 const FETCH_CHART_DATA_MAX_ATTEMPTS = 3;
 const MARKETS_UPDATE_RATE = 5000;
-const TRADE_OHLCV_UPDATE_RATE = 2000;
+const TRADE_PRICE_UPDATE_RATE = 2000;
+const TRADE_CANDLE_UPDATE_RATE = 2000;
 
 // Images URL'S:
 const DASHBOARD_ICON_URL = `${PUBLIC_IMGS_URL}dashboard-icon-white.svg`;
@@ -344,6 +346,19 @@ const SETTINGS_ICON_URL = `${PUBLIC_IMGS_URL}settings-icon-white.svg`;
 // This sizes are the same as in "variables.less".
 const SIDEBAR_MOBILE_WIDTH = '3em';
 const SIDEBAR_DESKTOP_WIDTH = '10em';
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+// Page.js
+// https://github.com/visionmedia/page.js/
+!function ( t, e ) { "object" === typeof exports && "undefined" !== typeof module ? module.exports = e() : "function" === typeof define && define.amd ? define( e ) : t.page = e() }( this, function () { "use strict"; var p = Array.isArray || function ( t ) { return "[object Array]" == Object.prototype.toString.call( t ) }, n = h, t = a, e = function ( t ) { return o( a( t ) ) }, r = o, i = c, x = new RegExp( ["(\\\\.)", "([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^()])+)\\))?|\\(((?:\\\\.|[^()])+)\\))([+*?])?|(\\*))"].join( "|" ), "g" ); function a( t ) { for ( var e, n, r = [], i = 0, o = 0, a = ""; null != ( e = x.exec( t ) ); ) { var s = e[0], c = e[1], h = e.index; if ( a += t.slice( o, h ), o = h + s.length, c ) a += c[1]; else { a && ( r.push( a ), a = "" ); var p = e[2], f = e[3], u = e[4], l = e[5], d = e[6], m = e[7], v = "+" === d || "*" === d, g = "?" === d || "*" === d, y = p || "/", w = u || l || ( m ? ".*" : "[^" + y + "]+?" ); r.push( { name: f || i++, prefix: p || "", delimiter: y, optional: g, repeat: v, pattern: ( n = w, n.replace( /([=!:$\/()])/g, "\\$1" ) ) } ) } } return o < t.length && ( a += t.substr( o ) ), a && r.push( a ), r } function o( c ) { for ( var h = new Array( c.length ), t = 0; t < c.length; t++ )"object" == typeof c[t] && ( h[t] = new RegExp( "^" + c[t].pattern + "$" ) ); return function ( t ) { for ( var e = "", n = t || {}, r = 0; r < c.length; r++ ) { var i = c[r]; if ( "string" != typeof i ) { var o, a = n[i.name]; if ( null == a ) { if ( i.optional ) continue; throw new TypeError( 'Expected "' + i.name + '" to be defined' ) } if ( p( a ) ) { if ( !i.repeat ) throw new TypeError( 'Expected "' + i.name + '" to not repeat, but received "' + a + '"' ); if ( 0 === a.length ) { if ( i.optional ) continue; throw new TypeError( 'Expected "' + i.name + '" to not be empty' ) } for ( var s = 0; s < a.length; s++ ) { if ( o = encodeURIComponent( a[s] ), !h[r].test( o ) ) throw new TypeError( 'Expected all "' + i.name + '" to match "' + i.pattern + '", but received "' + o + '"' ); e += ( 0 === s ? i.prefix : i.delimiter ) + o } } else { if ( o = encodeURIComponent( a ), !h[r].test( o ) ) throw new TypeError( 'Expected "' + i.name + '" to match "' + i.pattern + '", but received "' + o + '"' ); e += i.prefix + o } } else e += i } return e } } function f( t ) { return t.replace( /([.+*?=^!:${}()[\]|\/])/g, "\\$1" ) } function s( t, e ) { return t.keys = e, t } function u( t ) { return t.sensitive ? "" : "i" } function c( t, e ) { for ( var n = ( e = e || {} ).strict, r = !1 !== e.end, i = "", o = t[t.length - 1], a = "string" == typeof o && /\/$/.test( o ), s = 0; s < t.length; s++ ) { var c = t[s]; if ( "string" == typeof c ) i += f( c ); else { var h = f( c.prefix ), p = c.pattern; c.repeat && ( p += "(?:" + h + p + ")*" ), i += p = c.optional ? h ? "(?:" + h + "(" + p + "))?" : "(" + p + ")?" : h + "(" + p + ")" } } return n || ( i = ( a ? i.slice( 0, -2 ) : i ) + "(?:\\/(?=$))?" ), i += r ? "$" : n && a ? "" : "(?=\\/|$)", new RegExp( "^" + i, u( e ) ) } function h( t, e, n ) { return p( e = e || [] ) ? n || ( n = {} ) : ( n = e, e = [] ), t instanceof RegExp ? function ( t, e ) { var n = t.source.match( /\((?!\?)/g ); if ( n ) for ( var r = 0; r < n.length; r++ )e.push( { name: r, prefix: null, delimiter: null, optional: !1, repeat: !1, pattern: null } ); return s( t, e ) }( t, e ) : p( t ) ? function ( t, e, n ) { for ( var r = [], i = 0; i < t.length; i++ )r.push( h( t[i], e, n ).source ); return s( new RegExp( "(?:" + r.join( "|" ) + ")", u( n ) ), e ) }( t, e, n ) : function ( t, e, n ) { for ( var r = a( t ), i = c( r, n ), o = 0; o < r.length; o++ )"string" != typeof r[o] && e.push( r[o] ); return s( i, e ) }( t, e, n ) } n.parse = t, n.compile = e, n.tokensToFunction = r, n.tokensToRegExp = i; var l = L; ( L.default = L ).Context = P, L.Route = S, L.sameOrigin = N; var d, m, v, g = "undefined" != typeof document, y = "undefined" != typeof window, w = "undefined" != typeof history, b = "undefined" != typeof process, E = g && document.ontouchstart ? "touchstart" : "click", R = y && !( !window.history.location && !window.location ), k = !0, A = !0, T = "", O = !1, C = !1; function L( t, e ) { if ( "function" == typeof t ) return L( "*", t ); if ( "function" == typeof e ) for ( var n = new S( t ), r = 1; r < arguments.length; ++r )L.callbacks.push( n.middleware( arguments[r] ) ); else "string" == typeof t ? L["string" == typeof e ? "redirect" : "show"]( t, e ) : L.start( t ) } function U( t ) { return "string" != typeof t ? t : A ? decodeURIComponent( t.replace( /\+/g, " " ) ) : t } function P( t, e ) { var n = I(); "/" === t[0] && 0 !== t.indexOf( n ) && ( t = n + ( C ? "#!" : "" ) + t ); var r = t.indexOf( "?" ); if ( this.canonicalPath = t, this.path = t.replace( n, "" ) || "/", C && ( this.path = this.path.replace( "#!", "" ) || "/" ), this.title = g && v.document.title, this.state = e || {}, this.state.path = t, this.querystring = ~r ? U( t.slice( r + 1 ) ) : "", this.pathname = U( ~r ? t.slice( 0, r ) : t ), this.params = {}, this.hash = "", !C ) { if ( !~this.path.indexOf( "#" ) ) return; var i = this.path.split( "#" ); this.path = this.pathname = i[0], this.hash = U( i[1] ) || "", this.querystring = this.querystring.split( "#" )[0] } } function S( t, e ) { ( e = e || {} ).strict = e.strict || O, this.path = "*" === t ? "(.*)" : t, this.method = "GET", this.regexp = n( this.path, this.keys = [], e ) } L.callbacks = [], L.exits = [], L.current = "", L.len = 0, L.base = function ( t ) { if ( 0 === arguments.length ) return T; T = t }, L.strict = function ( t ) { if ( 0 === arguments.length ) return O; O = t }, L.start = function ( t ) { if ( t = t || {}, !d && ( d = !0, v = t.window || y && window, !1 === t.dispatch && ( k = !1 ), !1 === t.decodeURLComponents && ( A = !1 ), !1 !== t.popstate && y && v.addEventListener( "popstate", $, !1 ), !1 !== t.click && g && v.document.addEventListener( E, j, !1 ), ( C = !!t.hashbang ) && y && !w && v.addEventListener( "hashchange", $, !1 ), k ) ) { var e; if ( R ) { var n = v.location; e = C && ~n.hash.indexOf( "#!" ) ? n.hash.substr( 2 ) + n.search : C ? n.search + n.hash : n.pathname + n.search + n.hash } L.replace( e, null, !0, k ) } }, L.stop = function () { d && ( L.current = "", L.len = 0, d = !1, g && v.document.removeEventListener( E, j, !1 ), y && v.removeEventListener( "popstate", $, !1 ), y && v.removeEventListener( "hashchange", $, !1 ) ) }, L.show = function ( t, e, n, r ) { var i = new P( t, e ), o = m; return L.current = ( m = i ).path, !1 !== n && L.dispatch( i, o ), !1 !== i.handled && !1 !== r && i.pushState(), i }, L.back = function ( t, e ) { 0 < L.len ? ( w && v.history.back(), L.len-- ) : t ? setTimeout( function () { L.show( t, e ) } ) : setTimeout( function () { L.show( I(), e ) } ) }, L.redirect = function ( t, e ) { "string" == typeof t && "string" == typeof e && L( t, function ( t ) { setTimeout( function () { L.replace( e ) }, 0 ) } ), "string" == typeof t && void 0 === e && setTimeout( function () { L.replace( t ) }, 0 ) }, L.replace = function ( t, e, n, r ) { var i = new P( t, e ), o = m; return L.current = ( m = i ).path, i.init = n, i.save(), !1 !== r && L.dispatch( i, o ), i }, L.dispatch = function ( e, n ) { var r = 0, i = 0; function o() { var t = L.callbacks[r++]; if ( e.path === L.current ) return t ? void t( e, o ) : function ( t ) { if ( t.handled ) return; var e; e = C ? R && I() + v.location.hash.replace( "#!", "" ) : R && v.location.pathname + v.location.search; if ( e === t.canonicalPath ) return; L.stop(), t.handled = !1, R && ( v.location.href = t.canonicalPath ) }( e ); e.handled = !1 } n ? function t() { var e = L.exits[i++]; if ( !e ) return o(); e( n, t ) }() : o() }, L.exit = function ( t, e ) { if ( "function" == typeof t ) return L.exit( "*", t ); for ( var n = new S( t ), r = 1; r < arguments.length; ++r )L.exits.push( n.middleware( arguments[r] ) ) }, ( L.Context = P ).prototype.pushState = function () { L.len++ , w && v.history.pushState( this.state, this.title, C && "/" !== this.path ? "#!" + this.path : this.canonicalPath ) }, P.prototype.save = function () { w && "file:" !== v.location.protocol && v.history.replaceState( this.state, this.title, C && "/" !== this.path ? "#!" + this.path : this.canonicalPath ) }, ( L.Route = S ).prototype.middleware = function ( n ) { var r = this; return function ( t, e ) { if ( r.match( t.path, t.params ) ) return n( t, e ); e() } }, S.prototype.match = function ( t, e ) { var n = this.keys, r = t.indexOf( "?" ), i = ~r ? t.slice( 0, r ) : t, o = this.regexp.exec( decodeURIComponent( i ) ); if ( !o ) return !1; for ( var a = 1, s = o.length; a < s; ++a ) { var c = n[a - 1], h = U( o[a] ); void 0 === h && hasOwnProperty.call( e, c.name ) || ( e[c.name] = h ) } return !0 }; var $ = function () { var r = !1; if ( y ) return g && "complete" === document.readyState ? r = !0 : window.addEventListener( "load", function () { setTimeout( function () { r = !0 }, 0 ) } ), function ( t ) { if ( r ) if ( t.state ) { var e = t.state.path; L.replace( e, t.state ) } else if ( R ) { var n = v.location; L.show( n.pathname + n.hash, void 0, void 0, !1 ) } } }(); function j( t ) { var e; if ( 1 === ( null == ( e = ( e = t ) || y && window.event ).which ? e.button : e.which ) && !( t.metaKey || t.ctrlKey || t.shiftKey || t.defaultPrevented ) ) { var n = t.target, r = t.path || ( t.composedPath ? t.composedPath() : null ); if ( r ) for ( var i = 0; i < r.length; i++ )if ( r[i].nodeName && "A" === r[i].nodeName.toUpperCase() && r[i].href ) { n = r[i]; break } for ( ; n && "A" !== n.nodeName.toUpperCase(); )n = n.parentNode; if ( n && "A" === n.nodeName.toUpperCase() ) { var o = "object" == typeof n.href && "SVGAnimatedString" === n.href.constructor.name; if ( !n.hasAttribute( "download" ) && "external" !== n.getAttribute( "rel" ) ) { var a = n.getAttribute( "href" ); if ( ( C || !function ( t ) { if ( !R ) return !1; var e = v.location; return t.pathname === e.pathname && t.search === e.search }( n ) || !n.hash && "#" !== a ) && !( a && -1 < a.indexOf( "mailto:" ) ) && ( o ? !n.target.baseVal : !n.target ) && ( o || N( n.href ) ) ) { var s = o ? n.href.baseVal : n.pathname + n.search + ( n.hash || "" ); s = "/" !== s[0] ? "/" + s : s, b && s.match( /^\/[a-zA-Z]:\// ) && ( s = s.replace( /^\/[a-zA-Z]:\//, "/" ) ); var c = s, h = I(); 0 === s.indexOf( h ) && ( s = s.substr( T.length ) ), C && ( s = s.replace( "#!", "" ) ), h && c === s || ( t.preventDefault(), L.show( c ) ) } } } } } function N( t ) { if ( !t || !R ) return !1; var e = function ( t ) { if ( "function" == typeof URL && R ) return new URL( t, location.toString() ); if ( g ) { var e = document.createElement( "a" ); return e.href = t, e } }( t ), n = v.location; return n.protocol === e.protocol && n.hostname === e.hostname && n.port === e.port } function I() { if ( T ) return T; var t = y && v && v.location; return y && C && t && "file:" === t.protocol ? t.pathname : T } return L.sameOrigin = N, l } );
 
 ﻿/*
  *
@@ -397,6 +412,91 @@ class DevErrors {
  * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
  *
  */
+
+class DOM {
+
+  static changeDocTitle( title ) {
+
+  }
+
+  /**
+   * 
+   * @param { string } scriptCode The script code string.
+   * @param { HTMLElement } target Default: <body> element.
+   */
+  static addScript( scriptCode, target = document.body) {
+    let newScript = document.createElement('script');
+    newScript.text = scriptCode;
+    newScript.setAttribute('type', 'application/javascript');
+
+    target.insertAdjacentElement('beforeend', newScript);
+  }
+
+  /**
+ * 
+ * @param { string } url The script's URL.
+ * @param { HTMLElement } target Default: <body> element.
+ */
+  static addScriptUrl( url, target = document.body ) {
+    let newScript = document.createElement( 'script' );
+    newScript.setAttribute( 'src', url );
+    newScript.setAttribute( 'type', 'application/javascript' );
+
+    target.insertAdjacentElement( 'beforeend', newScript );
+  }
+
+  /**
+   * Create a new Event Listener on the provided HTMLElement.
+   * The Callback receives the Event object.
+   * 
+   * @param { HTMLElement } htmlElement
+   * @param { EventListenerOptions } eventType
+   * @param { Function } CallbackEventHandler
+   * 
+   * @returns { void }
+   */
+  static on( eventType, htmlElement, CallbackEventHandler ) {
+    htmlElement.addEventListener( eventType, ( e ) => {
+      CallbackEventHandler( e );
+    } );
+  }
+
+  static elemById( id ) {
+    return document.getElementById( id );
+  }
+
+  /**
+   * 
+   * @param { number } px
+   * @param { number } bodyTextSizePx
+   */
+  static pxToEm( px, bodyTextSizePx = 16 ) {
+    return px / bodyTextSizePx;
+
+  }
+
+  /**
+   * 
+   * @param { number } em
+   * @param { number } bodyTextSizePx
+   */
+  static emToPx( em, bodyTextSizePx = 16 ) {
+    return em * bodyTextSizePx;
+  }
+}
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+Array.prototype.last = () => {
+  return this[this.length - 1];
+};
 
 class Utils {
   constructor() {
@@ -675,75 +775,23 @@ class List extends Collection {
  *
  */
 
-class DOM {
-
-  static changeDocTitle( title ) {
-
+class ErrorHandler {
+  constructor() {
+    DevErrors.cantInstantiateStatic( 'ErrorHandler' );
   }
 
   /**
    * 
-   * @param { string } scriptCode The script code string.
-   * @param { HTMLElement } target Default: <body> element.
+   * @param { Response } res Fetch Response object.
    */
-  static addScript( scriptCode, target = document.body) {
-    let newScript = document.createElement('script');
-    newScript.text = scriptCode;
-    newScript.setAttribute('type', 'application/javascript');
-
-    target.insertAdjacentElement('beforeend', newScript);
-  }
-
-  /**
- * 
- * @param { string } url The script's URL.
- * @param { HTMLElement } target Default: <body> element.
- */
-  static addScriptUrl( url, target = document.body ) {
-    let newScript = document.createElement( 'script' );
-    newScript.setAttribute( 'src', url );
-    newScript.setAttribute( 'type', 'application/javascript' );
-
-    target.insertAdjacentElement( 'beforeend', newScript );
-  }
-
-  /**
-   * Create a new Event Listener on the provided HTMLElement.
-   * The Callback receives the Event object.
-   * 
-   * @param { HTMLElement } htmlElement
-   * @param { EventListenerOptions } eventType
-   * @param { Function } CallbackEventHandler
-   * 
-   * @returns { void }
-   */
-  static on( eventType, htmlElement, CallbackEventHandler ) {
-    htmlElement.addEventListener( eventType, ( e ) => {
-      CallbackEventHandler( e );
-    } );
-  }
-
-  static elemById( id ) {
-    return document.getElementById( id );
-  }
-
-  /**
-   * 
-   * @param { number } px
-   * @param { number } bodyTextSizePx
-   */
-  static pxToEm( px, bodyTextSizePx = 16 ) {
-    return px / bodyTextSizePx;
-
-  }
-
-  /**
-   * 
-   * @param { number } em
-   * @param { number } bodyTextSizePx
-   */
-  static emToPx( em, bodyTextSizePx = 16 ) {
-    return em * bodyTextSizePx;
+  static requestErrors( res ) {
+    if ( res.status === 400 ) {
+      // TODO: Handle error.
+      // Take error from Response object and show notification.
+    } else if ( res.status === 500 ) {
+      // TODO: Handle error.
+      // Show notification of something like "There was an error.".
+    }
   }
 }
 
@@ -862,6 +910,8 @@ const exchangeClientUtils = Object.freeze( {
   }
 } );
 
+// TODO: Add support for multiple exchanges.
+
 let exchangeClient = null;
 
 class ExchangeClient {
@@ -910,7 +960,7 @@ class ExchangeClient {
 
   /**
    * 
-   * Returns <string> (example):
+   * Returns Promise<string{} | undefined> (example):
     {
       'symbol':        string symbol of the market ('BTC/USD', 'ETH/BTC', ...)
       'info':        { the original non-modified unparsed reply from exchange API },
@@ -933,11 +983,14 @@ class ExchangeClient {
       'baseVolume':    float, // volume of base currency traded for last 24 hours
       'quoteVolume':   float, // volume of quote currency traded for last 24 hours
      }
+   *
+   * @param { string } exchangeName
    * @param { string } symbol
-   * @param { Function } Callback
+   * @param { Function } Callback (string{} | undefined)
+   * @returns { Promise<string{} | undefined> }
    */
   getLastTicker( exchangeName, symbol, Callback ) {
-    ( async () => {
+    return new Promise( async ( resolve, reject ) => {
       let ticker = undefined;
 
       try {
@@ -947,8 +1000,11 @@ class ExchangeClient {
         console.error( `EXCEPTION: \n${e}` );
       }
 
-      return Callback( ticker );
-    } )();
+      if ( Callback )
+        return Callback( ticker );
+
+      return resolve( ticker );
+    } );
   }
 
   /**
@@ -1107,6 +1163,115 @@ new ExchangeClient();
  *
  */
 
+page();
+
+page( `/${NavItemID.Dashboard}`, () => {
+  NavbarController._.activateItem( NavItemID.Dashboard );
+} );
+
+//page( `/${NavItemID.TradeRoom}`, () => {
+//  NavbarController._.activateItem( NavItemID.TradeRoom );
+//  page.redirect( `/${ NavItemID.Markets }` );
+//} );
+
+page( `/${NavItemID.Markets}`, () => {
+  NavbarController._.activateItem( NavItemID.Markets );
+  TradeRoomController._.openMarkets();
+} );
+
+page( `/${NavItemID.Trade}/:assetID`, ( ctx ) => {
+  TradeRoomController._.tradeAsset( ctx.params.assetID );
+} );
+
+page( `/${NavItemID.Settings}`, () => {
+  NavbarController._.activateItem( NavItemID.Settings );
+} );
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+// SweetAlert2
+// https://github.com/sweetalert2/sweetalert2
+
+class Notifications {
+  constructor() {
+    throw DevErrors.cantInstantiateStatic( 'Notifications' );
+  }
+
+  static successToast( title, description = '' ) {
+    swall( { toast: true, timer: 5000, title: title } );
+  }
+
+  static successToastAndIcon( title, description = '' ) {
+    swall( { type: 'success', timer: 5000, title: title } );
+  }
+
+  static successPopUp( title, description = '' ) {
+    swall();
+  }
+
+  static successPopUpAndIcon( title, description = '' ) {
+    swall();
+  }
+
+  static infoToast( title, description = '' ) {
+    swall();
+  }
+
+  static infoToastAndIcon( title, description = '' ) {
+    swall();
+  }
+
+  static infoPopUp( title, description = '' ) {
+    swall();
+  }
+
+  static infoPopUpAndIcon( title, description = '' ) {
+    swall();
+  }
+
+  static errorToast( title, description = '' ) {
+    swall();
+  }
+
+  static errorToastAndIcon( title, description = '' ) {
+    swall();
+  }
+
+  static errorPopUp( title, description = '' ) {
+    swall();
+  }
+
+  static errorPopUpAndIcon( title, description = '' ) {
+    swall();
+  }
+}
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
 /**
  * Extended by ControllerBase.
  */
@@ -1163,6 +1328,59 @@ class NavbarItemBase {
   }
 
   // #endregion
+}
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+/**
+ * Available events:
+ * - onSetActive(): Event fired when the page/item is injected into the DOM.
+ * - onBeforeDestroy(): Fired just before the page/item is destroyed (removed) from the DOM.
+ * */
+class ControllerBase extends NavbarItemBase {
+  /**
+   * 
+   * @param { ModelBase } model An extended ModelBase.
+   * @param { ViewBase } view An extended ViewBase.
+   */
+  constructor( model, view ) {
+    super( model, view );
+
+    this.model = model;
+    this.view = view;
+  }
+}
+
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ *
+ */
+
+class ModelBase {
+  /**
+   * @param { NavItemID } id NavItemID enum
+   * Used for storing in Dictionaries and as the URL slug for pages.
+   * @param { NavbarItemType } navbarItemType NavbarItemType enum.
+   * @param { string } title Used as label on the navbar.
+   * @param { string } navIconURL
+   */
+  constructor( id, navbarItemType, title, navIconURL ) {
+    this.id = id;
+    this.navbarItemType = navbarItemType;
+    this.title = title;
+    this.navIconURL = navIconURL;
+  }
 }
 
 ﻿/*
@@ -1253,31 +1471,6 @@ class PageTemplates {
  *
  */
 
-class ModelBase {
-  /**
-   * @param { NavItemID } id NavItemID enum
-   * Used for storing in Dictionaries and as the URL slug for pages.
-   * @param { NavbarItemType } navbarItemType NavbarItemType enum.
-   * @param { string } title Used as label on the navbar.
-   * @param { string } navIconURL
-   */
-  constructor( id, navbarItemType, title, navIconURL ) {
-    this.id = id;
-    this.navbarItemType = navbarItemType;
-    this.title = title;
-    this.navIconURL = navIconURL;
-  }
-}
-
-﻿/*
- *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
- *
- */
-
 class ViewBase {
   /**
    * 
@@ -1292,34 +1485,6 @@ class ViewBase {
 
   injectID( id ) {
     document.getElementById( 'page-container' ).firstElementChild.id = id;
-  }
-}
-
-﻿/*
- *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
- *
- */
-
-/**
- * Available events:
- * - onSetActive(): Event fired when the page/item is injected into the DOM.
- * - onBeforeDestroy(): Fired just before the page/item is destroyed (removed) from the DOM.
- * */
-class ControllerBase extends NavbarItemBase {
-  /**
-   * 
-   * @param { ModelBase } model An extended ModelBase.
-   * @param { ViewBase } view An extended ViewBase.
-   */
-  constructor( model, view ) {
-    super( model, view );
-
-    this.model = model;
-    this.view = view;
   }
 }
 
@@ -1473,8 +1638,8 @@ class TradeTemplates {
           // PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
           PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
-          '<p>Current Price: <span id="current-price">5048</span>€<p>' +
           PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
+          '<p><span id="trading-tools_current-price"></span><span id="trading-tools_fiat-symbol>€</span><p>' +
           PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
       </form>
@@ -1509,8 +1674,9 @@ class TradeModel extends ModelBase {
 
     this.currentTradeMode = TradingMode.BinaryOptions;
     this.currentSymbol = 'BTC/EUR';
+    this.currentFiatSymbol = FiatSymbol.Euro;
     this.currentExchange = 'KRAKEN';
-    this.currentTimeframe = '1d';
+    this.currentTimeframe = '1m';// '1d';
 
     this.chart = {};
 
@@ -1523,14 +1689,33 @@ class TradeModel extends ModelBase {
     this.chartConfig = {
       //backgroundColor: '#21202D',
       title: {
-        text: 'BTC/EUR',
-        left: 0 // 'center'
+        text: this.currentSymbol,
+        left: 'center'
       },
       animation: true,
       grid: {
         left: '10%',
         right: '10%',
         bottom: '15%'
+      },
+      toolbox: {
+        show: true,
+        right: 10,
+        feature: {
+          saveAsImage: {
+            title: 'Save image as'
+          },
+          dataZoom: {
+            yAxisIndex: 'none',
+            title: {
+              zoom: 'Area zoom',
+              back: 'Restore area zoom'
+            }
+          },
+          restore: {
+            title: 'Restore'
+          }
+        }
       },
       tooltip: {
         trigger: 'axis',
@@ -1596,11 +1781,16 @@ class TradeModel extends ModelBase {
       ]
     };
 
+    this.chartUpdatePriceInterval = null;
+    this.chartUpdateCandleInterval = null;
+
     tradeModel = this;
     Object.seal( tradeModel );
   }
 
   get _() { return tradeModel; }
+
+  get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
 
   getInitChartData() {
     return new Promise( async ( resolve, reject ) => {
@@ -1610,19 +1800,45 @@ class TradeModel extends ModelBase {
         OHLCVArray = await this.getOHLCV();
 
       } catch {
-        // TODO: Send notification.
-        return console.error( 'There was an error while trying to connect to the data provider. Please, try again.' );
+        // TODO: Send error notification.
+        return console.error( 'There was an error while trying to connect to the data provider.' );
       }
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
         const humanDate = moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY/MM/DD" );
         this.chartData.categoryData.push( humanDate );
-        // date, open，close, lowest, highest.
-        this.chartData.values.push( [ OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2] ] );
+        // open，close, lowest, highest.
+        this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }
 
       return resolve( [this.chartData] );
     } );
+  }
+
+  initEventHandlers() {
+    this.chart.on( 'datazoom', ( e ) => {
+      if ( e.batch === undefined ) {
+        this.chartConfig.dataZoom[0].start = e.start;
+        this.chartConfig.dataZoom[0].end = e.end;
+
+      } else {
+        const eventValues = e.batch[0];
+        this.chartConfig.dataZoom[0].start = eventValues.start;
+        this.chartConfig.dataZoom[0].end = eventValues.end;
+      }
+    } );
+
+    this.chart.on( 'restore', async () => {
+      // TODO: Control the restore (rate limit).
+      this.chartData.categoryData = [];
+      this.chartData.values = [];
+      await this.getInitChartData();
+      this.chart.setOption( this.chartConfig );
+    } );
+  }
+
+  updateTradingToolsCurrPrice( price ) {
+    this.tradingToolsPriceElem.innerText = price;
   }
 
   /**
@@ -1631,12 +1847,11 @@ class TradeModel extends ModelBase {
    * @returns { Promise<string[]> }
    */
   getOHLCV() {
-    let success = false;
-    let lastError = null;
-    let attemptNum = 0;
-    let OHLCVArray;
-
     return new Promise( async ( resolve, reject ) => {
+      let success = false;
+      let lastError = null;
+      let attemptNum = 0;
+      let OHLCVArray;
 
       while ( !success ) {
         try {
@@ -1659,6 +1874,37 @@ class TradeModel extends ModelBase {
       }
 
       return resolve( OHLCVArray );
+    } );
+  }
+
+  getTicker() {
+    return new Promise( async ( resolve, reject ) => {
+      let success = false;
+      let lastError = null;
+      let attemptNum = 0;
+      let ticker;
+
+      while ( !success ) {
+        try {
+          ticker = await ExchangeClient._.getLastTicker( this.currentExchange, this.currentSymbol );
+
+        } catch ( e ) {
+          ++attemptNum;
+          lastError = e;
+
+        } finally {
+          if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
+            console.error( 'There was an error while fetching the data.', lastError );
+            return reject( lastError );
+          }
+
+          // Just to confirm.
+          if ( typeof ticker === 'object' )
+            success = true;
+        }
+      }
+
+      return resolve( ticker );
     } );
   }
 }
@@ -1723,8 +1969,6 @@ class TradeView extends ViewBase {
 // Update existing chart candlesticks with Plotly.restyle
 
 let tradeController = null;
-let chartUpdateCandleInterval = null;
-let chartUpdatePriceInterval = null;
 
 class TradeController extends ControllerBase {
   constructor() {
@@ -1757,6 +2001,8 @@ class TradeController extends ControllerBase {
       await this.model.getInitChartData();
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
+      this.model.initEventHandlers();
+      this.startChartPriceUpdate();
 
       resolve();
     } );
@@ -1764,25 +2010,59 @@ class TradeController extends ControllerBase {
 
   // TODO: REDO.
   startChartCandleUpdate() {
-    chartUpdatePriceInterval = setInterval( () => {
+    this.model.chartUpdateCandleInterval = setInterval( () => {
       this.model.getOHLCV( ( OHLCV ) => {
         if ( OHLCV )
           this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
+
+        // option.xAxis.data.shift();
+        // option.xAxis.data.push( date );
+        // option.series[0].data.shift();
+        // option.series[0].data.push( newCandle );
+        // chart.setOption( option );
 
       } );
     }, 1000 * 60 );
   }
 
   startChartPriceUpdate() {
-    chartUpdatePriceInterval = setInterval();
+    this.model.chartUpdatePriceInterval = setInterval( async () => {
+      let ticker = undefined;
+
+      try {
+        ticker = await this.model.getTicker();
+
+        if ( ticker === undefined )
+          throw new Error();
+
+        const lastPrice = parseFloat( ticker.last );
+        const allCandles = this.model.chartConfig.series[0].data;
+        const lastCandle = allCandles[allCandles.length - 1];
+        // Close
+        lastCandle[1] = lastPrice;
+        // Low
+        if ( lastPrice < parseFloat( lastCandle[2] ) )
+          lastCandle[2] = lastPrice;
+        // High
+        if ( lastPrice > parseFloat( lastCandle[3] ) )
+          lastCandle[3] = lastPrice;
+       
+        this.model.chart.setOption( this.model.chartConfig );
+        this.model.updateTradingToolsCurrPrice( lastPrice.toString() );
+
+      } catch {
+        // TODO: Send error notification.
+        return console.error( 'There was an error while trying to connect to the data provider.' );
+      }
+    }, TRADE_PRICE_UPDATE_RATE );
   }
 
   stopChartUpdate() {
-    if ( chartUpdateCandleInterval )
-      clearInterval( chartUpdateCandleInterval );
+    if ( this.model.chartUpdateCandleInterval )
+      clearInterval( this.model.chartUpdateCandleInterval );
 
-    if ( chartUpdatePriceInterval )
-      clearInterval( chartUpdatePriceInterval );
+    if ( this.model.chartUpdatePriceInterval )
+      clearInterval( this.model.chartUpdatePriceInterval );
   }
 
   injectTradeTools() {
@@ -2745,20 +3025,6 @@ new NavbarController();
  *
  */
 
-const ThemeType = Object.freeze({
-  Light: 1,
-  Dark: 2
-});
-
-﻿/*
- *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
- *
- */
-
 class Theme {
   /**
    * 
@@ -2850,37 +3116,4 @@ whenDomReady(() => {
 
   document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
 });
-
-﻿/*
- *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
- *
- */
-
-page();
-
-page( `/${NavItemID.Dashboard}`, () => {
-  NavbarController._.activateItem( NavItemID.Dashboard );
-} );
-
-//page( `/${NavItemID.TradeRoom}`, () => {
-//  NavbarController._.activateItem( NavItemID.TradeRoom );
-//  page.redirect( `/${ NavItemID.Markets }` );
-//} );
-
-page( `/${NavItemID.Markets}`, () => {
-  NavbarController._.activateItem( NavItemID.Markets );
-  TradeRoomController._.openMarkets();
-} );
-
-page( `/${NavItemID.Trade}/:assetID`, ( ctx ) => {
-  TradeRoomController._.tradeAsset( ctx.params.assetID );
-} );
-
-page( `/${NavItemID.Settings}`, () => {
-  NavbarController._.activateItem( NavItemID.Settings );
-} );
 
