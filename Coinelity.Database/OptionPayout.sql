@@ -18,3 +18,5 @@ GO
 
 CREATE INDEX idx_Payout_AssetId ON dbo.OptionPayout( AssetId );
 GO
+CREATE INDEX idx_Payout_LifetimeId ON dbo.OptionLifetime( Id );
+GO

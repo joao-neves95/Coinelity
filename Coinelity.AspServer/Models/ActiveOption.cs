@@ -22,11 +22,13 @@ namespace Coinelity.AspServer.Models
 
         public int AssetId { get; set; }
 
+        public int IsRealBalance { get; set; }
+
         public int OperationTypeId { get; set; }
 
         public int LifetimeId { get; set; }
 
-        public short PayoutPercent { get; set; }
+        public sbyte PayoutPercent { get; set; }
 
         public decimal StrikePrice { get; set; }
 

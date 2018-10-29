@@ -12,6 +12,7 @@ CREATE TABLE dbo.ActiveOption
     Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     UserId INT NOT NULL FOREIGN KEY REFERENCES dbo.ApplicationUser( Id ),
     AssetId INT NOT NULL FOREIGN KEY REFERENCES dbo.Asset( Id ),
+    IsRealBalance BIT NOT NULL,
     OperationTypeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OperationType( Id ),
     LifetimeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionLifetime( Id ),
     PayoutPercent TINYINT NOT NULL CHECK (PayoutPercent > 0),

@@ -38,8 +38,10 @@ namespace Coinelity.Core.Models
 
         public string StatusMessage { get; set; }
 
+        // TODO: Change to string[].
         public object[] Errors { get; set; }
 
+        // TODO: Change to string[].
         public object[] Data { get; set; }
 
         public string ToJSON()

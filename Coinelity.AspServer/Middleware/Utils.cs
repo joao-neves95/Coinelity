@@ -42,17 +42,12 @@ namespace Coinelity.AspServer.Middleware
         /// </summary>
         /// <param name="accountType"> UserAccountType string (pascal case) or JSON (camel case) representation </param>
         /// <returns></returns>
-        public static UserAccountType? UserAccountTypeResolver(string accountType, bool isJson = true)
+        public static UserAccountType UserAccountTypeResolver(byte isRealBalance)
         {
-            if (isJson)
-                accountType = char.ToUpper( accountType[0] ) + accountType.Substring( 1 );
-
-            if (accountType == nameof( UserAccountType.RealBalance ))
-                return UserAccountType.RealBalance;
-            else if (accountType == nameof( UserAccountType.PaperBalance ))
-                return UserAccountType.PaperBalance;
-            else
-                return null;
+            return
+                isRealBalance == 1 ? UserAccountType.RealBalance :
+                isRealBalance == 0 ? UserAccountType.PaperBalance :
+                UserAccountType.Unknown;
         }
 
         /// <summary>

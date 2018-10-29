@@ -16,6 +16,7 @@ namespace Coinelity.AspServer.Enums
 {
     public enum UserAccountType
     {
+        Unknown = 0,
         RealBalance = 1,
         PaperBalance = 2
     }

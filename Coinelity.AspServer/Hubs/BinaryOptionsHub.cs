@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using ExchangeSharp;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.AspServer.Middleware;
+using Coinelity.AspServer.BusinessLogic;
 using Coinelity.AspServer.Models;
 using Coinelity.AspServer.Enums;
 using Coinelity.Core.Data;
@@ -54,22 +55,21 @@ namespace Coinelity.AspServer.Hubs
 
                 // Check if user has enough money.
                 int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( Context.User ) );
-                UserAccountType? accountType = Utils.UserAccountTypeResolver( order.AccountType );
+                UserAccountType accountType = Utils.UserAccountTypeResolver( order.IsRealBalance );
 
-                if (accountType == null)
-                    // TODO: Change from the error objects to only error strings (<string[]>) in all responses.
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
+                if (accountType == UserAccountType.Unknown)
+                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.WrongAccountType } ).ToJSON() );
 
                 decimal userBalance = 0.0M;
                 using (userAccountStore = new UserAccountStore())
                 {
-                    userBalance = await userAccountStore.GetUserBalanceAsync( thisUserId, accountType.Value );
+                    userBalance = await userAccountStore.GetUserBalanceAsync( thisUserId, accountType );
                 }
 
                 if (Convert.ToDecimal( order.InvestmentAmount ) > userBalance)
                 {
                     // If he does not have enough money, send failed response.
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.InsufficientFunds ) } ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.InsufficientFunds } ).ToJSON() );
                 }
                 else
                 {
@@ -77,12 +77,21 @@ namespace Coinelity.AspServer.Hubs
 
                     // Get strike price from API and add it to the PlaceOrderDTO.
                     // Both Exchange and Symbol are **temporarily** hardcoded.
-                    using (exchange = new Exchange( "KRAKEN" ))
+                    string symbol = "";
+                    string exchangeName = "";
+                    using (optionsStore = new OptionsStore())
+                    {
+                        IList<Dictionary<string, object>> symbolAndExchange = await optionsStore.GetSymbolAndExchange( order.AssetId );
+                        symbol = symbolAndExchange[0]["Symbol"].ToString();
+                        exchangeName = symbolAndExchange[1]["Exchange"].ToString();
+                    }
+
+                    using (exchange = new Exchange( exchangeName ))
                     {
                         if (exchange.API == null)
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
+                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.UnknownExchange } ).ToJSON() );
 
-                        order.StrikePrice = await exchange.GetLastPrice( "BTC/EUR" );
+                        order.StrikePrice = await exchange.GetLastPrice( symbol );
                     }
 
                     using (connection = Env.GetMSSQLConnection())
@@ -93,13 +102,13 @@ namespace Coinelity.AspServer.Hubs
                         bool success = await MSSQLClient.NonQueryTransactionAsync( connection,
                             new SqlCommand[]
                             {
-                                userAccountStore.FreezeUserBalanceCmd( thisUserId, accountType.Value, Convert.ToDecimal( order.InvestmentAmount ), connection ),
+                                userAccountStore.FreezeUserBalanceCmd( thisUserId, accountType, Convert.ToDecimal( order.InvestmentAmount ), connection ),
                                 await optionsStore.OpenOrderCmdAsync( order, connection )
                             } );
 
                         if (!success)
                         {
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
                         }
                         else
                         {
@@ -123,7 +132,7 @@ namespace Coinelity.AspServer.Hubs
             {
                 // TODO: Exeption handling.
                 Console.WriteLine( e );
-                return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+                return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
             }
             finally
             {
@@ -155,122 +164,15 @@ namespace Coinelity.AspServer.Hubs
 
             try
             {
-                UserAccountType? userAccountType = Utils.UserAccountTypeResolver( order.AccountType );
-
-                if (userAccountType == null)
-                    return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.WrongAccountType ) } ).ToJSON() );
-
-                ActiveOptionJoined activeOption;
-
-                using (optionsStore = new OptionsStore())
-                {
-                    activeOption = await optionsStore.GetActiveOrderAsync( Convert.ToInt32( order.OrderId ), thisUserId );
-
-                    // If the InvestmentAmount is 0 it's because the query returned an empty ActiveOption (ActiveOption not found).
-                    if (activeOption.InvestmentAmount == 0)
-                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 404, "Not Found", new object[] { /* Order not found. */ } ).ToJSON() );
-                }
-
-                int lifetimeMinutes = activeOption.Lifetime;
-
-                DateTime currentUtcTimestamp = DateTime.UtcNow;
-                // The .AddMinutes() mothod does not change change the value of the timestamp. It returns a **new** DateTime.
-                DateTime closeUtcTimestamp = activeOption.OpenTimestamp.AddMinutes( lifetimeMinutes );
-
-                // The option maturity (expiration timestamp) has not yet been met.
-                if ( DateTimeOffset.Compare(currentUtcTimestamp, closeUtcTimestamp ) < 0)
-                {
-                    return Clients.Caller.SendAsync( "ReceiveCheckOrderResult",
-                        new ApiResponse( null, null, null,
-                            new object[] { new Dictionary<string, object>
-                                {
-                                    { "Message", "The option has not yet expired." },
-                                    { "Order", activeOption }
-                                }
-                            }
-                        ).ToJSON()
-                    );
-                }
-                else
-                {
-                    decimal currentPrice;
-
-                    using (exchange = new Exchange( activeOption.ExchangeName ))
-                    {
-                        if (exchange.API == null)
-                            return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", new object[] { new ErrorMessage( ErrorType.UnknownExchange ) } ).ToJSON() );
-
-                        currentPrice = await exchange.GetLastPrice( activeOption.Symbol );
-                    }
-
-                    decimal investmentAmount = Convert.ToDecimal( activeOption.InvestmentAmount );
-                    decimal payoutValue = ( activeOption.PayoutPercent * investmentAmount ) / 100;
-
-                    // Win/Loss Logic.
-                    bool addToBalance = false;
-
-                    switch (activeOption.OperationTypeId)
-                    {
-                        case (int)OperationType.Call:
-                            if (currentPrice < activeOption.StrikePrice)
-                                // User lost.
-                                addToBalance = false;
-                            else
-                                // User won.
-                                addToBalance = true;
-                            break;
-
-                        case (int)OperationType.Put:
-                            if( currentPrice > activeOption.StrikePrice )
-                                // User lost.
-                                addToBalance = false;
-                            else
-                                // User won.
-                                addToBalance = true;
-                            break;
-                    }
-
-                    bool successful;
-                    userAccountStore = new UserAccountStore( false );
-                    optionsStore = new OptionsStore( false );
-                    using (connection = Env.GetMSSQLConnection())
-                    {
-                        successful = await MSSQLClient.NonQueryTransactionOnceAsync( connection, new SqlCommand[]
-                        {
-                                new SqlCommand(userAccountStore.UnfreezeBalanceCmd(thisUserId, userAccountType.Value, investmentAmount, addToBalance, payoutValue)),
-                                // TODO: (If user lost) Send lost balance to Coinelity's bank account.
-                                new SqlCommand(optionsStore.DeleteActiveOrderCmd(activeOption.Id, thisUserId), connection)
-                        } );
-                    }
-
-                    if (!successful)
-                    {
-                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 500, "Error", new object[] { /* new ErrorMessage( <Error processing the request> ) */  } ).ToJSON() );
-                    }
-                    else
-                    {
-                        // Send success message.
-                        string wonLost = addToBalance ? "won" : "lost";
-
-                        return Clients.Caller.SendAsync( "ReceiveCheckOrderResult",
-                            new ApiResponse( null, null, null,
-                                new object[] { new Dictionary<string, object>
-                                    {
-                                        { "Message", $"The user has {wonLost}." },
-                                        { "Order", activeOption }
-                                    }
-                                }
-                            ).ToJSON()
-                        );
-                    }
-
-                }
+                CheckOrderLogicResponse orderResult = await BinaryOptionsLogic.CheckOrderAsync( exchange, thisUserId, order, optionsStore );
+                ApiResponse apiResponse = await HandleCheckOrderResultAsync( userAccountStore, optionsStore, connection, thisUserId, orderResult );
+                return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", apiResponse.ToJSON() );
             }
             catch (Exception e)
             {
                 // TODO: Exception Handling.
                 Console.WriteLine( e );
-                return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+                return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
             }
             finally
             {
@@ -281,9 +183,18 @@ namespace Coinelity.AspServer.Hubs
             }
         }
 
+        /// <summary>
+        /// 
+        /// Returns an ApiResponse instance with an array of ApiResponse instances as Data or an error ApiResponse.
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<Task> SyncOrders()
         {
             OptionsStore optionsStore = null;
+            Exchange exchange = null;
+            UserAccountStore userAccountStore = null;
+            SqlConnection connection = null;
 
             try
             {
@@ -291,26 +202,94 @@ namespace Coinelity.AspServer.Hubs
                 List<ActiveOptionJoined> activeOptions = await optionsStore.GetActiveOrdersAsync( thisUserId );
 
                 if (activeOptions.Count <= 0)
-                    return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 200, "Ok", new object[] { /* new ErrorMessage( ErrorType ) */ } ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceiveSyncResult",
+                        new ApiResponse( 200, "Ok", null, new object[] {
+                            new Dictionary<string, string>()
+                            {
+                                { "Message", "No active orders" }
+                            }
+                        } ).ToJSON()
+                    );
 
-                // TODO: Continue.
-                return new Task(() => { } );
+                List<ApiResponse> apiResponses = new List<ApiResponse>();
+                CheckOrderLogicResponse currentOrderResponse;
+                // TODO: Complete (handle results).
+                for (int i = 0; i < activeOptions.Count; ++i)
+                {
+                    currentOrderResponse = await BinaryOptionsLogic.CheckOrderAsync( exchange, thisUserId, activeOptions[i] );
+                    apiResponses.Add( await HandleCheckOrderResultAsync( userAccountStore, optionsStore, connection, thisUserId, currentOrderResponse ) );
+                }
+
+                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 200, "Success", null, apiResponses.ToArray() ) );
             }
             catch (Exception e)
             {
                 // TODO: Exception Handling.
                 Console.WriteLine( e );
-                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 500, "Unknown Error", new object[] { new ErrorMessage( ErrorType.UnknownError ) } ).ToJSON() );
+                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
             }
             finally
             {
                 optionsStore?.Dispose();
+                exchange.Dispose();
+                userAccountStore.Dispose();
+                connection.Dispose();
             }
         }
 
         public async Task CloseOrder(string orderId)
         {
+            // Does the order exist?
+            // Unfreeze corresponding balance and take cancelation fee.
+            // Remove from active orders.
+            // Add to order history.
+        }
 
+        private async Task<ApiResponse> HandleCheckOrderResultAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, int thisUserId, CheckOrderLogicResponse orderResult)
+        {
+            switch (orderResult.Result)
+            {
+                case CheckOrderLogicResult.ErrorNotFound:
+                    return new ApiResponse( 404, "Not Found", new object[] { "Order not found." } );
+
+                case CheckOrderLogicResult.NotExpired:
+                    return new ApiResponse( null, null, null,
+                        new object[] { new Dictionary<string, object>
+                            {
+                                { "Message", "The option has not yet expired." },
+                                { "Order", orderResult.ActiveOption }
+                            }
+                        }
+                    );
+
+                case CheckOrderLogicResult.ErrorUnknownExchange:
+                    return new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.UnknownExchange } );
+
+                case CheckOrderLogicResult.Profit:
+                case CheckOrderLogicResult.Loss:
+                    CloseOrderLogicResponse closeOrderResult = await BinaryOptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, connection, thisUserId, orderResult );
+
+                    if (!closeOrderResult.Success)
+                    {
+                        return new ApiResponse( 500, "Error", new object[] { "Error processing the request. Please try again." } );
+                    }
+                    else
+                    {
+                        // Send success message.
+                        string wonLostMessage = closeOrderResult.ClosedOption.AddToBalance ? "Profit" : "Loss";
+
+                        return new ApiResponse( null, null, null,
+                            new object[] { new Dictionary<string, object>
+                                {
+                                    { "Message", wonLostMessage },
+                                    { "Order", orderResult.ClosedOption }
+                                }
+                            }
+                        );
+                    }
+                default:
+                    return new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } );
+            }
         }
     }
 }

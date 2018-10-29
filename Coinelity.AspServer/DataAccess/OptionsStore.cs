@@ -37,6 +37,7 @@ namespace Coinelity.AspServer.DataAccess
             this.Dispose();
         }
 
+        // TODO: Validate the req placeOrderDTO.
         /// <summary>
         /// 
         /// The command for opening a new order.
@@ -47,17 +48,18 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public async Task<SqlCommand> OpenOrderCmdAsync(PlaceOrderDTO placeOrderDTO, SqlConnection connection = null)
         {
-            int payoutPercent = await GetOptionPayoutPercentByAssetId( placeOrderDTO.AssetId );
+            int payoutPercent = await GetPayoutPercentByAssetIdAndLifetimeId( placeOrderDTO.AssetId, placeOrderDTO.LifetimeId );
 
             connection = connection == null ? _connection : connection;
 
             return MSSQLClient.ParameterizeCommand( connection,
-                @"INSERT INTO dbo.ActiveOption (UserId, AssetId, OperationTypeId, LifetimeId, PayoutPercent, StrikePrice, InvestmentAmount)
-                  VALUES (@UserId, @AssetId, @OperationTypeId, @LifetimeId, @PayoutPercent, @StrikePrice, @InvestmentAmount)",
+                @"INSERT INTO dbo.ActiveOption (UserId, AssetId, IsRealBalance, OperationTypeId, LifetimeId, PayoutPercent, StrikePrice, InvestmentAmount)
+                  VALUES (@UserId, @AssetId, @IsRealBalance, @OperationTypeId, @LifetimeId, @PayoutPercent, @StrikePrice, @InvestmentAmount)",
                 new Dictionary<string, object>
                 {
                     { "@UserId", placeOrderDTO.UserId },
                     { "@AssetId", placeOrderDTO.AssetId },
+                    { "@IsRealBalance", placeOrderDTO.IsRealBalance },
                     { "@OperationTypeId", placeOrderDTO.OperationTypeId },
                     { "@LifetimeId", placeOrderDTO.LifetimeId },
                     { "@PayoutPercent", payoutPercent },
@@ -88,7 +90,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public string GetActiveOrderCmd()
         {
-            return @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.OptionLifetime.TimeMinutes, dbo.LifetimeLabel.Name AS LifetimeLabel, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
+            return @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.ActiveOption.IsRealBalance, dbo.ActiveOption.AssetId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.ActiveOption.LifetimeId, dbo.OptionLifetime.TimeMinutes, dbo.LifetimeLabel.Name AS LifetimeLabel, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
                      FROM dbo.ActiveOption
                          INNER JOIN dbo.Asset
                              INNER JOIN dbo.Exchange
@@ -97,7 +99,7 @@ namespace Coinelity.AspServer.DataAccess
                          INNER JOIN dbo.OptionLifetime
                          ON dbo.ActiveOption.LifetimeId = dbo.OptionLifetime.Id
                          INNER JOIN dbo.LifetimeLabel
-                         ON dbo.ActiveOption.LifetimeId = dbo.LifetimeLabel.Id";
+                         ON dbo.ActiveOption.LifetimeId = dbo.LifetimeLabel.Id ";
         }
 
         public async Task<List<ActiveOptionJoined>> GetActiveOrdersAsync(int userId)
@@ -139,7 +141,7 @@ namespace Coinelity.AspServer.DataAccess
         public string DeleteActiveOrderCmd(int orderId, int? userId = null)
         {
             string command = $@"DELETE FROM dbo.ActiveOrders
-                  WHERE Id = {orderId} ";
+                                WHERE Id = {orderId} ";
 
             command += userId == null ? "" : " AND UserId = {userId}";
 
@@ -162,8 +164,7 @@ namespace Coinelity.AspServer.DataAccess
             connection = connection == null ? _connection : connection;
 
             string query = @"SELECT MAX(Id) AS Id
-                             FROM dbo.ActiveOption
-                             WHERE UserId = @UserId";
+                             FROM dbo.ActiveOption ";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>();
 
@@ -180,12 +181,54 @@ namespace Coinelity.AspServer.DataAccess
             return Convert.ToInt32( activeOrderIdListDict[0]["Id"] );
         }
 
+        public string InsertInOrderHistoryCmd(ClosedOptionDTO closedOptionDTO)
+        {
+            return $@"
+                 INSERT INTO dbo.OptionHistory 
+                     (
+                         UserId,
+                         AssetId,
+                         IsRealBalance,
+                         OperationTypeId,
+                         LifetimeId,
+                         PayoutPercent,
+                         StrikePrice,
+                         InvestmentAmount,
+                         OpenTimestamp,
+                         ClosePrice,
+                         ProfitLossFiat,
+                     )
+                   VALUES 
+                       (
+                           {closedOptionDTO.UserId},
+                           {closedOptionDTO.AssetId},
+                           {closedOptionDTO.IsRealBalance},
+                           {closedOptionDTO.OperationTypeId},
+                           {closedOptionDTO.LifetimeId},
+                           {closedOptionDTO.PayoutPercent},
+                           {closedOptionDTO.StrikePrice},
+                           {closedOptionDTO.InvestmentAmount},
+                           {closedOptionDTO.OpenTimestamp},
+                           {closedOptionDTO.ClosePrice},
+                           {closedOptionDTO.ProfitLossFiat},
+                       )";
+
+        }
+
+        public async Task InsertInOrderHistory(ClosedOptionDTO closedOptionDTO, SqlConnection sqlConnection = null)
+        {
+            sqlConnection = sqlConnection == null ? _connection : sqlConnection;
+
+            await MSSQLClient.CommandOnceAsync( sqlConnection, InsertInOrderHistoryCmd( closedOptionDTO ) );
+        }
+
+        // TODO: Refactor query.
         public async Task<IList<Dictionary<string, object>>> GetUserOrderHistoryAsync(int userId)
         {
             IList<Dictionary<string, object>> orderListDict = await MSSQLClient.QueryOnceAsync( _connection,
                 @"SELECT *
                   FROM dbo.OptionHistory
-                  WHERE UserId = @UserId",
+                  WHERE UserId = @UserId ",
                 new Dictionary<string, object>
                 {
                     { "@UserId", userId }
@@ -201,10 +244,10 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<int> GetOptionPayoutPercentById(int id)
+        public async Task<int> GetPayoutPercentById(int id)
         {
-            const string whereClause = "WHERE Id = @Id";
-            return await GetOptionPayoutPercent( whereClause, id );
+            string whereClause = $"WHERE Id = {id}";
+            return await GetPayoutPercent( whereClause );
         }
 
         /// <summary>
@@ -214,10 +257,16 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
-        public Task<int> GetOptionPayoutPercentByAssetId(int assetId)
+        public Task<int> GetPayoutPercentByAssetId(int assetId)
         {
-            const string whereClause = "WHERE AssetId = @Id";
-            return GetOptionPayoutPercent( whereClause, assetId );
+            string whereClause = $"WHERE AssetId = {assetId}";
+            return GetPayoutPercent( whereClause );
+        }
+
+        public Task<int> GetPayoutPercentByAssetIdAndLifetimeId(int assetId, int lifetimeId)
+        {
+            string whereClause = $"WHERE AssetId = {assetId} AND LifetimeId = {lifetimeId}";
+            return GetPayoutPercent( whereClause );
         }
 
         /// <summary>
@@ -228,16 +277,13 @@ namespace Coinelity.AspServer.DataAccess
         /// <param name="whereQuery"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private async Task<int> GetOptionPayoutPercent(string whereClause, int id)
+        private async Task<int> GetPayoutPercent(string whereClause)
         {
             IList<Dictionary<string, object>> payoutListDict = await MSSQLClient.QueryOnceAsync( _connection,
                 $@"SELECT Payout
-                  FROM dbo.OptionPayout
-                  {whereClause}",
-                new Dictionary<string, object>
-                {
-                    { "@Id", id }
-                } );
+                   FROM dbo.OptionPayout
+                   {whereClause}"
+            );
 
             return payoutListDict.Count > 0 ? Convert.ToInt16( payoutListDict[0]["Payout"] ) : -1;
         }
@@ -254,13 +300,37 @@ namespace Coinelity.AspServer.DataAccess
             IList<Dictionary<string, object>> lifetimeListDict = await MSSQLClient.QueryOnceAsync( _connection,
                 $@"SELECT TimeMinutes
                    FROM dbo.OptionLifetime
-                   WHERE Id = @LifetimeId",
+                   WHERE Id = @LifetimeId ",
                 new Dictionary<string, object>
                 {
                     { "@LifetimeId", optionLifetimeId }
                 } );
 
             return lifetimeListDict.Count > 0 ? Convert.ToInt32( lifetimeListDict[0]["LifetimeMinutes"] ) : -1;
+        }
+
+        public async Task GetSymbolMeta(int assetId)
+        {
+            IList<Dictionary<string, object>> symbolMetaListDict = await MSSQLClient.QueryOnceAsync( _connection, "" );
+        }
+
+        /// <summary>
+        /// 
+        /// Task<IList<Dictionary<string, object>>>
+        /// [0] Symbol, (value)
+        /// [1] Exchange, (value)
+        /// 
+        /// </summary>
+        /// <param name="assetId"></param>
+        /// <returns></returns>
+        public async Task<IList<Dictionary<string, object>>> GetSymbolAndExchange(int assetId)
+        {
+            return await MSSQLClient.QueryOnceAsync( _connection,
+                $@"SELECT dbo.Asset.Symbol, dbo.Exchange.Name AS Exchange
+                   FROM dbo.Asset
+                       INNER JOIN dbo.Exchange
+                       ON dbo.Asset.ExchangeId = dbo.Exchange.Id
+                   WHERE dbo.Asset.Id = {assetId} " );
         }
     }
 }
