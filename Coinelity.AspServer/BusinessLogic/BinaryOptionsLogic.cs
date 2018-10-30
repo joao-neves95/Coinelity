@@ -69,7 +69,7 @@ namespace Coinelity.AspServer.BusinessLogic
                 closedOption.ClosePrice = currentPrice;
                 closedOption.UserAccountType = userAccountType;
                 decimal investmentAmount = Convert.ToDecimal( activeOption.InvestmentAmount );
-                closedOption.PayoutValue = (activeOption.PayoutPercent * investmentAmount) / 100;
+                closedOption.PayoutValue = ( activeOption.PayoutPercent * investmentAmount) / 100m;
 
                 // Win/Loss Logic.
                 bool addToBalance = false;
@@ -129,24 +129,25 @@ namespace Coinelity.AspServer.BusinessLogic
         /// <param name="thisUserId"></param>
         /// <param name="orderResult"></param>
         /// <returns></returns>
-        public static async Task<CloseOrderLogicResponse> CloseOrderAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, int thisUserId, CheckOrderLogicResponse orderResult)
+        public static async Task<CloseOrderLogicResponse> CloseOrderAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, int thisUserId, ClosedOptionDTO closedOption)
         {
             bool success;
             userAccountStore = new UserAccountStore( false );
             optionsStore = new OptionsStore( false );
+
             using (connection = Env.GetMSSQLConnection())
             {
                 // TODO: Pass this to the BinaryOptionsLogic.CloseOrder()
                 success = await MSSQLClient.NonQueryTransactionOnceAsync( connection, new SqlCommand[]
                 {
-                    new SqlCommand(userAccountStore.UnfreezeBalanceCmd(thisUserId, orderResult.ClosedOption.UserAccountType, Convert.ToDecimal( orderResult.ClosedOption.InvestmentAmount ), orderResult.ClosedOption.AddToBalance, orderResult.ClosedOption.PayoutValue)),
+                    new SqlCommand(userAccountStore.UnfreezeBalanceCmd(thisUserId, closedOption.UserAccountType, Convert.ToDecimal( closedOption.InvestmentAmount ), closedOption.AddToBalance, closedOption.PayoutValue)),
                     // TODO: (If user lost) Send lost balance to Coinelity's bank account.
-                    new SqlCommand(optionsStore.DeleteActiveOrderCmd(orderResult.ActiveOption.Id, thisUserId), connection),
-                    new SqlCommand(optionsStore.InsertInOrderHistoryCmd(orderResult.ClosedOption), connection)
+                    new SqlCommand(optionsStore.DeleteActiveOrderCmd(closedOption.Id, thisUserId), connection),
+                    new SqlCommand(optionsStore.InsertInOrderHistoryCmd(closedOption), connection)
                 } );
             }
 
-            return new CloseOrderLogicResponse( success, null, orderResult.ClosedOption );
+            return new CloseOrderLogicResponse( success, null, closedOption );
         }
     }
 }

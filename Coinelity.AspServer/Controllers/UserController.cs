@@ -19,6 +19,7 @@ using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.Models;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.Core.Errors;
+using Coinelity.Core.Models;
 
 // TODO: Add consistency to the JSON responses (**Successes**/Errors). Something like: { error: [], result: [] }
 // TODO: Update AuditLog table.
@@ -105,7 +106,7 @@ namespace Coinelity.AspServer.Controllers
         public async Task<IActionResult> Login([FromBody]LoginDTO loginDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest(Json( Utils.GetErrorsFromModelState(ModelState) ).Value );
+                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
             string userEmail = loginDTO.Email;
             UserStore userStore = new UserStore();
@@ -262,6 +263,41 @@ namespace Coinelity.AspServer.Controllers
                 return StatusCode( 500, Json( new ErrorMessage( ErrorType.UnknownError ) ).Value );
 
             return Ok( Json( "Successfully changed the maximum number of failed logins." ).Value );
+        }
+
+        #endregion
+
+        #region BINARY OPTIONS
+
+        [Authorize]
+        [HttpGet("active-binary-options")]
+        public async Task<IActionResult> GetOpenBinaryOptions()
+        {
+            OptionsStore optionsStore = null;
+            List<ActiveOptionJoined> activeOptions = new List<ActiveOptionJoined>();
+
+            try
+            {
+                int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( User ) );
+
+                using (optionsStore = new OptionsStore())
+                {
+                    activeOptions = await optionsStore.GetActiveOrdersAsync( thisUserId );
+                }
+
+                if (activeOptions.Count <= 0)
+                    return NotFound( new ApiResponse( 400, "Not Found", new object[] { "No active orders found" } ) );
+
+                return Ok( new ApiResponse( 200, "Ok", null, activeOptions.ToArray() ) );
+            }
+            catch
+            {
+                return Ok( new ApiResponse( 500, "Unknown Error", new object[] { "Unknown error." }, null ) );
+            }
+            finally
+            {
+                optionsStore?.Dispose();
+            }
         }
 
         #endregion

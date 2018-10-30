@@ -10,7 +10,20 @@ namespace Coinelity.AspServer.Models
     {
         public ClosedOptionDTO(ActiveOptionJoined activeOptionJoined )
         {
-
+            this.Id = activeOptionJoined.Id;
+            this.UserId = activeOptionJoined.UserId;
+            this.IsRealBalance = activeOptionJoined.IsRealBalance;
+            this.OperationTypeId = activeOptionJoined.OperationTypeId;
+            this.AssetId = activeOptionJoined.AssetId;
+            this.Symbol = activeOptionJoined.Symbol;
+            this.ExchangeName = activeOptionJoined.ExchangeName;
+            this.LifetimeId = activeOptionJoined.LifetimeId;
+            this.TimeMinutes = activeOptionJoined.TimeMinutes;
+            this.LifetimeLabel = activeOptionJoined.LifetimeLabel;
+            this.PayoutPercent = activeOptionJoined.PayoutPercent;
+            this.StrikePrice = activeOptionJoined.StrikePrice;
+            this.InvestmentAmount = activeOptionJoined.InvestmentAmount;
+            this.OpenTimestamp = activeOptionJoined.OpenTimestamp;
         }
 
         public int Id { get; set; }
@@ -39,21 +52,32 @@ namespace Coinelity.AspServer.Models
 
         public float InvestmentAmount { get; set; }
 
-        public decimal ProfitLossFiat { get; set; }
-
         public DateTime OpenTimestamp { get; set; }
 
         // Closed Order properties:
 
+        /// <summary>
+        /// 
+        /// The investment amount plus the payout value in case of a profit, or 
+        /// all the negative investment amount in case of a loss.
+        /// To be set up server side.
+        /// 
+        /// </summary>
+        public decimal ProfitLossFiat { get; set; }
+
+
         public decimal ClosePrice { get; set; }
 
         /// <summary>
-        /// Without the user investment ammount.
+        /// The payout value without the user investment amount.
         /// </summary>
         public decimal PayoutValue { get; set; }
 
         public UserAccountType UserAccountType { get; set; }
 
+        /// <summary>
+        /// Set up server side.
+        /// </summary>
         public bool AddToBalance { get; set; }
     }
 }

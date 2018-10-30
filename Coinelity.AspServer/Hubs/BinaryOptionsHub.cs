@@ -15,18 +15,19 @@ using Microsoft.AspNetCore.Authorization;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
-using ExchangeSharp;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Linq;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.BusinessLogic;
 using Coinelity.AspServer.Models;
 using Coinelity.AspServer.Enums;
+using Coinelity.Core;
 using Coinelity.Core.Data;
 using Coinelity.Core.Models;
 using Coinelity.Core.Errors;
 
-// TODo: Refactor for less code repetition.
-// TODO: Pass the methods to the Coinelity.Core and modularize them.
+// TODO: Pass the error messages to the ErrorMessages class of constants.
 namespace Coinelity.AspServer.Hubs
 {
     public class BinaryOptionsHub : Hub
@@ -48,14 +49,17 @@ namespace Coinelity.AspServer.Hubs
 
             try
             {
-                // TODO: Handle Deserialization exceptions.
-                // TODO: Test if not having the strike price on the placeOrderDTO gives an error.
-                // TODO: Validate placeOrderDTO.
-                PlaceOrderDTO order = JsonConvert.DeserializeObject<PlaceOrderDTO>( placeOrderDTO );
+                JsonValidationResponse jsonValidationResponse = JsonValidation.IsValid( typeof( PlaceOrderDTO ), placeOrderDTO );
 
+                if (!jsonValidationResponse.IsValid)
+                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", jsonValidationResponse.ErrorMessages ).ToJSON() );
+
+                // TODO: Handle Deserialization exceptions.
+                // TODO: Test the placeOrderDTO gives an error.
+                PlaceOrderDTO order = JsonConvert.DeserializeObject<PlaceOrderDTO>( placeOrderDTO );
                 // Check if user has enough money.
-                int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( Context.User ) );
-                UserAccountType accountType = Utils.UserAccountTypeResolver( order.IsRealBalance );
+                int thisUserId = Convert.ToInt32( Middleware.Utils.GetUserIdClaim( Context.User ) );
+                UserAccountType accountType = Middleware.Utils.UserAccountTypeResolver( order.IsRealBalance );
 
                 if (accountType == UserAccountType.Unknown)
                     return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.WrongAccountType } ).ToJSON() );
@@ -154,16 +158,21 @@ namespace Coinelity.AspServer.Hubs
         public async Task<Task> CheckOrder(string checkOrderDTO)
         {
             // TODO: Handle Deserialization exceptions.
-            CheckOrderDTO order = JsonConvert.DeserializeObject<CheckOrderDTO>( checkOrderDTO );
             OptionsStore optionsStore = null;
             UserAccountStore userAccountStore = null;
             Exchange exchange = null;
             SqlConnection connection = null;
 
-            int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( Context.User ) );
+            int thisUserId = Convert.ToInt32( Middleware.Utils.GetUserIdClaim( Context.User ) );
 
             try
             {
+                CheckOrderDTO order = JsonConvert.DeserializeObject<CheckOrderDTO>( checkOrderDTO );
+                JsonValidationResponse jsonValidationResponse = JsonValidation.IsValid( typeof( CheckOrderDTO ), checkOrderDTO );
+
+                if (!jsonValidationResponse.IsValid)
+                    return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", jsonValidationResponse.ErrorMessages ).ToJSON() );
+
                 CheckOrderLogicResponse orderResult = await BinaryOptionsLogic.CheckOrderAsync( exchange, thisUserId, order, optionsStore );
                 ApiResponse apiResponse = await HandleCheckOrderResultAsync( userAccountStore, optionsStore, connection, thisUserId, orderResult );
                 return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", apiResponse.ToJSON() );
@@ -198,18 +207,20 @@ namespace Coinelity.AspServer.Hubs
 
             try
             {
-                int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( Context.User ) );
+                int thisUserId = Convert.ToInt32( Middleware.Utils.GetUserIdClaim( Context.User ) );
                 List<ActiveOptionJoined> activeOptions = await optionsStore.GetActiveOrdersAsync( thisUserId );
 
                 if (activeOptions.Count <= 0)
+                {
                     return Clients.Caller.SendAsync( "ReceiveSyncResult",
                         new ApiResponse( 200, "Ok", null, new object[] {
                             new Dictionary<string, string>()
                             {
-                                { "Message", "No active orders" }
+                                { "Message", "No active orders." }
                             }
                         } ).ToJSON()
                     );
+                }
 
                 List<ApiResponse> apiResponses = new List<ApiResponse>();
                 CheckOrderLogicResponse currentOrderResponse;
@@ -237,8 +248,55 @@ namespace Coinelity.AspServer.Hubs
             }
         }
 
-        public async Task CloseOrder(string orderId)
+        public async Task<Task> CloseOrder(string orderId)
         {
+            OptionsStore optionsStore = null;
+            UserAccountStore userAccountStore = null;
+            SqlConnection sqlConnection = null;
+
+            try
+            {
+                int thisOrderId = Convert.ToInt32( orderId );
+                int thisUserId = Convert.ToInt32( Middleware.Utils.GetUserIdClaim( Context.User ) );
+                ActiveOptionJoined activeOption;
+
+                using (optionsStore = new OptionsStore())
+                {
+                    activeOption = await optionsStore.GetActiveOrderAsync( thisOrderId );
+                }
+
+                if (activeOption.InvestmentAmount <= 0)
+                    return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( 404, "Not Found", new object[] { "Order not found." } ).ToJSON() );
+
+
+                ClosedOptionDTO closedOption = new ClosedOptionDTO( activeOption );
+                // Do not add the investment amount.
+                closedOption.AddToBalance = false;
+                // The user loses 30% of the his investment in case he closes the order.
+                closedOption.PayoutValue = (Convert.ToDecimal( closedOption.InvestmentAmount ) * 30m) / 100m;
+                CloseOrderLogicResponse closeOrderResponse = await BinaryOptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, sqlConnection, thisUserId, closedOption );
+
+                if (!closeOrderResponse.Success)
+                {
+                    return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( 500, "Unknown Error", new object[] { "Error processing the close order request. Please try again." } ).ToJSON() );
+                }
+                else
+                {
+                    return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( null, null, null,
+                        new object[] { new Dictionary<string, object>
+                            {
+                                { "Message", "Successfuly closed the order." },
+                                { "Order", closeOrderResponse.ClosedOption }
+                            }
+                        }
+                    ) );
+                }
+            }
+            catch (FormatException e)
+            {
+                return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( 400, "Client", new object[] { "The order id must be an integer." } ).ToJSON() );
+            }
+
             // Does the order exist?
             // Unfreeze corresponding balance and take cancelation fee.
             // Remove from active orders.
@@ -267,7 +325,7 @@ namespace Coinelity.AspServer.Hubs
 
                 case CheckOrderLogicResult.Profit:
                 case CheckOrderLogicResult.Loss:
-                    CloseOrderLogicResponse closeOrderResult = await BinaryOptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, connection, thisUserId, orderResult );
+                    CloseOrderLogicResponse closeOrderResult = await BinaryOptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, connection, thisUserId, orderResult.ClosedOption );
 
                     if (!closeOrderResult.Success)
                     {

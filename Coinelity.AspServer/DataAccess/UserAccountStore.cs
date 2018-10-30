@@ -115,7 +115,12 @@ namespace Coinelity.AspServer.DataAccess
             const string accountType = nameof( userAccountType );
             string addToBalanceStatement;
 
-            addToBalanceStatement = addToBalance ? $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToUnfreeze} + {amountToAdd})," : "";
+            addToBalanceStatement =
+                addToBalance ?
+                    $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToUnfreeze} + {amountToAdd})," :
+                amountToAdd != 0.0m ?
+                    $"dbo.ApplicationUserAccount.{accountType} = (dbo.ApplicationUserAccount.{accountType} + {amountToAdd})," :
+                    "";
 
             return $@"UPDATE dbo.ApplicationUserAccount
                       SET
@@ -130,7 +135,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <param name="userId"></param>
         /// <param name="userAccountType"></param>
         /// <param name="amountToUnfreeze"></param>
-        /// <param name="addToBalance"> If true, it adds the amountToUnfreeze parameter to the user's balance. If false the next parameter gets ignored </param>
+        /// <param name="addToBalance"> If true, it adds the amountToUnfreeze parameter to the user's balance. </param>
         /// <param name="amountToAdd"> Optional. The amount to add to the user's balance </param>
         /// <returns></returns>
         public Task<int> UnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
