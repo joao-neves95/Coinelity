@@ -1,9 +1,10 @@
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -22,6 +23,74 @@ class Utils {
 
   static decodeCoinSymbolUri( symbol ) {
     return symbol.replace( '-', '/' );
+  }
+
+  static unixMilisecondsToHuman( unix ) {
+    return Utils.unixSecondsToHuman( unix / 1000 );
+  }
+
+  static unixSecondsToHuman( unix ) {
+    return moment.unix( unix ).format( "YYYY/MM/DD" );
+  }
+
+  /**
+   * Get the time in miliseconds to the next timeframe.
+   * 
+   * @param { ChartTimeframeType } chartTimeframeType
+   */
+  static getTimeToNextTimeframe( chartTimeframeType ) {
+    const now = moment( new Date() );
+    let getEndOf = '';
+
+    switch ( chartTimeframeType ) {
+      case ChartTimeframeType.Min1:
+      case ChartTimeframeType.Min5:
+      case ChartTimeframeType.Min15:
+      case ChartTimeframeType.Min30:
+        getEndOf = 'minute';
+        break;
+      case ChartTimeframeType.H1:
+      case ChartTimeframeType.H4:
+        getEndOf = 'minute';
+        break;
+      case ChartTimeframeType.D1:
+      case ChartTimeframeType.D7:
+        getEndOf = 'day';
+        break;
+      case ChartTimeframeType.Mon1:
+        getEndOf = 'month';
+        break;
+    }
+
+    const targetTime = moment( now ).endOf( getEndOf );
+    return moment.duration( targetTime.diff( now ) ).asMilliseconds();
+  }
+
+  /**
+   * 
+   * @param { ChartTimeframeType } chartTimeframeType
+   */
+  static getMilisecondsFromChartTimeframe( chartTimeframeType ) {
+    switch ( chartTimeframeType ) {
+      case ChartTimeframeType.Min1:
+        return 1000 * 60;
+      case ChartTimeframeType.Min5:
+        return 1000 * 60 * 5;
+      case ChartTimeframeType.Min15:
+        return 1000 * 60 * 15;
+      case ChartTimeframeType.Min30:
+        return 1000 * 60 * 30;
+      case ChartTimeframeType.H1:
+        return 1000 * 60 * 60;
+      case ChartTimeframeType.H4:
+        return 1000 * 60 * 60 * 4;
+      case ChartTimeframeType.D1:
+        return 1000 * 60 * 60 * 24;
+      case ChartTimeframeType.D7:
+        return 1000 * 60 * 60 * 24 * 7;
+      case ChartTimeframeType.Mon1:
+        return 1000 * 60 * 60 * 24 * 7 * 4.34524;
+    }
   }
 
   /**

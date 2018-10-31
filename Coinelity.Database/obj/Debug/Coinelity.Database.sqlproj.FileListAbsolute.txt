@@ -4,3 +4,13 @@ C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\bin\Debug\C
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.sqlprojAssemblyReference.cache
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.dll
 C:\Users\Utilizador1\Documents\DEV\REPO\coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.pdb
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.dacpac
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.pdb
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.sqlprojAssemblyReference.cache
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\Model.xml
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\refactor.xml
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\postdeploy.sql
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\predeploy.sql
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.pdb

@@ -1,9 +1,10 @@
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -20,7 +21,7 @@ class TradeModel extends ModelBase {
     this.currentSymbol = 'BTC/EUR';
     this.currentFiatSymbol = FiatSymbol.Euro;
     this.currentExchange = 'KRAKEN';
-    this.currentTimeframe = '1m';// '1d';
+    this.currentTimeframe = ChartTimeframeType.Min1;
 
     this.chart = {};
 
@@ -149,8 +150,7 @@ class TradeModel extends ModelBase {
       }
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
-        const humanDate = moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY/MM/DD" );
-        this.chartData.categoryData.push( humanDate );
+        this.chartData.categoryData.push( Utils.unixMilisecondsToHuman( OHLCVArray[i][0] ) );
         // open，close, lowest, highest.
         this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }

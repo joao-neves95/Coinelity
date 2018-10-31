@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "d02a251be40c216f15184b223b0da713922780cb"
+    "signature": "644215a200ae29f0aed00f62cb2d830acbd20292"
   },
   "compilationOptions": {},
   "targets": {
@@ -11,6 +11,7 @@
           "DigitalRuby.ExchangeSharp": "0.5.8",
           "DotNetEnv": "1.2.0",
           "Isopoh.Cryptography.Argon2": "1.0.8",
+          "Newtonsoft.Json.Schema": "3.0.10",
           "System.Data.SqlClient": "4.5.1"
         },
         "runtime": {
@@ -107,6 +108,17 @@
           "lib/netstandard2.0/Newtonsoft.Json.dll": {
             "assemblyVersion": "11.0.0.0",
             "fileVersion": "11.0.2.21924"
+          }
+        }
+      },
+      "Newtonsoft.Json.Schema/3.0.10": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.Schema.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.0.10.21924"
           }
         }
       },
@@ -380,6 +392,13 @@
       "sha512": "sha512-IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
       "path": "newtonsoft.json/11.0.2",
       "hashPath": "newtonsoft.json.11.0.2.nupkg.sha512"
+    },
+    "Newtonsoft.Json.Schema/3.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uDNsnCTUOryhTtujD297nLj+lyxIQ4H54o4TiPBsB0w06COs03eoHRvHFAflI8LbEtsezcdooT8rAcJ8nM08ew==",
+      "path": "newtonsoft.json.schema/3.0.10",
+      "hashPath": "newtonsoft.json.schema.3.0.10.nupkg.sha512"
     },
     "NLog/4.5.8": {
       "type": "package",

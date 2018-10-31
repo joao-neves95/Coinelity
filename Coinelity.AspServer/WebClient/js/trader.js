@@ -1,9 +1,10 @@
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -55,10 +56,11 @@
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -71,12 +73,26 @@ const ButtonType = Object.freeze( {
   Warning: 'warning'
 } );
 
+﻿/** 1m, 5m, 15m, 30m, 1h, 4h, 1d, 7d, 1M. */
+const ChartTimeframeType = Object.freeze( {
+  Min1: '1m',
+  Min5: '5m',
+  Min15: '15m',
+  Min30: '30m',
+  H1: '1h',
+  H4: '4h',
+  D1: '1d',
+  D7: '7d',
+  Mon1: '1M'
+} );
+
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -87,10 +103,11 @@ const Colors = Object.freeze({
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -101,10 +118,11 @@ const EnvironmentType = Object.freeze( {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -118,10 +136,11 @@ const FiatSymbol = Object.freeze( {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -132,10 +151,11 @@ const GridOrientationType = Object.freeze( {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -147,10 +167,11 @@ const NavbarItemType = Object.freeze({
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -167,10 +188,11 @@ const NavItemID = Object.freeze( {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -183,10 +205,11 @@ const RequestType = Object.freeze( {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -197,10 +220,11 @@ const ThemeType = Object.freeze({
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -211,10 +235,11 @@ const TradingMode = Object.freeze( {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -231,10 +256,11 @@ class AssetModel {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -248,10 +274,11 @@ class ChangeModel {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -264,10 +291,11 @@ class ChangePasswordDTO {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -280,10 +308,11 @@ class HttpClientResponse {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -296,10 +325,11 @@ class SelectInputOptions {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -314,10 +344,11 @@ class SpreadPricesModel {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -334,7 +365,7 @@ const BASE_NODEJS_URL = `http://localhost:${BASE_NODEJS_PORT}/`;
 const BASE_NODEJS_API = BASE_NODEJS_URL + 'api/';
 
 const FETCH_CHART_DATA_MAX_ATTEMPTS = 3;
-const MARKETS_UPDATE_RATE = 5000;
+const MARKETS_UPDATE_RATE = 8000;
 const TRADE_PRICE_UPDATE_RATE = 2000;
 const TRADE_CANDLE_UPDATE_RATE = 2000;
 
@@ -349,10 +380,11 @@ const SIDEBAR_DESKTOP_WIDTH = '10em';
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -362,10 +394,11 @@ const SIDEBAR_DESKTOP_WIDTH = '10em';
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -406,10 +439,11 @@ class DevErrors {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -487,10 +521,11 @@ class DOM {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -509,6 +544,74 @@ class Utils {
 
   static decodeCoinSymbolUri( symbol ) {
     return symbol.replace( '-', '/' );
+  }
+
+  static unixMilisecondsToHuman( unix ) {
+    return Utils.unixSecondsToHuman( unix / 1000 );
+  }
+
+  static unixSecondsToHuman( unix ) {
+    return moment.unix( unix ).format( "YYYY/MM/DD" );
+  }
+
+  /**
+   * Get the time in miliseconds to the next timeframe.
+   * 
+   * @param { ChartTimeframeType } chartTimeframeType
+   */
+  static getTimeToNextTimeframe( chartTimeframeType ) {
+    const now = moment( new Date() );
+    let getEndOf = '';
+
+    switch ( chartTimeframeType ) {
+      case ChartTimeframeType.Min1:
+      case ChartTimeframeType.Min5:
+      case ChartTimeframeType.Min15:
+      case ChartTimeframeType.Min30:
+        getEndOf = 'minute';
+        break;
+      case ChartTimeframeType.H1:
+      case ChartTimeframeType.H4:
+        getEndOf = 'minute';
+        break;
+      case ChartTimeframeType.D1:
+      case ChartTimeframeType.D7:
+        getEndOf = 'day';
+        break;
+      case ChartTimeframeType.Mon1:
+        getEndOf = 'month';
+        break;
+    }
+
+    const targetTime = moment( now ).endOf( getEndOf );
+    return moment.duration( targetTime.diff( now ) ).asMilliseconds();
+  }
+
+  /**
+   * 
+   * @param { ChartTimeframeType } chartTimeframeType
+   */
+  static getMilisecondsFromChartTimeframe( chartTimeframeType ) {
+    switch ( chartTimeframeType ) {
+      case ChartTimeframeType.Min1:
+        return 1000 * 60;
+      case ChartTimeframeType.Min5:
+        return 1000 * 60 * 5;
+      case ChartTimeframeType.Min15:
+        return 1000 * 60 * 15;
+      case ChartTimeframeType.Min30:
+        return 1000 * 60 * 30;
+      case ChartTimeframeType.H1:
+        return 1000 * 60 * 60;
+      case ChartTimeframeType.H4:
+        return 1000 * 60 * 60 * 4;
+      case ChartTimeframeType.D1:
+        return 1000 * 60 * 60 * 24;
+      case ChartTimeframeType.D7:
+        return 1000 * 60 * 60 * 24 * 7;
+      case ChartTimeframeType.Mon1:
+        return 1000 * 60 * 60 * 24 * 7 * 4.34524;
+    }
   }
 
   /**
@@ -768,10 +871,11 @@ class List extends Collection {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -797,10 +901,11 @@ class ErrorHandler {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -893,10 +998,11 @@ class HttpClient {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1156,10 +1262,11 @@ new ExchangeClient();
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1189,20 +1296,22 @@ page( `/${NavItemID.Settings}`, () => {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1265,10 +1374,11 @@ class Notifications {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1332,10 +1442,11 @@ class NavbarItemBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1360,10 +1471,11 @@ class ControllerBase extends NavbarItemBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1385,10 +1497,11 @@ class ModelBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1464,10 +1577,11 @@ class PageTemplates {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1490,10 +1604,11 @@ class ViewBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1505,10 +1620,11 @@ class DashboardTemplates {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1534,10 +1650,11 @@ class DashboardModel extends ModelBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1563,10 +1680,11 @@ class DashboardView extends ViewBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1594,10 +1712,11 @@ class DashboardController extends ControllerBase {
 
 /*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1656,10 +1775,11 @@ class TradeTemplates {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1676,7 +1796,7 @@ class TradeModel extends ModelBase {
     this.currentSymbol = 'BTC/EUR';
     this.currentFiatSymbol = FiatSymbol.Euro;
     this.currentExchange = 'KRAKEN';
-    this.currentTimeframe = '1m';// '1d';
+    this.currentTimeframe = ChartTimeframeType.Min1;
 
     this.chart = {};
 
@@ -1805,8 +1925,7 @@ class TradeModel extends ModelBase {
       }
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
-        const humanDate = moment.unix( OHLCVArray[i][0] / 1000 ).format( "YYYY/MM/DD" );
-        this.chartData.categoryData.push( humanDate );
+        this.chartData.categoryData.push( Utils.unixMilisecondsToHuman( OHLCVArray[i][0] ) );
         // open，close, lowest, highest.
         this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }
@@ -1911,10 +2030,11 @@ class TradeModel extends ModelBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -1958,10 +2078,11 @@ class TradeView extends ViewBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2003,26 +2124,21 @@ class TradeController extends ControllerBase {
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();
       this.startChartPriceUpdate();
+      this.startChartCandleUpdate();
 
       resolve();
     } );
   }
 
-  // TODO: REDO.
   startChartCandleUpdate() {
-    this.model.chartUpdateCandleInterval = setInterval( () => {
-      this.model.getOHLCV( ( OHLCV ) => {
-        if ( OHLCV )
-          this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
+    setTimeout( () => {
+      this.__updateCandles();
 
-        // option.xAxis.data.shift();
-        // option.xAxis.data.push( date );
-        // option.series[0].data.shift();
-        // option.series[0].data.push( newCandle );
-        // chart.setOption( option );
+      this.model.chartUpdateCandleInterval = setInterval( async () => {
+        await this.__updateCandles();
+      }, Utils.getMilisecondsFromChartTimeframe( this.model.currentTimeframe ) );
 
-      } );
-    }, 1000 * 60 );
+    }, Utils.getTimeToNextTimeframe( this.model.currentTimeframe ) );
   }
 
   startChartPriceUpdate() {
@@ -2068,14 +2184,39 @@ class TradeController extends ControllerBase {
   injectTradeTools() {
     this.view.injectTradingTools( this.model.currentTradeMode );
   }
+
+  async __updateCandles() {
+    let OHLCVArray = undefined;
+
+    try {
+      OHLCVArray = await this.model.getOHLCV();
+
+      if ( OHLCVArray === undefined )
+        throw new Error();
+
+      const lastOHLCV = OHLCVArray[OHLCVArray.length - 1];
+      const allDates = this.model.chartConfig.xAxis.data;
+      allDates.shift();
+      allDates.push( Utils.unixMilisecondsToHuman( lastOHLCV[0] ) );
+      const allCandles = this.model.chartConfig.series[0].data;
+      allCandles.shift();
+      allCandles.push( [lastOHLCV[1], lastOHLCV[4], lastOHLCV[3], lastOHLCV[2]] );
+      this.model.chart.setOption( this.model.chartConfig );
+
+    } catch {
+      // TODO: Send error notification.
+      return console.error( 'There was an error while trying to connect to the data provider.' );
+    }
+  }
 }
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2133,10 +2274,11 @@ class MarketsTemplates {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2180,10 +2322,11 @@ class MarketsModel extends ModelBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2243,10 +2386,11 @@ class MarketsView extends ViewBase {
 
 /*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2319,17 +2463,17 @@ class MarketsController extends ControllerBase {
   stopCardUpdate() {
     if ( this.model.cardUpdateInterval ) {
       clearInterval( this.model.cardUpdateInterval );
-      this.model.cardUpdateInterval = null;
     }
   }
 }
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2341,10 +2485,11 @@ class TradeRoomTemplates {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2368,10 +2513,11 @@ class TradeRoomModel extends ModelBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2407,10 +2553,11 @@ class TradeRoomView extends ViewBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2471,10 +2618,11 @@ class TradeRoomController extends ControllerBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2557,10 +2705,11 @@ class SettingsTemplates {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2604,10 +2753,11 @@ class SettingsModel extends ModelBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2652,10 +2802,11 @@ class SettingsView extends ViewBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2701,10 +2852,11 @@ class SettingsController extends ControllerBase {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2748,10 +2900,11 @@ class NavbarTemplates {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2789,10 +2942,11 @@ class NavbarModel {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -2880,10 +3034,11 @@ class NavbarView {
 }
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -3018,10 +3173,11 @@ new NavbarController();
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -3085,10 +3241,11 @@ class Themes {
 
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 

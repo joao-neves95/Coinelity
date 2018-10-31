@@ -1,9 +1,10 @@
 ﻿/*
  *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -45,26 +46,21 @@ class TradeController extends ControllerBase {
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();
       this.startChartPriceUpdate();
+      this.startChartCandleUpdate();
 
       resolve();
     } );
   }
 
-  // TODO: REDO.
   startChartCandleUpdate() {
-    this.model.chartUpdateCandleInterval = setInterval( () => {
-      this.model.getOHLCV( ( OHLCV ) => {
-        if ( OHLCV )
-          this.model.chart.series[0].addPoint( OHLCV[OHLCV.length - 1], true, true );
+    setTimeout( () => {
+      this.__updateCandles();
 
-        // option.xAxis.data.shift();
-        // option.xAxis.data.push( date );
-        // option.series[0].data.shift();
-        // option.series[0].data.push( newCandle );
-        // chart.setOption( option );
+      this.model.chartUpdateCandleInterval = setInterval( async () => {
+        await this.__updateCandles();
+      }, Utils.getMilisecondsFromChartTimeframe( this.model.currentTimeframe ) );
 
-      } );
-    }, 1000 * 60 );
+    }, Utils.getTimeToNextTimeframe( this.model.currentTimeframe ) );
   }
 
   startChartPriceUpdate() {
@@ -109,5 +105,29 @@ class TradeController extends ControllerBase {
 
   injectTradeTools() {
     this.view.injectTradingTools( this.model.currentTradeMode );
+  }
+
+  async __updateCandles() {
+    let OHLCVArray = undefined;
+
+    try {
+      OHLCVArray = await this.model.getOHLCV();
+
+      if ( OHLCVArray === undefined )
+        throw new Error();
+
+      const lastOHLCV = OHLCVArray[OHLCVArray.length - 1];
+      const allDates = this.model.chartConfig.xAxis.data;
+      allDates.shift();
+      allDates.push( Utils.unixMilisecondsToHuman( lastOHLCV[0] ) );
+      const allCandles = this.model.chartConfig.series[0].data;
+      allCandles.shift();
+      allCandles.push( [lastOHLCV[1], lastOHLCV[4], lastOHLCV[3], lastOHLCV[2]] );
+      this.model.chart.setOption( this.model.chartConfig );
+
+    } catch {
+      // TODO: Send error notification.
+      return console.error( 'There was an error while trying to connect to the data provider.' );
+    }
   }
 }
