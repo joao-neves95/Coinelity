@@ -1,0 +1,50 @@
+﻿@import 'material-shadows.less';
+@import 'variables.less';
+
+#markets {
+    padding: 1em 2em;
+
+    @media screen and (max-width: @mobile-width-max) {
+        padding: .5em 1em;
+    }
+}
+
+.coin-card {
+    width: 10em;
+    min-width: 20%;
+    padding-left: 0 !important;
+
+    .card {
+        cursor: pointer;
+        padding-top: .7em;
+        .z-depth(4);
+        transition: box-shadow .39s cubic-bezier(.4, 0, .2, 1);
+        transition: all .25s ease-in-out;
+
+        &:hover {
+            .z-depth(16);
+            transform: scale(1.01);
+        }
+
+        img {
+            width: 6em;
+        }
+
+        .card-section {
+            white-space: normal;
+
+            .name {
+                font-weight: bold;
+            }
+
+            .price {
+                font-size: 1.1rem;
+            }
+
+            .change {
+                font-size: .8rem;
+                color: green;
+            }
+        }
+    }
+}

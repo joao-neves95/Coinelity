@@ -55,21 +55,37 @@ class NavbarView {
 
   minimize() {
     // "&raquo;" == "»"
-    this.resize( SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
+    this.resize( true, SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
   }
 
   maximize() {
     // "&laquo;" == "«"
-    this.resize( SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
+    this.resize( false, SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
   }
 
-  resize( width, toggleButtonLabel, iconLabelsDisplay ) {
-    this.element.style.maxWidth = width;
-    this.element.style.minWidth = width;
-    this.element.style.width = width;
+  resize( isToMinimize, width, toggleButtonLabel, iconLabelsDisplay ) {
+    let toAdd;
+    let toRemove;
+    let pageToAdd;
+    let pageToRemove;
+
+    if ( isToMinimize ) {
+      toAdd = 'sidenav-min';
+      toRemove = 'sidenav-max';
+      pageToAdd = 'page-max';
+      pageToRemove = 'page-min';
+    } else {
+      toAdd = 'sidenav-max';
+      toRemove = 'sidenav-min';
+      pageToAdd = 'page-min';
+      pageToRemove = 'page-max';
+    }
+
+    this.element.classList.remove( toRemove );
+    this.element.classList.add( toAdd );
+    NavbarView.pageContainer.classList.add( pageToAdd );
+    NavbarView.pageContainer.classList.remove( pageToRemove );
     this.toggleButtonPElem.innerHTML = toggleButtonLabel;
-    NavbarView.pageContainer.style.marginLeft = width;
-    NavbarView.pageContainer.style.maxWidth = `calc(100% - ${width})`;
 
     const labels = this.getIconLabels();
     for ( let i = 0; i < labels.length; ++i ) {
@@ -86,6 +102,14 @@ class NavbarView {
 
   removeActivePage() {
     NavbarView.pageContainer.innerHTML = '';
+  }
+
+  addActiveClassToItem( id ) {
+    document.getElementById( id + '_btn' ).classList.add( 'active' );
+  }
+
+  removeActiveClassFromItem( id ) {
+    document.getElementById( id + '_btn' ).classList.remove( 'active' );
   }
 
   // #endregion

@@ -66,8 +66,8 @@ class NavbarController {
 
     const thisItems = this.model.items;
     for (let i = 0; i < thisItems.length; ++i) {
-      const thisItemModel = thisItems.getByIndex(i).model;
-      this.injectIcon(thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id);
+      const thisItemModel = thisItems.getByIndex( i ).model;
+      this.injectIcon( thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id );
     }
 
     DOM.on( 'click', this.view.toggleButtonElem, ( e ) => {
@@ -86,7 +86,7 @@ class NavbarController {
   }
 
   injectIcon(url, label, linkTo = null) {
-    this.view.injectIcon(url, label, linkTo);
+    this.view.injectIcon( url, label, linkTo );
   }
 
   /**
@@ -109,12 +109,15 @@ class NavbarController {
         if ( this.model.activePageId !== null ) {
           /** @type { NavbarItemBase } */
           const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
+          this.view.removeActiveClassFromItem( this.model.activePageId );
           lastActiveItem.onBeforeDestroyBase();
         }
       }
 
       this.view.removeActivePage();
       this.model.activePageId = itemId;
+      this.view.addActiveClassToItem( itemId );
+
     } else if ( thisItem.navbarItemType === NavbarItemType.NavbarPanelItem ) {
       if ( this.model.activeNavbarPanelItemId === itemId )
         return;

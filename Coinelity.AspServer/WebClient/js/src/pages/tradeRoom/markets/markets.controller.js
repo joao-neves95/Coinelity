@@ -64,7 +64,7 @@ class MarketsController extends ControllerBase {
     for ( let i = 0; i < symbols.length; ++i ) {
       const thisSymbol = symbols.get( i );
 
-      DOM.on( 'click', DOM.elemById( thisSymbol + MarketsTemplates.idPostfix ), ( e ) => {
+      DOM.on( 'click', DOM.byId( thisSymbol + MarketsTemplates.idPostfix ), ( e ) => {
         e.preventDefault();
         page( `/${NavItemID.Trade}/${Utils.encondeCoinSymbolUri( thisSymbol.substring( 0, thisSymbol.length - 1 ) )}` );
 

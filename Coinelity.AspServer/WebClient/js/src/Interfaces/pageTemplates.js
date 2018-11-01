@@ -27,8 +27,8 @@ class PageTemplates {
 
   static inputElem( label, type, id, placeholder = '', additionalAttributes = '' ) {
     return `
-      <label>${label}
-        <input type="${type}" placeholder="${placeholder}" id="${id}" ${additionalAttributes}>
+      <label>${ label }
+        <input type="${ type }" placeholder="${ placeholder }" id="${ id }" name="${ id }" ${ additionalAttributes }>
       </label>
     `;
   }
@@ -65,15 +65,34 @@ class PageTemplates {
     let optionsHtml = '';
 
     for ( let i = 0; i < options.length; ++i ) {
-      optionsHtml += `<option value="${options[i].value}">${options[i].label}</option>`;
+      optionsHtml += `<option value="${ options[i].value }">${ options[i].label }</option>`;
     }
 
     return `
-      <label>${label}
-        <select id="${selectId}" class="${selectAddicionalClasses}">
-          ${optionsHtml}
+      <label>${ label }
+        <select id="${ selectId }" class="${ selectAddicionalClasses }">
+          ${ optionsHtml }
         </select>
       </label>
+    `;
+  }
+
+  static switchInput( id, leftLabel, rightLabel ) {
+    return `
+      <div class="switch">
+        <label class="s-label" for="${ id }">
+          ${ leftLabel }
+        </label>
+
+        <input class="switch-input" id="${ id }" type="checkbox" name="${ id }">
+        <label class="switch-paddle" for="${ id }">
+          <span class="show-for-sr"></span>
+        </label>
+
+        <label class="s-label" for="${ id }">
+          ${ rightLabel }
+        </label>
+      </div>
     `;
   }
 }

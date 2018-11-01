@@ -1,24 +1,24 @@
-﻿.settings-form {
-    position: relative;
+﻿@import 'variables.less';
 
-    .form-item {
-        max-width: 25em;
-        margin-bottom: 1em;
-        margin-right: 3em;
+#settings {
+    padding: 1em 4em;
 
-        .article-content {
-            height: auto;
+    @media screen and (max-width: @mobile-width-max) {
+        padding: .5em 1.1em;
+    }
 
-            label {
+    input {
+        height: 1.9em;
+    }
 
-                input {
-                    height: 1.9em;
-                }
+    .accordion {
+
+        #change-password {
+            margin-bottom: 2.3em;
+
+            #change-password-button {
+                float: right;
             }
-        }
-
-        a#change-password-button {
-            float: right;
         }
     }
 }

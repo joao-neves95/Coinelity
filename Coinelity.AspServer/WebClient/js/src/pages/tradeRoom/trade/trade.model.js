@@ -32,7 +32,7 @@ class TradeModel extends ModelBase {
 
     // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
     this.chartConfig = {
-      //backgroundColor: '#21202D',
+      backgroundColor: Colors.LighterGrey,// '#21202D',
       title: {
         text: this.currentSymbol,
         left: 'center'
@@ -106,9 +106,11 @@ class TradeModel extends ModelBase {
           data: this.chartData.values,
           itemStyle: {
             // Bullish candles.
-            color: '#26A69A',
+            color: Colors.BullishGreen,
+            borderColor: Colors.BullishGreen,
             // Bearish candles.
-            color0: '#EF5350'
+            color0: Colors.BearishRed,
+            borderColor0: Colors.BearishRed
           }
         }//,
         //{
@@ -134,8 +136,6 @@ class TradeModel extends ModelBase {
   }
 
   get _() { return tradeModel; }
-
-  get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
 
   getInitChartData() {
     return new Promise( async ( resolve, reject ) => {
@@ -179,10 +179,6 @@ class TradeModel extends ModelBase {
       await this.getInitChartData();
       this.chart.setOption( this.chartConfig );
     } );
-  }
-
-  updateTradingToolsCurrPrice( price ) {
-    this.tradingToolsPriceElem.innerText = price;
   }
 
   /**

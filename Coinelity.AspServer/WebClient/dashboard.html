@@ -20,13 +20,12 @@
   <!-- FOUNDATION CSS -->
   <!-- Temporary, only for development. -->
   <!-- TODO: Create a custom Foundation build for production: https://foundation.zurb.com/sites/download.html/ -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0-rc.2/dist/css/foundation.min.css" integrity="sha256-iJQ8dZac/jUYHxiEnZJsyVpKcdq2sQvdA7t02QFmp30= sha384-SplqNBo/0ZlvSdwrP/riIPDozO5ck8+yIm++KVqyMAC53S6m3BaV+2OLpi7ULOOh sha512-ho6hK4sAWdCeqopNZWNy1d9Ok2hzfTLQLcGSr8ZlRzDzh6tNHkVoqSl6wgLsqls3yazwiG9H9dBCtSfPuiLRCQ==" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0/dist/css/foundation.min.css" integrity="sha256-VEEaOnBKVRoYPn4AID/tY/XKVxKEqXstoo/xZ6nemak= sha384-D46t32f421/hB30qwnim2pIcisNN5GU9+6m2Mfnd3dKpTSFidZLa08/1StEiCFId sha512-WkgzH8VKemDfwrp18r+wgbx+oHXOkfd2kJs7ocAXdGDgonXDXh88E90IRtRZRXtO0IHprxYHYlY14h+wyTsUDA==" crossorigin="anonymous">
   <link rel="stylesheet" href="http://localhost:33623/private/css/dashboard.css" type="text/css">
 </head>
 
 <body>
   <div class="grid-container fluid">
-
     <!-- DESKTOP TOPBAR -->
     <header class="top-bar">
       <div class="top-bar-left">
@@ -34,26 +33,19 @@
         <h3 class="title-bar-title">Coinelity</h3>
       </div>
     </header>
-
     <div class="grid-x container-content">
-
-      <aside class="cell sidenav" id="sidenav">
+      <aside class="cell sidenav anim" id="sidenav">
         <ul class="grid-y no-bullet" id="icon-container"></ul>
       </aside>
-
-      <section class="cell small-12 medium-12 large-12 page-container" id="page-container">
-      </section>
-
+      <section class="cell small-12 medium-12 large-12 page-container anim" id="page-container"></section>
     </div>
   </div>
-
-  <!-- JQUERY SLIM JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
-
+  <!-- JQUERY JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <!-- FOUNDATION JS -->
+  <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0/dist/js/foundation.min.js" integrity="sha256-GZq6aeugpWo25iH//1eKmeK6FHCf+6KXTfoUpkCqPCA= sha384-vjxUQtbGw5FJMigaaFpXYyxoHHLb7LbvRywnMZOiPJeh5j9sl2rnmQ3iucuegRm8 sha512-h7tIMIX/opZXfWkcTDbkO+nT0LePyAAwDacfYhWtgGUidV+Kkh3eesW52fPSxKEsw3rgywKhQvghNLT4eDuUyw==" crossorigin="anonymous"></script>
+  
   <!-- Compressed JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.0-rc.2/dist/js/foundation.min.js" integrity="sha256-G6jsRyH1fxbsvFIXSCuwYmI1aIDYBa28xscrvmYjJy0= sha384-vtoG68NvPc9azmFJr447vvY8qgdyA4FdaJ5/bqvzIM4eAdZfO0iyRRF8l2AAscYI sha512-43seCcNrHA0BQgrtyajB9sp8yOdv5c8QdYvgjP7zJ7v+dmzAcxYDQ2gupb9aztsNWBq1COIp/3NHYkQs4l/dkg==" crossorigin="anonymous"></script>
-
   <script type="text/javascript" src="http://localhost:33623/private/js/externalLibs.js"></script>
   <script type="text/javascript" src="http://localhost:33623/private/js/trader.js?0.0.1"></script>
   <!-- Get user previleges. If it has admin rights, inject the relative script. -->

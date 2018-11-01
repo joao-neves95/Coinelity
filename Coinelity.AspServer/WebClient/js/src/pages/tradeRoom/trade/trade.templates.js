@@ -46,7 +46,10 @@ class TradeTemplates {
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
           PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
           PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
-          '<p><span id="trading-tools_current-price"></span><span id="trading-tools_fiat-symbol>€</span><p>' +
+          `<p class="curr-price">
+             <span id="trading-tools_current-price"></span>
+             <span id="trading-tools_fiat-symbol"></span>
+           </p>` +
           PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
       </form>

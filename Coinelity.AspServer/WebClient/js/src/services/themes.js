@@ -13,16 +13,26 @@ class Theme {
    * 
    * @param { Colors } sidenav
    */
-  constructor(sidenav, topbar) {
+  constructor( sidenav, topbar, tradingTools, chartBG) {
     this.sidenav = sidenav;
     this.topbar = topbar;
+    this.tradingToolsBG = tradingTools;
+    this.chartBG = chartBG;
   }
 }
 
 let lightTheme = null;
 class LightTheme extends Theme {
   constructor() {
-    super( Colors.LightBlue, Colors.LightBlue );
+    if ( lightTheme )
+      throw DevErrors.singleIntance( 'LightTheme' );
+
+    super(
+      Colors.LightBlue,
+      Colors.LightBlue,
+      Colors.LightBlue,
+      Colors.LightBlue
+    );
 
     lightTheme = this;
     Object.freeze( lightTheme );
@@ -33,7 +43,15 @@ new LightTheme();
 let darkTheme = null;
 class DarkTheme extends Theme {
   constructor() {
-    super( Colors.DarkGrey, Colors.DarkGrey );
+    if ( darkTheme )
+      throw DevErrors.singleIntance( 'DarkTheme' );
+
+    super(
+      Colors.DarkGrey,
+      Colors.DarkGrey,
+      Colors.LightGrey,
+      Colors.LighterGrey
+    );
 
     darkTheme = this;
     Object.freeze( darkTheme );
@@ -46,11 +64,13 @@ class Themes {
     throw new Error( 'Can not create a new instance of Themes (static class).' );
   }
 
+  // TODO: Apply theme in each page element (by page).
   /**
    * 
    * @param { ThemeType } themeType
+   * @param { NavItemID } page A page from the NavItemId enum
    */
-  static apply( themeType ) {
+  static apply( themeType, page ) {
     /**
      * @type { Theme }
      */
@@ -59,8 +79,24 @@ class Themes {
     if (themeType === ThemeType.Dark)
       theme = darkTheme;
 
+    // COMMON
     document.getElementById( 'sidenav' ).style.backgroundColor = theme.sidenav;
     document.getElementsByClassName( 'top-bar' )[0].style.backgroundColor = theme.topbar;
+
+    // BY PAGE
+    switch ( page ) {
+      case NavItemID.Dashboard:
+        break;
+      case NavItemID.Settings:
+        break;
+      case NavItemID.Markets:
+        break;
+      case NavItemID.Trade:
+        DOM.byClass( 'trading-tools-wrapper' )[0].style.backgroundColor = theme.tradingToolsBG;
+        TradeModel._.chartConfig.backgroundColor = theme.chartBG;
+        TradeModel._.chart.setOption( TradeModel._.chartConfig );
+        break;
+    }
   }
 
   static update() {}

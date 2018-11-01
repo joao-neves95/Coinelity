@@ -22,7 +22,9 @@ class TradeView extends ViewBase {
   }
 
   get tradeContentWrapper() { return document.getElementsByClassName('trade-content-wrapper')[0]; }
-  get tradingChartWrapper() { return document.getElementsByClassName('trading-chart-wrapper')[0]; }
+  get tradingChartWrapper() { return document.getElementsByClassName( 'trading-chart-wrapper' )[0]; }
+  get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
+  get tradingToolsFiatSymbolElem() { return document.getElementById( 'trading-tools_fiat-symbol' ); }
 
   injectContainer() {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
@@ -44,4 +46,13 @@ class TradeView extends ViewBase {
     else
       tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
   }
+
+  updateTradingToolsFiatSymbol( fiatSymbol = FiatSymbol.Euro ) {
+    this.tradingToolsFiatSymbolElem.innerHTML = fiatSymbol;
+  }
+
+  updateTradingToolsCurrPrice( price ) {
+    this.tradingToolsPriceElem.innerText = price;
+  }
+
 }

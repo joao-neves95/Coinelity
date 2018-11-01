@@ -56,8 +56,18 @@ class DOM {
     } );
   }
 
-  static elemById( id ) {
+  static byId( id ) {
     return document.getElementById( id );
+  }
+
+  /**
+   * 
+   * @param { string } className
+   * @param { string } element Defaults to document
+   * @returns { HTMLElement }
+   */
+  static byClass( className, element = document ) {
+    return element.getElementsByClassName( className );
   }
 
   /**

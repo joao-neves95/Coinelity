@@ -98,7 +98,11 @@ const ChartTimeframeType = Object.freeze( {
 
 const Colors = Object.freeze({
   DarkGrey: '#3D3D3D',
-  LightBlue: '#78BBFF'
+  LightGrey: '#5a5a5a',
+  LighterGrey: '#767676',
+  LightBlue: '#78BBFF',
+  BullishGreen: '#0DFFAA',
+  BearishRed: '#EF5350'
 });
 
 ﻿/*
@@ -495,8 +499,18 @@ class DOM {
     } );
   }
 
-  static elemById( id ) {
+  static byId( id ) {
     return document.getElementById( id );
+  }
+
+  /**
+   * 
+   * @param { string } className
+   * @param { string } element Defaults to document
+   * @returns { HTMLElement }
+   */
+  static byClass( className, element = document ) {
+    return element.getElementsByClassName( className );
   }
 
   /**
@@ -1524,8 +1538,8 @@ class PageTemplates {
 
   static inputElem( label, type, id, placeholder = '', additionalAttributes = '' ) {
     return `
-      <label>${label}
-        <input type="${type}" placeholder="${placeholder}" id="${id}" ${additionalAttributes}>
+      <label>${ label }
+        <input type="${ type }" placeholder="${ placeholder }" id="${ id }" name="${ id }" ${ additionalAttributes }>
       </label>
     `;
   }
@@ -1562,15 +1576,34 @@ class PageTemplates {
     let optionsHtml = '';
 
     for ( let i = 0; i < options.length; ++i ) {
-      optionsHtml += `<option value="${options[i].value}">${options[i].label}</option>`;
+      optionsHtml += `<option value="${ options[i].value }">${ options[i].label }</option>`;
     }
 
     return `
-      <label>${label}
-        <select id="${selectId}" class="${selectAddicionalClasses}">
-          ${optionsHtml}
+      <label>${ label }
+        <select id="${ selectId }" class="${ selectAddicionalClasses }">
+          ${ optionsHtml }
         </select>
       </label>
+    `;
+  }
+
+  static switchInput( id, leftLabel, rightLabel ) {
+    return `
+      <div class="switch">
+        <label class="s-label" for="${ id }">
+          ${ leftLabel }
+        </label>
+
+        <input class="switch-input" id="${ id }" type="checkbox" name="${ id }">
+        <label class="switch-paddle" for="${ id }">
+          <span class="show-for-sr"></span>
+        </label>
+
+        <label class="s-label" for="${ id }">
+          ${ rightLabel }
+        </label>
+      </div>
     `;
   }
 }
@@ -1758,7 +1791,10 @@ class TradeTemplates {
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
           PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
           PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
-          '<p><span id="trading-tools_current-price"></span><span id="trading-tools_fiat-symbol>€</span><p>' +
+          `<p class="curr-price">
+             <span id="trading-tools_current-price"></span>
+             <span id="trading-tools_fiat-symbol"></span>
+           </p>` +
           PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
       </form>
@@ -1807,7 +1843,7 @@ class TradeModel extends ModelBase {
 
     // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
     this.chartConfig = {
-      //backgroundColor: '#21202D',
+      backgroundColor: Colors.LighterGrey,// '#21202D',
       title: {
         text: this.currentSymbol,
         left: 'center'
@@ -1881,9 +1917,11 @@ class TradeModel extends ModelBase {
           data: this.chartData.values,
           itemStyle: {
             // Bullish candles.
-            color: '#26A69A',
+            color: Colors.BullishGreen,
+            borderColor: Colors.BullishGreen,
             // Bearish candles.
-            color0: '#EF5350'
+            color0: Colors.BearishRed,
+            borderColor0: Colors.BearishRed
           }
         }//,
         //{
@@ -1909,8 +1947,6 @@ class TradeModel extends ModelBase {
   }
 
   get _() { return tradeModel; }
-
-  get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
 
   getInitChartData() {
     return new Promise( async ( resolve, reject ) => {
@@ -1954,10 +1990,6 @@ class TradeModel extends ModelBase {
       await this.getInitChartData();
       this.chart.setOption( this.chartConfig );
     } );
-  }
-
-  updateTradingToolsCurrPrice( price ) {
-    this.tradingToolsPriceElem.innerText = price;
   }
 
   /**
@@ -2052,7 +2084,9 @@ class TradeView extends ViewBase {
   }
 
   get tradeContentWrapper() { return document.getElementsByClassName('trade-content-wrapper')[0]; }
-  get tradingChartWrapper() { return document.getElementsByClassName('trading-chart-wrapper')[0]; }
+  get tradingChartWrapper() { return document.getElementsByClassName( 'trading-chart-wrapper' )[0]; }
+  get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
+  get tradingToolsFiatSymbolElem() { return document.getElementById( 'trading-tools_fiat-symbol' ); }
 
   injectContainer() {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
@@ -2074,6 +2108,15 @@ class TradeView extends ViewBase {
     else
       tradingToolsWrapper.innerHTML = TradeTemplates.CFDTools();
   }
+
+  updateTradingToolsFiatSymbol( fiatSymbol = FiatSymbol.Euro ) {
+    this.tradingToolsFiatSymbolElem.innerHTML = fiatSymbol;
+  }
+
+  updateTradingToolsCurrPrice( price ) {
+    this.tradingToolsPriceElem.innerText = price;
+  }
+
 }
 
 ﻿/*
@@ -2114,6 +2157,7 @@ class TradeController extends ControllerBase {
     this.view.injectContainer();
     await this.injectChart();
     this.injectTradeTools();
+    this.view.updateTradingToolsFiatSymbol();
   }
 
   injectChart() {
@@ -2123,7 +2167,7 @@ class TradeController extends ControllerBase {
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();
-      this.startChartPriceUpdate();
+      await this.startChartPriceUpdate();
       this.startChartCandleUpdate();
 
       resolve();
@@ -2164,7 +2208,7 @@ class TradeController extends ControllerBase {
           lastCandle[3] = lastPrice;
        
         this.model.chart.setOption( this.model.chartConfig );
-        this.model.updateTradingToolsCurrPrice( lastPrice.toString() );
+        this.view.updateTradingToolsCurrPrice( lastPrice.toString() );
 
       } catch {
         // TODO: Send error notification.
@@ -2450,7 +2494,7 @@ class MarketsController extends ControllerBase {
     for ( let i = 0; i < symbols.length; ++i ) {
       const thisSymbol = symbols.get( i );
 
-      DOM.on( 'click', DOM.elemById( thisSymbol + MarketsTemplates.idPostfix ), ( e ) => {
+      DOM.on( 'click', DOM.byId( thisSymbol + MarketsTemplates.idPostfix ), ( e ) => {
         e.preventDefault();
         page( `/${NavItemID.Trade}/${Utils.encondeCoinSymbolUri( thisSymbol.substring( 0, thisSymbol.length - 1 ) )}` );
 
@@ -2633,52 +2677,74 @@ class SettingsTemplates {
 
   // TODO: Change to an Accordion Menu.
 
-  static theForm( content ) {
+  static theAccordion( content ) {
     return `
-      <form class="settings-form grid-x">
+      <ul class="accordion" data-accordion data-allow-all-closed="true">
         ${ content }
-      </form>
+      </ul>
     `;
   }
 
-  static formItem( title, gridOrientationType, gridContent, containerBottomContent = '' ) {
+  static __accordionItem( tabId, title, content ) {
     return `
-      <article class="form-item cell small-12 medium-6 large-4">
-        <h4>${ title }</h4>
+      <li class="accordion-item" data-accordion-item>
+        <a href="#${tabId}" class="accordion-title"> ${title} </a>
+        <div id="${tabId}" class="accordion-content" data-tab-content>
+          ${ content }
+        </div>
+      </li>
+    `;
+  }
+
+  static __form( gridOrientationType, gridContent, containerBottomContent = '' ) {
+    return `
+      <form class="cell small-12 medium-6 large-4">
         <div class="grid-container fluid">
-          <div class="${ gridOrientationType } article-content">
+          <div class="${ gridOrientationType }">
             ${ gridContent }
           </div>
           ${containerBottomContent}
         </div>
-      </article>
+      </form>
     `;
   }
 
   static changePassword() {
-    return SettingsTemplates.formItem(
+    return SettingsTemplates.__accordionItem(
+      'change-password',
       'Change Password',
-      GridOrientationType.Y,
+      SettingsTemplates.__form( 
+        GridOrientationType.Y,
 
-      PageTemplates.inputElem( 'Current Password', 'password', 'curr-pass-input' ) +
-      PageTemplates.inputElem( 'New Password', 'password', 'new-pass-input' ) +
-      PageTemplates.inputElem( 'Confirm New Password', 'password', 'check-new-pass-input' ),
+        PageTemplates.inputElem( 'Current Password', 'password', 'curr-pass-input' ) +
+        PageTemplates.inputElem( 'New Password', 'password', 'new-pass-input' ) +
+        PageTemplates.inputElem( 'Confirm New Password', 'password', 'check-new-pass-input' ),
 
-      PageTemplates.successButton( 'Change Password', 'change-password-button' )
-    );
+        PageTemplates.successButton( 'Change Password', 'change-password-button' )
+    ) );
   }
 
   static maxLoginFailes() {
-    return SettingsTemplates.formItem(
-      'Maximum Login Failes Allowed',
-      GridOrientationType.Y,
-      PageTemplates.inputNumElem( 'Maximum Login Fails', 'max-login-fails-input', 0, 100, 'Leave this blank to deactivate this control.' )
-    );
+    return SettingsTemplates.__accordionItem(
+      'max-login-fails',
+      'Maximum Login Fails',
+      SettingsTemplates.__form(
+        GridOrientationType.Y,
+
+        PageTemplates.inputNumElem( 'Maximum Login Fails', 'max-login-fails-input', 0, 100, 'Leave this blank to deactivate this control.' )
+    ) );
   }
 
   static themeSelection() {
-    throw DevErrors.notImplemented();
-    // return ``;
+    return SettingsTemplates.__accordionItem(
+      'theme-selection',
+      'Change Color Theme',
+      SettingsTemplates.__form(
+        GridOrientationType.Y,
+
+        PageTemplates.switchInput( 'theme-checkbox', 'Light Theme', 'Dark Theme' )
+      )
+    );
   }
 
 
@@ -2749,6 +2815,14 @@ class SettingsModel extends ModelBase {
         console.debug( res );
       });
   }
+
+  /**
+   * 
+   * @param { ThemeType } themeType
+   */
+  changeTheme( themeType ) {
+    localStorage.setItem( 'theme', themeType );
+  }
 }
 
 ﻿/*
@@ -2770,9 +2844,10 @@ class SettingsView extends ViewBase {
 
     super(
       '<h1>Settings</h1>' +
-      SettingsTemplates.theForm(
+      SettingsTemplates.theAccordion(
         SettingsTemplates.changePassword() +
-        SettingsTemplates.maxLoginFailes()
+        SettingsTemplates.maxLoginFailes() +
+        SettingsTemplates.themeSelection()
       )
     );
 
@@ -2797,6 +2872,13 @@ class SettingsView extends ViewBase {
     const newPasswordInput = this.newPassInput.value;
 
     return new ChangePasswordDTO( currentPasswordInput, newPasswordInput );
+  }
+
+  /**
+   * @returns { ThemeType }
+   */
+  getCheckedTheme() {
+    return DOM.byId( 'theme-checkbox' ).checked ? ThemeType.Dark : ThemeType.Light;
   }
 }
 
@@ -2843,10 +2925,15 @@ class SettingsController extends ControllerBase {
       // Update password (API connection - confirm current password).
       this.model.changePassword( newChangePasswordDTO );
     } );
+
+    DOM.on( 'change', DOM.byId( 'theme-checkbox' ), () => {
+      this.model.changeTheme( this.view.getCheckedTheme() );
+    } );
   }
 
   onSetActive() {
     this.setEventListeners();
+    $( document ).foundation();
   }
 }
 
@@ -2997,21 +3084,37 @@ class NavbarView {
 
   minimize() {
     // "&raquo;" == "»"
-    this.resize( SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
+    this.resize( true, SIDEBAR_MOBILE_WIDTH, '&raquo;', 'none' );
   }
 
   maximize() {
     // "&laquo;" == "«"
-    this.resize( SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
+    this.resize( false, SIDEBAR_DESKTOP_WIDTH, '&laquo;', 'inline-block' );
   }
 
-  resize( width, toggleButtonLabel, iconLabelsDisplay ) {
-    this.element.style.maxWidth = width;
-    this.element.style.minWidth = width;
-    this.element.style.width = width;
+  resize( isToMinimize, width, toggleButtonLabel, iconLabelsDisplay ) {
+    let toAdd;
+    let toRemove;
+    let pageToAdd;
+    let pageToRemove;
+
+    if ( isToMinimize ) {
+      toAdd = 'sidenav-min';
+      toRemove = 'sidenav-max';
+      pageToAdd = 'page-max';
+      pageToRemove = 'page-min';
+    } else {
+      toAdd = 'sidenav-max';
+      toRemove = 'sidenav-min';
+      pageToAdd = 'page-min';
+      pageToRemove = 'page-max';
+    }
+
+    this.element.classList.remove( toRemove );
+    this.element.classList.add( toAdd );
+    NavbarView.pageContainer.classList.add( pageToAdd );
+    NavbarView.pageContainer.classList.remove( pageToRemove );
     this.toggleButtonPElem.innerHTML = toggleButtonLabel;
-    NavbarView.pageContainer.style.marginLeft = width;
-    NavbarView.pageContainer.style.maxWidth = `calc(100% - ${width})`;
 
     const labels = this.getIconLabels();
     for ( let i = 0; i < labels.length; ++i ) {
@@ -3028,6 +3131,14 @@ class NavbarView {
 
   removeActivePage() {
     NavbarView.pageContainer.innerHTML = '';
+  }
+
+  addActiveClassToItem( id ) {
+    document.getElementById( id + '_btn' ).classList.add( 'active' );
+  }
+
+  removeActiveClassFromItem( id ) {
+    document.getElementById( id + '_btn' ).classList.remove( 'active' );
   }
 
   // #endregion
@@ -3100,8 +3211,8 @@ class NavbarController {
 
     const thisItems = this.model.items;
     for (let i = 0; i < thisItems.length; ++i) {
-      const thisItemModel = thisItems.getByIndex(i).model;
-      this.injectIcon(thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id);
+      const thisItemModel = thisItems.getByIndex( i ).model;
+      this.injectIcon( thisItemModel.navIconURL, thisItemModel.title, thisItemModel.id );
     }
 
     DOM.on( 'click', this.view.toggleButtonElem, ( e ) => {
@@ -3120,7 +3231,7 @@ class NavbarController {
   }
 
   injectIcon(url, label, linkTo = null) {
-    this.view.injectIcon(url, label, linkTo);
+    this.view.injectIcon( url, label, linkTo );
   }
 
   /**
@@ -3143,12 +3254,15 @@ class NavbarController {
         if ( this.model.activePageId !== null ) {
           /** @type { NavbarItemBase } */
           const lastActiveItem = this.model.items.getByKey( this.model.activePageId );
+          this.view.removeActiveClassFromItem( this.model.activePageId );
           lastActiveItem.onBeforeDestroyBase();
         }
       }
 
       this.view.removeActivePage();
       this.model.activePageId = itemId;
+      this.view.addActiveClassToItem( itemId );
+
     } else if ( thisItem.navbarItemType === NavbarItemType.NavbarPanelItem ) {
       if ( this.model.activeNavbarPanelItemId === itemId )
         return;
@@ -3186,16 +3300,26 @@ class Theme {
    * 
    * @param { Colors } sidenav
    */
-  constructor(sidenav, topbar) {
+  constructor( sidenav, topbar, tradingTools, chartBG) {
     this.sidenav = sidenav;
     this.topbar = topbar;
+    this.tradingToolsBG = tradingTools;
+    this.chartBG = chartBG;
   }
 }
 
 let lightTheme = null;
 class LightTheme extends Theme {
   constructor() {
-    super( Colors.LightBlue, Colors.LightBlue );
+    if ( lightTheme )
+      throw DevErrors.singleIntance( 'LightTheme' );
+
+    super(
+      Colors.LightBlue,
+      Colors.LightBlue,
+      Colors.LightBlue,
+      Colors.LightBlue
+    );
 
     lightTheme = this;
     Object.freeze( lightTheme );
@@ -3206,7 +3330,15 @@ new LightTheme();
 let darkTheme = null;
 class DarkTheme extends Theme {
   constructor() {
-    super( Colors.DarkGrey, Colors.DarkGrey );
+    if ( darkTheme )
+      throw DevErrors.singleIntance( 'DarkTheme' );
+
+    super(
+      Colors.DarkGrey,
+      Colors.DarkGrey,
+      Colors.LightGrey,
+      Colors.LighterGrey
+    );
 
     darkTheme = this;
     Object.freeze( darkTheme );
@@ -3219,11 +3351,13 @@ class Themes {
     throw new Error( 'Can not create a new instance of Themes (static class).' );
   }
 
+  // TODO: Apply theme in each page element (by page).
   /**
    * 
    * @param { ThemeType } themeType
+   * @param { NavItemID } page A page from the NavItemId enum
    */
-  static apply( themeType ) {
+  static apply( themeType, page ) {
     /**
      * @type { Theme }
      */
@@ -3232,8 +3366,24 @@ class Themes {
     if (themeType === ThemeType.Dark)
       theme = darkTheme;
 
+    // COMMON
     document.getElementById( 'sidenav' ).style.backgroundColor = theme.sidenav;
     document.getElementsByClassName( 'top-bar' )[0].style.backgroundColor = theme.topbar;
+
+    // BY PAGE
+    switch ( page ) {
+      case NavItemID.Dashboard:
+        break;
+      case NavItemID.Settings:
+        break;
+      case NavItemID.Markets:
+        break;
+      case NavItemID.Trade:
+        DOM.byClass( 'trading-tools-wrapper' )[0].style.backgroundColor = theme.tradingToolsBG;
+        TradeModel._.chartConfig.backgroundColor = theme.chartBG;
+        TradeModel._.chart.setOption( TradeModel._.chartConfig );
+        break;
+    }
   }
 
   static update() {}
@@ -3254,7 +3404,7 @@ whenDomReady(() => {
   console.log( 'The DOM is ready' );
 
   $( document ).foundation();
-  Themes.apply( ThemeType.Dark );
+  Themes.apply( ThemeType.Dark, NavItemID.Dashboard );
 
   NavbarController._.mapItem( NavItemID.Dashboard, new DashboardController() );
   NavbarController._.mapItem( NavItemID.Markets, new TradeRoomController() );
@@ -3263,14 +3413,22 @@ whenDomReady(() => {
   NavbarController._.init();
 
   // This gives an error if it exists more than 1 cookie (of course).
-  const requestedPage = document.cookie.split( '=' )[1].substring(3).replace( '%2F', '/' );
+  console.debug( document.cookie );
+  console.debug( document.cookie.split( ';' ) );
+  const cookies = document.cookie.split( ';' );
+  const cookieIndex = cookies.length <= 1 ? 0 : cookies.length === 2 ? 1 : 2;
+  const requestedPage = cookies[cookieIndex].split( '=' )[1].trim().substring( 3 ).replace( /(%2F)/g, '/' );
+
   const page = Utils.getNavItemIDFromString( requestedPage );
 
-  if ( !page )
-    console.info('404 - Not Found.'); // Show 404 page.
+  if ( !page ) {
+    console.info( '404 - Not Found.' ); // Show 404 page.
+    console.debug( window.history );
+  }
   else
     document.getElementById( page + '_btn' ).click();
 
   document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
+  document.cookie = '';
 });
 

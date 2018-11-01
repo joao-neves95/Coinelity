@@ -44,4 +44,12 @@ class SettingsModel extends ModelBase {
         console.debug( res );
       });
   }
+
+  /**
+   * 
+   * @param { ThemeType } themeType
+   */
+  changeTheme( themeType ) {
+    localStorage.setItem( 'theme', themeType );
+  }
 }

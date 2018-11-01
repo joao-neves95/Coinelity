@@ -10,5 +10,9 @@
 
 const Colors = Object.freeze({
   DarkGrey: '#3D3D3D',
-  LightBlue: '#78BBFF'
+  LightGrey: '#5a5a5a',
+  LighterGrey: '#767676',
+  LightBlue: '#78BBFF',
+  BullishGreen: '#0DFFAA',
+  BearishRed: '#EF5350'
 });

@@ -1,0 +1,79 @@
+﻿@import 'variables.less';
+
+.anim {
+    animation-duration: 1s;
+    animation-fill-mode: both;
+    -moz-transition: all 1s ease;
+    -webkit-transition: all 1s ease;
+    -ms-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;
+}
+
+@keyframes sideNavMax {
+    from {
+        max-width: @sidebar-mobile-width;
+        min-width: @sidebar-mobile-width;
+        width: @sidebar-mobile-width;
+    }
+
+    to {
+        max-width: @sidebar-desktop-width;
+        min-width: @sidebar-desktop-width;
+        width: @sidebar-desktop-width;
+    }
+}
+
+.sidenav-max {
+    animation-name: sideNavMax;
+}
+
+@keyframes pageMin {
+    from {
+        max-width: calc(~'100%' - @sidebar-mobile-width);
+        margin-left: @sidebar-mobile-width;
+    }
+
+    to {
+        max-width: calc(~'100%' - @sidebar-desktop-width);
+        margin-left: @sidebar-desktop-width;
+    }
+}
+
+.page-min {
+    animation-name: pageMin;
+}
+
+@keyframes sideNavMin {
+    from {
+        max-width: @sidebar-desktop-width;
+        min-width: @sidebar-desktop-width;
+        width: @sidebar-desktop-width;
+    }
+
+    to {
+        max-width: @sidebar-mobile-width;
+        min-width: @sidebar-mobile-width;
+        width: @sidebar-mobile-width;
+    }
+}
+
+.sidenav-min {
+    animation-name: sideNavMin;
+}
+
+@keyframes pageMax {
+    from {
+        max-width: calc(~'100%' - @sidebar-desktop-width);
+        margin-left: @sidebar-desktop-width;
+    }
+
+    to {
+        max-width: calc(~'100%' - @sidebar-mobile-width);
+        margin-left: @sidebar-mobile-width;
+    }
+}
+
+.page-max {
+    animation-name: pageMax;
+}

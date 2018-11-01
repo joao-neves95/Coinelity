@@ -17,9 +17,10 @@ class SettingsView extends ViewBase {
 
     super(
       '<h1>Settings</h1>' +
-      SettingsTemplates.theForm(
+      SettingsTemplates.theAccordion(
         SettingsTemplates.changePassword() +
-        SettingsTemplates.maxLoginFailes()
+        SettingsTemplates.maxLoginFailes() +
+        SettingsTemplates.themeSelection()
       )
     );
 
@@ -44,5 +45,12 @@ class SettingsView extends ViewBase {
     const newPasswordInput = this.newPassInput.value;
 
     return new ChangePasswordDTO( currentPasswordInput, newPasswordInput );
+  }
+
+  /**
+   * @returns { ThemeType }
+   */
+  getCheckedTheme() {
+    return DOM.byId( 'theme-checkbox' ).checked ? ThemeType.Dark : ThemeType.Light;
   }
 }

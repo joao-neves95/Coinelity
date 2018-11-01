@@ -41,9 +41,14 @@ class SettingsController extends ControllerBase {
       // Update password (API connection - confirm current password).
       this.model.changePassword( newChangePasswordDTO );
     } );
+
+    DOM.on( 'change', DOM.byId( 'theme-checkbox' ), () => {
+      this.model.changeTheme( this.view.getCheckedTheme() );
+    } );
   }
 
   onSetActive() {
     this.setEventListeners();
+    $( document ).foundation();
   }
 }

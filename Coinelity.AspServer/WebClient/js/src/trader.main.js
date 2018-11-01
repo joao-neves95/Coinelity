@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
@@ -13,7 +13,7 @@ whenDomReady(() => {
   console.log( 'The DOM is ready' );
 
   $( document ).foundation();
-  Themes.apply( ThemeType.Dark );
+  Themes.apply( ThemeType.Dark, NavItemID.Dashboard );
 
   NavbarController._.mapItem( NavItemID.Dashboard, new DashboardController() );
   NavbarController._.mapItem( NavItemID.Markets, new TradeRoomController() );
@@ -21,14 +21,18 @@ whenDomReady(() => {
 
   NavbarController._.init();
 
-  // This gives an error if it exists more than 1 cookie (of course).
-  const requestedPage = document.cookie.split( '=' )[1].substring(3).replace( '%2F', '/' );
+  const cookies = document.cookie.split( ';' );
+  const cookieIndex = cookies.length <= 1 ? 0 : cookies.length === 2 ? 1 : 2;
+  const requestedPage = cookies[cookieIndex].split( '=' )[1].trim().substring( 3 ).replace( /(%2F)/g, '/' );
+
   const page = Utils.getNavItemIDFromString( requestedPage );
 
-  if ( !page )
-    console.info('404 - Not Found.'); // Show 404 page.
+  if ( !page ) {
+    console.info( '404 - Not Found.' ); // Show 404 page.
+  }
   else
     document.getElementById( page + '_btn' ).click();
 
   document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
+  document.cookie = '';
 });

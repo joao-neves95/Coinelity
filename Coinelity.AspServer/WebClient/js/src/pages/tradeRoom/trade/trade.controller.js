@@ -36,6 +36,7 @@ class TradeController extends ControllerBase {
     this.view.injectContainer();
     await this.injectChart();
     this.injectTradeTools();
+    this.view.updateTradingToolsFiatSymbol();
   }
 
   injectChart() {
@@ -45,7 +46,7 @@ class TradeController extends ControllerBase {
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();
-      this.startChartPriceUpdate();
+      await this.startChartPriceUpdate();
       this.startChartCandleUpdate();
 
       resolve();
@@ -86,7 +87,7 @@ class TradeController extends ControllerBase {
           lastCandle[3] = lastPrice;
        
         this.model.chart.setOption( this.model.chartConfig );
-        this.model.updateTradingToolsCurrPrice( lastPrice.toString() );
+        this.view.updateTradingToolsCurrPrice( lastPrice.toString() );
 
       } catch {
         // TODO: Send error notification.
