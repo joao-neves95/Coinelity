@@ -35,6 +35,58 @@ namespace Coinelity.Core.Models
             this.Data = (data == null) ? new object[0] : data;
         }
 
+        /// <summary>
+        /// 
+        /// Error API response. Example:
+        /// <para/>
+        /// {
+        ///   "StatusCode": 400,
+        ///   "StatusMessage": "Client Error",
+        ///   "Errors": [
+        ///     "Email already in use."
+        ///   ],
+        ///   "Data": []
+        /// }
+        /// 
+        /// </summary>
+        /// <param name="statusCode"></param>
+        /// <param name="statusMessage"></param>
+        /// <param name="errorMessage"> Defaults to "Unknown Error" </param>
+        /// <param name="ignore"> Set to "null" to send this error response. </param>
+        public ApiResponse(short? statusCode = null, string statusMessage = null, string errorMessage = "Unknown Error", string ignore = null )
+        {
+            this.StatusCode = (statusCode == null) ? 200 : statusCode;
+            this.StatusMessage = (statusMessage == null) ? "Success" : statusMessage;
+            this.Errors = new object[1] { errorMessage };
+            this.Data = new object[0];
+        }
+
+        /// <summary>
+        /// 
+        /// Success API response. Example:
+        /// <para/>
+        /// {
+        ///  "StatusCode": 201,
+        ///  "StatusMessage": "Created",
+        ///  "Errors": [],
+        ///  "Data": [
+        ///    {
+        ///      "message": "User successfully registered."
+        ///    }
+        ///  ]
+        /// }
+        /// </summary>
+        /// <param name="statusCode"></param>
+        /// <param name="statusMessage"></param>
+        /// <param name="successMessage"> Defaults to "Success" </param>
+        public ApiResponse(short? statusCode = null, string statusMessage = null, string successMessage = "Success" )
+        {
+            this.StatusCode = (statusCode == null) ? 200 : statusCode;
+            this.StatusMessage = (statusMessage == null) ? "Success" : statusMessage;
+            this.Errors = new object[0];
+            this.Data = new object[1] { new Dictionary<string, string> { { "message", successMessage } } };
+        }
+
         public short? StatusCode { get; set; }
 
         public string StatusMessage { get; set; }

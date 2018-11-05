@@ -12,7 +12,7 @@
 // @import '/services/externalLibs'
 // %import 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js'
 // $import 'sweetalert2/dist/sweetalert2.all.min'
-// $import 'ccxt/build/ccxt.browser'
+// %import<<GH 'ccxt/ccxt/master/build/ccxt.browser.js'
 // $import '@aspnet/signalr/dist/browser/signalr.min'
 // Temporary. For development only.
 // TODO: Make a custom build for production.

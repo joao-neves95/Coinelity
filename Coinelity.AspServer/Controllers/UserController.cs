@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.Models;
 using Coinelity.AspServer.DataAccess;
@@ -57,10 +58,10 @@ namespace Coinelity.AspServer.Controllers
             }
 
             if (userExists)
-                return BadRequest( Json( new ErrorMessage( ErrorType.EmailAlreadyInUse ) ).Value );
+                return BadRequest( new ApiResponse(400, "Client Error", ErrorMessages.EmailAlreadyInUse, null ).ToJSON() );
 
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
-            // When in localhost it returns "::1".
+            // When running the server in localhost it returns "::1".
             user.IpAddress = Utils.GetUserIp( _httpContextAccessor );
 
             IdentityResult registerSuccess = await _userManager.CreateAsync( user, user.Password );
@@ -68,7 +69,7 @@ namespace Coinelity.AspServer.Controllers
             if (!registerSuccess.Succeeded)
                 // TODO: Error handling.
                 // return StatusCode( 500 );
-                return StatusCode( 500, registerSuccess.Errors.ToList() );
+                return StatusCode( 500, new ApiResponse( 400, "Client Error", JsonConvert.SerializeObject( registerSuccess.Errors, Formatting.Indented ) ).ToJSON() );
 
             // Do not await. Ignore warning.
             Task.Run( async () =>
@@ -100,7 +101,7 @@ namespace Coinelity.AspServer.Controllers
                 }
             } );
 
-            return StatusCode(201, Json( "User successfully registered." ).Value );
+            return StatusCode( 201, new ApiResponse( 201, "Created", "User successfully registered." ).ToJSON() );
         }
 
         [HttpPost("login")]
@@ -268,11 +269,11 @@ namespace Coinelity.AspServer.Controllers
 
         #endregion
 
-        #region BINARY OPTIONS
+        #region OPTIONS
 
         [Authorize]
-        [HttpGet("active-binary-options")]
-        public async Task<IActionResult> GetOpenBinaryOptions()
+        [HttpGet("active-options")]
+        public async Task<IActionResult> GetActiveOptions()
         {
             OptionsStore optionsStore = null;
             List<ActiveOptionJoined> activeOptions = new List<ActiveOptionJoined>();
@@ -287,13 +288,13 @@ namespace Coinelity.AspServer.Controllers
                 }
 
                 if (activeOptions.Count <= 0)
-                    return NotFound( new ApiResponse( 400, "Not Found", new object[] { "No active orders found" } ) );
+                    return NotFound( new ApiResponse( 400, "Not Found", "No active orders found", null ) );
 
                 return Ok( new ApiResponse( 200, "Ok", null, activeOptions.ToArray() ) );
             }
             catch
             {
-                return Ok( new ApiResponse( 500, "Unknown Error", new object[] { "Unknown error." }, null ) );
+                return Ok( new ApiResponse( 500, "Unknown Error", "Unknown error.", null ) );
             }
             finally
             {

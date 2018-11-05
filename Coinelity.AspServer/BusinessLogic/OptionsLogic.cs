@@ -21,9 +21,19 @@ using Coinelity.Core.Data;
 
 namespace Coinelity.AspServer.BusinessLogic
 {
-    public static class BinaryOptionsLogic
+    public static class OptionsLogic
     {
-        public static async Task<CheckOrderLogicResponse> CheckOrderAsync(Exchange exchange, int thisUserId, CheckOrderDTO order, OptionsStore optionsStore)
+        /// <summary>
+        /// 
+        /// It finds the active order on the DB and then checks the order result (profit/loss).
+        /// 
+        /// </summary>
+        /// <param name="exchange"></param>
+        /// <param name="thisUserId"></param>
+        /// <param name="order"></param>
+        /// <param name="optionsStore"></param>
+        /// <returns></returns>
+        public static async Task<CheckOptionLogicResponse> CheckOrderAsync(Exchange exchange, OptionsStore optionsStore, int thisUserId, CheckOptionDTO order )
         {
             ActiveOptionJoined activeOption;
 
@@ -33,23 +43,22 @@ namespace Coinelity.AspServer.BusinessLogic
 
                 // If the InvestmentAmount is 0 it's because the query returned an empty ActiveOption (ActiveOption not found).
                 if (activeOption.InvestmentAmount == 0)
-                    return new CheckOrderLogicResponse( CheckOrderLogicResult.ErrorNotFound );
+                    return new CheckOptionLogicResponse( CheckOrderLogicResult.ErrorNotFound );
             }
 
-            return await CheckOrderAsync( exchange, thisUserId, activeOption );
+            return await CheckOrderAsync( exchange, activeOption );
         }
 
         /// <summary>
-        /// 
+        /// Checks the result of an active option (profit/loss).
         /// NOTE: Does not handle Exceptions (try/catch)
         /// 
         /// </summary>
         /// <param name="optionsStore"> Empty storage variable. Must disposed in the finally block. </param>
         /// <param name="exchange"> Empty storage variable. Must disposed in the finally block. </param>
-        /// <param name="thisUserId"></param>
         /// <param name="order"></param>
         /// <returns></returns>
-        public static async Task<CheckOrderLogicResponse> CheckOrderAsync(Exchange exchange, int thisUserId, ActiveOptionJoined activeOption)
+        public static async Task<CheckOptionLogicResponse> CheckOrderAsync(Exchange exchange, ActiveOptionJoined activeOption)
         {
             UserAccountType userAccountType = Utils.UserAccountTypeResolver( activeOption.IsRealBalance );
             int lifetimeMinutes = activeOption.TimeMinutes;
@@ -61,7 +70,7 @@ namespace Coinelity.AspServer.BusinessLogic
             // The option maturity (expiration timestamp) has not yet been met.
             if (DateTimeOffset.Compare( currentUtcTimestamp, closeUtcTimestamp ) < 0)
             {
-                return new CheckOrderLogicResponse( CheckOrderLogicResult.NotExpired, activeOption );
+                return new CheckOptionLogicResponse( CheckOrderLogicResult.NotExpired, activeOption );
             }
             else
             {
@@ -70,7 +79,7 @@ namespace Coinelity.AspServer.BusinessLogic
                 using (exchange = new Exchange( activeOption.ExchangeName ))
                 {
                     if (exchange.API == null)
-                        return new CheckOrderLogicResponse( CheckOrderLogicResult.ErrorUnknownExchange, activeOption );
+                        return new CheckOptionLogicResponse( CheckOrderLogicResult.ErrorUnknownExchange, activeOption );
 
                     currentPrice = await exchange.GetLastPrice( activeOption.Symbol );
                 }
@@ -122,8 +131,8 @@ namespace Coinelity.AspServer.BusinessLogic
                 closedOption.AddToBalance = addToBalance;
                 // Send success message.
                 return addToBalance ?
-                    new CheckOrderLogicResponse( CheckOrderLogicResult.Profit, activeOption, closedOption ) :
-                    new CheckOrderLogicResponse( CheckOrderLogicResult.Loss, activeOption, closedOption );
+                    new CheckOptionLogicResponse( CheckOrderLogicResult.Profit, activeOption, closedOption ) :
+                    new CheckOptionLogicResponse( CheckOrderLogicResult.Loss, activeOption, closedOption );
             }
         }
 
@@ -136,10 +145,9 @@ namespace Coinelity.AspServer.BusinessLogic
         /// <param name="userAccountStore"> Empty storage variable. Must disposed in the finally block. </param>
         /// <param name="optionsStore"> Empty storage variable. Must disposed in the finally block. </param>
         /// <param name="connection"> Empty storage variable. Must disposed in the finally block. </param>
-        /// <param name="thisUserId"></param>
         /// <param name="orderResult"></param>
         /// <returns></returns>
-        public static async Task<CloseOrderLogicResponse> CloseOrderAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, int thisUserId, ClosedOptionDTO closedOption)
+        public static async Task<CloseOrderLogicResponse> CloseOrderAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, ClosedOptionDTO closedOption)
         {
             bool success;
             userAccountStore = new UserAccountStore( false );
@@ -150,9 +158,9 @@ namespace Coinelity.AspServer.BusinessLogic
                 // TODO: Pass this to the BinaryOptionsLogic.CloseOrder()
                 success = await MSSQLClient.NonQueryTransactionOnceAsync( connection, new SqlCommand[]
                 {
-                    new SqlCommand(userAccountStore.UnfreezeBalanceCmd(thisUserId, closedOption.UserAccountType, Convert.ToDecimal( closedOption.InvestmentAmount ), closedOption.AddToBalance, closedOption.PayoutValue)),
+                    new SqlCommand(userAccountStore.UnfreezeBalanceCmd(closedOption.UserId, closedOption.UserAccountType, Convert.ToDecimal( closedOption.InvestmentAmount ), closedOption.AddToBalance, closedOption.PayoutValue)),
                     // TODO: (If user lost) Send lost balance to Coinelity's bank account.
-                    new SqlCommand(optionsStore.DeleteActiveOrderCmd(closedOption.Id, thisUserId), connection),
+                    new SqlCommand(optionsStore.DeleteActiveOrderCmd(closedOption.Id, closedOption.UserId), connection),
                     new SqlCommand(optionsStore.InsertInOrderHistoryCmd(closedOption), connection)
                 } );
             }

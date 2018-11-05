@@ -20,7 +20,7 @@ using Coinelity.AspServer.Middleware;
 
 namespace Coinelity.AspServer.Models
 {
-    public class PlaceOrderDTO
+    public class PlaceOptionDTO
     {
         [Required]
         public int UserId { get; set; }
@@ -49,6 +49,6 @@ namespace Coinelity.AspServer.Models
         /// <summary>
         /// To be used when sending the place order success response.
         /// </summary>
-        public int ActiveOrderId { get; set; }
+        public int ActiveOptionId { get; set; }
     }
 }

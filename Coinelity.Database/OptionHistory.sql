@@ -16,12 +16,14 @@ CREATE TABLE dbo.OptionHistory
     IsRealBalance BIT NOT NULL,
     OperationTypeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OperationType( Id ),
     LifetimeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionLifetime( Id ),
-    PayoutPercent TINYINT NOT NULL,
     StrikePrice DECIMAL(16,4) NOT NULL,
     InvestmentAmount FLOAT NOT NULL,
     OpenTimestamp DATETIME2 NOT NULL,
     CloseTimestamp DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
     ClosePrice DECIMAL(16,4) NOT NULL,
+    -- The payout percent is negative in case of a loss.
+    -- It is not a foreign key because the value can change.
+    PayoutPercent SMALLINT NOT NULL,
     ProfitLossFiat DECIMAL(16,4) NOT NULL,
 )
 GO

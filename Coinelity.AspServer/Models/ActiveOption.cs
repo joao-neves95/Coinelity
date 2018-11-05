@@ -29,7 +29,7 @@ namespace Coinelity.AspServer.Models
 
         public int LifetimeId { get; set; }
 
-        public sbyte PayoutPercent { get; set; }
+        public byte PayoutPercent { get; set; }
 
         public decimal StrikePrice { get; set; }
 

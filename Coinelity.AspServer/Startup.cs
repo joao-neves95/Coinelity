@@ -9,22 +9,22 @@
  */
 
 using System;
-using System.Collections.Generic;
+using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.AspNetCore.HttpOverrides;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.Hubs;
 using Coinelity.AspServer.DataAccess;
@@ -78,7 +78,7 @@ namespace Coinelity.AspServer
                 {
                     SaveSigninToken = false,
                     // Clock skew compensates for server time drift.
-                    ClockSkew = TimeSpan.FromMinutes(1),
+                    ClockSkew = TimeSpan.FromMinutes( 1 ),
                     //Specify the key used to sign the token:
                     RequireSignedTokens = true,
                     //Ensure the token hasn't expired:
@@ -90,7 +90,7 @@ namespace Coinelity.AspServer
                     //Ensure the token was issued by a trusted authorization server(default true):
                     ValidateIssuer = true,
                     // TODO: Change IssuerSigningKey with a cron job.
-                    IssuerSigningKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(DotNetEnv.Env.GetString("JWT_KEY")) ),
+                    IssuerSigningKey = new SymmetricSecurityKey( Encoding.UTF8.GetBytes( DotNetEnv.Env.GetString( "JWT_KEY" ) ) ),
                     ValidIssuer = DotNetEnv.Env.GetString( "JWT_ISSUER" )
                 };
             });
@@ -103,6 +103,8 @@ namespace Coinelity.AspServer
 
             services.AddCors();
 
+            services.AddHttpContextAccessor();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddMvc()
@@ -156,7 +158,7 @@ namespace Coinelity.AspServer
 
             app.UseSignalR( routes =>
              {
-                 routes.MapHub<BinaryOptionsHub>( "/binary-options" );
+                 routes.MapHub<OptionsHub>( "/options" );
                  routes.MapHub<CFDHub>( "/cfd" );
                  routes.MapHub<ChatHub>( "/chat" );
              } );

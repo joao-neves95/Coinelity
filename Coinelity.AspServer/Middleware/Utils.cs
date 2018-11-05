@@ -36,13 +36,6 @@ namespace Coinelity.AspServer.Middleware
             return errors;
         }
 
-        /// <summary>
-        /// 
-        /// Returns <null> if the a account type is not valid.
-        /// 
-        /// </summary>
-        /// <param name="accountType"> UserAccountType string (pascal case) or JSON (camel case) representation </param>
-        /// <returns></returns>
         public static UserAccountType UserAccountTypeResolver(byte isRealBalance)
         {
             return

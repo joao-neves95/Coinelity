@@ -47,7 +47,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <param name="placeOrderDTO"></param>
         /// <param name="connection"> If null, it defaults to this class on creation's connection, and if not null it's used the provided connection instead </param>
         /// <returns></returns>
-        public async Task<SqlCommand> OpenOrderCmdAsync(PlaceOrderDTO placeOrderDTO, SqlConnection connection = null)
+        public async Task<SqlCommand> OpenOrderCmdAsync(PlaceOptionDTO placeOrderDTO, SqlConnection connection = null)
         {
             int payoutPercent = await GetPayoutPercentByAssetIdAndLifetimeId( placeOrderDTO.AssetId, placeOrderDTO.LifetimeId );
 
@@ -65,7 +65,7 @@ namespace Coinelity.AspServer.DataAccess
                     { "@LifetimeId", placeOrderDTO.LifetimeId },
                     { "@PayoutPercent", payoutPercent },
                     // TODO: Get the strike price from API.
-                    { "@StrikePricet", placeOrderDTO.StrikePrice },
+                    { "@StrikePrice", placeOrderDTO.StrikePrice },
                     { "@InvestmentAmount", placeOrderDTO.InvestmentAmount }
                 } );
         }
@@ -78,7 +78,7 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="placeOrderDTO"></param>
         /// <returns></returns>
-        public async Task<int> OpenOrderAsync(PlaceOrderDTO placeOrderDTO)
+        public async Task<int> OpenOrderAsync(PlaceOptionDTO placeOrderDTO)
         {
             return await MSSQLClient.CommandOnceAsync( _connection, await OpenOrderCmdAsync( placeOrderDTO ) );
         }
@@ -226,7 +226,7 @@ namespace Coinelity.AspServer.DataAccess
         // TODO: Refactor query.
         public async Task<IList<Dictionary<string, object>>> GetUserOrderHistoryAsync(int userId)
         {
-            IList<Dictionary<string, object>> orderListDict = await MSSQLClient.QueryOnceAsync( _connection,
+            return await MSSQLClient.QueryOnceAsync( _connection,
                 @"SELECT *
                   FROM dbo.OptionHistory
                   WHERE UserId = @UserId ",
@@ -234,8 +234,6 @@ namespace Coinelity.AspServer.DataAccess
                 {
                     { "@UserId", userId }
                 });
-
-            return orderListDict;
         }
 
         /// <summary>
@@ -245,7 +243,7 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<int> GetPayoutPercentById(int id)
+        public async Task<byte> GetPayoutPercentById(int id)
         {
             string whereClause = $"WHERE Id = {id}";
             return await GetPayoutPercent( whereClause );
@@ -258,13 +256,13 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
-        public Task<int> GetPayoutPercentByAssetId(int assetId)
+        public Task<byte> GetPayoutPercentByAssetId(int assetId)
         {
             string whereClause = $"WHERE AssetId = {assetId}";
             return GetPayoutPercent( whereClause );
         }
 
-        public Task<int> GetPayoutPercentByAssetIdAndLifetimeId(int assetId, int lifetimeId)
+        public Task<byte> GetPayoutPercentByAssetIdAndLifetimeId(int assetId, int lifetimeId)
         {
             string whereClause = $"WHERE AssetId = {assetId} AND LifetimeId = {lifetimeId}";
             return GetPayoutPercent( whereClause );
@@ -272,13 +270,13 @@ namespace Coinelity.AspServer.DataAccess
 
         /// <summary>
         /// 
-        /// Returns <int> (16 bits / SQL's tinyint) the payout percentage of the requested asset id, or -1 case the asset does not exist.
+        /// Returns <short> (16 bits / SQL's SMALLINT) the payout percentage of the requested asset id, or -1 case the asset does not exist.
         /// 
         /// </summary>
         /// <param name="whereQuery"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        private async Task<int> GetPayoutPercent(string whereClause)
+        private async Task<byte> GetPayoutPercent(string whereClause)
         {
             IList<Dictionary<string, object>> payoutListDict = await MSSQLClient.QueryOnceAsync( _connection,
                 $@"SELECT Payout
@@ -286,7 +284,7 @@ namespace Coinelity.AspServer.DataAccess
                    {whereClause}"
             );
 
-            return payoutListDict.Count > 0 ? Convert.ToInt16( payoutListDict[0]["Payout"] ) : -1;
+            return payoutListDict.Count > 0 ? Convert.ToByte( payoutListDict[0]["Payout"] ) : Convert.ToByte( -1 );
         }
 
         /// <summary>
@@ -310,6 +308,7 @@ namespace Coinelity.AspServer.DataAccess
             return lifetimeListDict.Count > 0 ? Convert.ToInt32( lifetimeListDict[0]["LifetimeMinutes"] ) : -1;
         }
 
+        // TODO: Finish the GetSymbolMeta query.
         public async Task GetSymbolMeta(int assetId)
         {
             IList<Dictionary<string, object>> symbolMetaListDict = await MSSQLClient.QueryOnceAsync( _connection, "" );

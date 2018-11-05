@@ -17,9 +17,9 @@ using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer.Models
 {
-    public class CheckOrderLogicResponse
+    public class CheckOptionLogicResponse
     {
-        public CheckOrderLogicResponse(CheckOrderLogicResult result, ActiveOptionJoined activeOption = null, ClosedOptionDTO closedOption = null)
+        public CheckOptionLogicResponse(CheckOrderLogicResult result, ActiveOptionJoined activeOption = null, ClosedOptionDTO closedOption = null)
         {
             this.Result = result;
             this.ActiveOption = activeOption == null ? new ActiveOptionJoined() : activeOption;

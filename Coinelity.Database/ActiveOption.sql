@@ -16,7 +16,8 @@ CREATE TABLE dbo.ActiveOption
     IsRealBalance BIT NOT NULL,
     OperationTypeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OperationType( Id ),
     LifetimeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionLifetime( Id ),
-    PayoutPercent TINYINT NOT NULL CHECK (PayoutPercent > 0),
+    -- This is the acitve option's payout percent, not the closed option payout percent.
+    PayoutPercent TINYINT NOT NULL CHECK ( PayoutPercent >= 0 ),
     StrikePrice DECIMAL(16,4) NOT NULL,
     InvestmentAmount FLOAT NOT NULL,
     OpenTimestamp DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME() CHECK (OpenTimestamp >= SYSUTCDATETIME())

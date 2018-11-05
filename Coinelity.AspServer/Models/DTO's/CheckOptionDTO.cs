@@ -16,7 +16,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Coinelity.AspServer.Models
 {
-    public class CheckOrderDTO
+    public class CheckOptionDTO
     {
         [Required]
         public int OrderId { get; set; }

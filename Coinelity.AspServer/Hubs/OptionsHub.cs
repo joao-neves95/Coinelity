@@ -31,7 +31,7 @@ using Coinelity.Core.Errors;
 // TODO: Pass the error messages to the ErrorMessages class of constants.
 namespace Coinelity.AspServer.Hubs
 {
-    public class BinaryOptionsHub : Hub
+    public class OptionsHub : Hub
     {
         /// <summary>
         /// 
@@ -50,20 +50,20 @@ namespace Coinelity.AspServer.Hubs
 
             try
             {
-                JsonValidationResponse jsonValidationResponse = JsonValidation.IsValid( typeof( PlaceOrderDTO ), placeOrderDTO );
+                JsonValidationResponse jsonValidationResponse = JsonValidation.IsValid( typeof( PlaceOptionDTO ), placeOrderDTO );
 
                 if (!jsonValidationResponse.IsValid)
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", jsonValidationResponse.ErrorMessages ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 400, "Client Error", jsonValidationResponse.ErrorMessages ).ToJSON() );
 
                 // TODO: Handle Deserialization exceptions.
                 // TODO: Test the placeOrderDTO gives an error.
-                PlaceOrderDTO order = JsonConvert.DeserializeObject<PlaceOrderDTO>( placeOrderDTO );
+                PlaceOptionDTO order = JsonConvert.DeserializeObject<PlaceOptionDTO>( placeOrderDTO );
                 // Check if user has enough money.
                 int thisUserId = Convert.ToInt32( Middleware.Utils.GetUserIdClaim( Context.User ) );
                 UserAccountType accountType = Middleware.Utils.UserAccountTypeResolver( order.IsRealBalance );
 
                 if (accountType == UserAccountType.Unknown)
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.WrongAccountType } ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 400, "Client Error",  ErrorMessages.WrongAccountType, null ).ToJSON() );
 
                 decimal userBalance = 0.0M;
                 using (userAccountStore = new UserAccountStore())
@@ -74,7 +74,7 @@ namespace Coinelity.AspServer.Hubs
                 if (Convert.ToDecimal( order.InvestmentAmount ) > userBalance)
                 {
                     // If he does not have enough money, send failed response.
-                    return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.InsufficientFunds } ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 400, "Client Error", ErrorMessages.InsufficientFunds, null ).ToJSON() );
                 }
                 else
                 {
@@ -94,7 +94,7 @@ namespace Coinelity.AspServer.Hubs
                     using (exchange = new Exchange( exchangeName ))
                     {
                         if (exchange.API == null)
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 400, "Client Error", new object[] { ErrorMessages.UnknownExchange } ).ToJSON() );
+                            return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 400, "Client Error", ErrorMessages.UnknownExchange, null ).ToJSON() );
 
                         order.StrikePrice = await exchange.GetLastPrice( symbol );
                     }
@@ -113,13 +113,13 @@ namespace Coinelity.AspServer.Hubs
 
                         if (!success)
                         {
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
+                            return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 500, "Unknown Error", ErrorMessages.UnknownError, null ).ToJSON() );
                         }
                         else
                         {
-                            order.ActiveOrderId = await optionsStore.GetLastActiveOrderAsync( thisUserId, connection );
+                            order.ActiveOptionId = await optionsStore.GetLastActiveOrderAsync( thisUserId, connection );
 
-                            return Clients.Caller.SendAsync( "ReceivePlaceOrderResult",
+                            return Clients.Caller.SendAsync( "ReceivePlaceOptionResult",
                                 new ApiResponse( null, null, null,
                                     new object[] { new Dictionary<string, object>
                                         {
@@ -137,7 +137,7 @@ namespace Coinelity.AspServer.Hubs
             {
                 // TODO: Exeption handling.
                 Console.WriteLine( e );
-                return Clients.Caller.SendAsync( "ReceivePlaceOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
+                return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 500, "Unknown Error", ErrorMessages.UnknownError, null ).ToJSON() );
             }
             finally
             {
@@ -153,10 +153,10 @@ namespace Coinelity.AspServer.Hubs
         /// WORK IN PROGRESS.
         /// 
         /// </summary>
-        /// <param name="checkOrderDTO"> A CheckOrderDTO instance in JSON string format </param>
+        /// <param name="checkOptionDTO"> A CheckOrderDTO instance in JSON string format </param>
         /// <returns></returns>
         // [Authorize]
-        public async Task<Task> CheckOrder(string checkOrderDTO)
+        public async Task<Task> CheckOrder(string checkOptionDTO)
         {
             // TODO: Handle Deserialization exceptions.
             OptionsStore optionsStore = null;
@@ -168,21 +168,21 @@ namespace Coinelity.AspServer.Hubs
 
             try
             {
-                CheckOrderDTO order = JsonConvert.DeserializeObject<CheckOrderDTO>( checkOrderDTO );
-                JsonValidationResponse jsonValidationResponse = JsonValidation.IsValid( typeof( CheckOrderDTO ), checkOrderDTO );
+                CheckOptionDTO order = JsonConvert.DeserializeObject<CheckOptionDTO>( checkOptionDTO );
+                JsonValidationResponse jsonValidationResponse = JsonValidation.IsValid( typeof( CheckOptionDTO ), checkOptionDTO );
 
                 if (!jsonValidationResponse.IsValid)
-                    return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 400, "Client Error", jsonValidationResponse.ErrorMessages ).ToJSON() );
+                    return Clients.Caller.SendAsync( "ReceiveCheckOptionResult", new ApiResponse( 400, "Client Error", jsonValidationResponse.ErrorMessages ).ToJSON() );
 
-                CheckOrderLogicResponse orderResult = await BinaryOptionsLogic.CheckOrderAsync( exchange, thisUserId, order, optionsStore );
+                CheckOptionLogicResponse orderResult = await OptionsLogic.CheckOrderAsync( exchange, optionsStore, thisUserId, order );
                 ApiResponse apiResponse = await HandleCheckOrderResultAsync( userAccountStore, optionsStore, connection, thisUserId, orderResult );
-                return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", apiResponse.ToJSON() );
+                return Clients.Caller.SendAsync( "ReceiveCheckOptionResult", apiResponse.ToJSON() );
             }
             catch (Exception e)
             {
                 // TODO: Exception Handling.
                 Console.WriteLine( e );
-                return Clients.Caller.SendAsync( "ReceiveCheckOrderResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
+                return Clients.Caller.SendAsync( "ReceiveCheckOptionResult", new ApiResponse( 500, "Unknown Error", ErrorMessages.UnknownError, null ).ToJSON() );
             }
             finally
             {
@@ -214,31 +214,26 @@ namespace Coinelity.AspServer.Hubs
                 if (activeOptions.Count <= 0)
                 {
                     return Clients.Caller.SendAsync( "ReceiveSyncResult",
-                        new ApiResponse( 200, "Ok", null, new object[] {
-                            new Dictionary<string, string>()
-                            {
-                                { "Message", "No active orders." }
-                            }
-                        } ).ToJSON()
+                        new ApiResponse( 200, "Ok", "No active orders." ).ToJSON()
                     );
                 }
 
                 List<ApiResponse> apiResponses = new List<ApiResponse>();
-                CheckOrderLogicResponse currentOrderResponse;
+                CheckOptionLogicResponse currentOrderResponse;
                 // TODO: Complete (handle results).
                 for (int i = 0; i < activeOptions.Count; ++i)
                 {
-                    currentOrderResponse = await BinaryOptionsLogic.CheckOrderAsync( exchange, thisUserId, activeOptions[i] );
+                    currentOrderResponse = await OptionsLogic.CheckOrderAsync( exchange, activeOptions[i] );
                     apiResponses.Add( await HandleCheckOrderResultAsync( userAccountStore, optionsStore, connection, thisUserId, currentOrderResponse ) );
                 }
 
-                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 200, "Success", null, apiResponses.ToArray() ) );
+                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( null, null, null, apiResponses.ToArray() ) );
             }
             catch (Exception e)
             {
                 // TODO: Exception Handling.
                 Console.WriteLine( e );
-                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 500, "Unknown Error", new object[] { ErrorMessages.UnknownError } ).ToJSON() );
+                return Clients.Caller.SendAsync( "ReceiveSyncResult", new ApiResponse( 500, "Unknown Error", ErrorMessages.UnknownError ).ToJSON() );
             }
             finally
             {
@@ -267,20 +262,17 @@ namespace Coinelity.AspServer.Hubs
                 }
 
                 if (activeOption.InvestmentAmount <= 0)
-                    return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( 404, "Not Found", new object[] { "Order not found." } ).ToJSON() );
-
+                    return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( 404, "Not Found", "Order not found." ).ToJSON() );
 
                 ClosedOptionDTO closedOption = new ClosedOptionDTO( activeOption );
                 // Do not add the investment amount.
                 closedOption.AddToBalance = false;
                 // The user loses 30% of the his investment in case he closes the order.
                 closedOption.PayoutValue = (Convert.ToDecimal( closedOption.InvestmentAmount ) * 30m) / 100m;
-                CloseOrderLogicResponse closeOrderResponse = await BinaryOptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, sqlConnection, thisUserId, closedOption );
+                CloseOrderLogicResponse closeOrderResponse = await OptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, sqlConnection, closedOption );
 
                 if (!closeOrderResponse.Success)
-                {
-                    return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( 500, "Unknown Error", new object[] { "Error processing the close order request. Please try again." } ).ToJSON() );
-                }
+                    return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( 500, "Unknown Error", "Error while processing the close order request. Please try again." ).ToJSON() );
                 else
                 {
                     return Clients.Caller.SendAsync( "ReceiveCloseResult", new ApiResponse( null, null, null,
@@ -304,7 +296,7 @@ namespace Coinelity.AspServer.Hubs
             // Add to order history.
         }
 
-        private async Task<ApiResponse> HandleCheckOrderResultAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, int thisUserId, CheckOrderLogicResponse orderResult)
+        private async Task<ApiResponse> HandleCheckOrderResultAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, int thisUserId, CheckOptionLogicResponse orderResult)
         {
             switch (orderResult.Result)
             {
@@ -326,7 +318,7 @@ namespace Coinelity.AspServer.Hubs
 
                 case CheckOrderLogicResult.Profit:
                 case CheckOrderLogicResult.Loss:
-                    CloseOrderLogicResponse closeOrderResult = await BinaryOptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, connection, thisUserId, orderResult.ClosedOption );
+                    CloseOrderLogicResponse closeOrderResult = await OptionsLogic.CloseOrderAsync( userAccountStore, optionsStore, connection, orderResult.ClosedOption );
 
                     if (!closeOrderResult.Success)
                     {

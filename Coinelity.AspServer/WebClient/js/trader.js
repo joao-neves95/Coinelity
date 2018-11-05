@@ -3389,7 +3389,7 @@ class Themes {
   static update() {}
 }
 
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
@@ -3412,9 +3412,6 @@ whenDomReady(() => {
 
   NavbarController._.init();
 
-  // This gives an error if it exists more than 1 cookie (of course).
-  console.debug( document.cookie );
-  console.debug( document.cookie.split( ';' ) );
   const cookies = document.cookie.split( ';' );
   const cookieIndex = cookies.length <= 1 ? 0 : cookies.length === 2 ? 1 : 2;
   const requestedPage = cookies[cookieIndex].split( '=' )[1].trim().substring( 3 ).replace( /(%2F)/g, '/' );
@@ -3423,7 +3420,6 @@ whenDomReady(() => {
 
   if ( !page ) {
     console.info( '404 - Not Found.' ); // Show 404 page.
-    console.debug( window.history );
   }
   else
     document.getElementById( page + '_btn' ).click();

@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
@@ -48,7 +48,7 @@ namespace Coinelity.AspServer.Controllers
             catch (Exception e)
             {
                 // TODO: Error handling.
-                Console.WriteLine($"ERROR:\nIn: /\n{ e.Message }");
+                Console.WriteLine( $"ERROR:\nIn: /\n{ e.Message }" );
                 return NotFound();
             }
         }
@@ -75,7 +75,7 @@ namespace Coinelity.AspServer.Controllers
             {
                 // TODO: Error handling.
                 Console.WriteLine($"ERROR:\nIn: /dashboard\n{ e.Message }");
-                return NotFound(Json( new ErrorMessage(ErrorType.NotFound) ).Value);
+                return NotFound( Json( new ErrorMessage( ErrorType.NotFound ) ).Value );
             }
         }
 
@@ -99,29 +99,30 @@ namespace Coinelity.AspServer.Controllers
         /// <param name="fileName"> The file name. </param>
         public IActionResult GetPrivateResource([FromRoute]string fileType, [FromRoute]string fileName)
         {
-            return GetResource(ResourcePrivacyLevel.Private, fileType, fileName);
+            return GetResource( ResourcePrivacyLevel.Private, fileType, fileName );
         }
 
         private IActionResult GetResource(ResourcePrivacyLevel privacyLevel, string fileType, string fileName)
         {
+
             try
             {
                 string folder = "wwwroot";
                 if (privacyLevel == ResourcePrivacyLevel.Private)
                     folder = "WebClient";
 
-                string contentType = Utils.ContentTypeResolver(fileType, fileName);
+                string contentType = Utils.ContentTypeResolver( fileType, fileName );
 
                 Response.ContentType = contentType;
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), folder, fileType, fileName);
+                string filePath = Path.Combine( Directory.GetCurrentDirectory(), folder, fileType, fileName );
                 Console.WriteLine( filePath );
-                return PhysicalFile(filePath, contentType);
+                return PhysicalFile( filePath, contentType );
             }
             catch (Exception e)
             {
                 // TODO: Error handling.
-                Console.WriteLine(e.Message);
-                return NotFound(Json( new ErrorMessage( ErrorType.NotFound )).Value);
+                Console.WriteLine( e.Message );
+                return NotFound( Json( new ErrorMessage( ErrorType.NotFound ) ).Value );
             }
         }
     }
