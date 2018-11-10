@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "Coinelity.AspServer/package.json",
+        "Coinelity.NodeServer/package.json"
+      ]
+    }
+  }
+}
