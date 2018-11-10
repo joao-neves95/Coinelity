@@ -2187,23 +2187,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Utilizador1\\.nuget\\packages\\": {},
+    "C:\\Users\\Utilizador\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Utilizador1\\Documents\\DEV\\REPO\\coinelity\\Coinelity.Core\\Coinelity.Core.csproj",
+      "projectUniqueName": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.Core\\Coinelity.Core.csproj",
       "projectName": "Coinelity.Core",
-      "projectPath": "C:\\Users\\Utilizador1\\Documents\\DEV\\REPO\\coinelity\\Coinelity.Core\\Coinelity.Core.csproj",
-      "packagesPath": "C:\\Users\\Utilizador1\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Utilizador1\\Documents\\DEV\\REPO\\coinelity\\Coinelity.Core\\obj\\",
+      "projectPath": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.Core\\Coinelity.Core.csproj",
+      "packagesPath": "C:\\Users\\Utilizador\\.nuget\\packages\\",
+      "outputPath": "D:\\Utilizador\\Documents\\DEV\\Coinelity\\Coinelity.Core\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Utilizador1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Utilizador\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -2211,6 +2211,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\nuget\\LocalPackages": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

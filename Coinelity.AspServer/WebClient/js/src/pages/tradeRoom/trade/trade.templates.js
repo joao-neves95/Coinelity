@@ -44,13 +44,21 @@ class TradeTemplates {
         ${
           // PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
-          PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
-          PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
+          PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+          PageTemplates.button( `
+            <span class="icon call"></span>
+            <span class="lbl">Call</span>`,
+          'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
+
           `<p class="curr-price">
              <span id="trading-tools_current-price"></span>
              <span id="trading-tools_fiat-symbol"></span>
            </p>` +
-          PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
+
+          PageTemplates.button( `
+            <span class="icon put"></span>
+            <span class= "lbl">Put</span>`,
+            'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
       </form>
     `;

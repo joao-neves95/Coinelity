@@ -1789,13 +1789,21 @@ class TradeTemplates {
         ${
           // PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
-          PageTemplates.inputNumElem( 'Investement Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
-          PageTemplates.button( '<span class="icon call"></span>Call', 'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
+          PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+          PageTemplates.button( `
+            <span class="icon call"></span>
+            <span class="lbl">Call</span>`,
+          'call-btn', ButtonType.Success, 'btn round-borders-1' ) +
+
           `<p class="curr-price">
              <span id="trading-tools_current-price"></span>
              <span id="trading-tools_fiat-symbol"></span>
            </p>` +
-          PageTemplates.button( '<span class="icon put"></span>Put', 'put-btn', ButtonType.Alert, 'btn round-borders-1' )
+
+          PageTemplates.button( `
+            <span class="icon put"></span>
+            <span class= "lbl">Put</span>`,
+            'put-btn', ButtonType.Alert, 'btn round-borders-1' )
          }
       </form>
     `;
@@ -3412,6 +3420,7 @@ whenDomReady(() => {
 
   NavbarController._.init();
 
+  // TODO: What a stupid thing to do. Do not use cookies. Fetch the requested page from the document URL -_-
   const cookies = document.cookie.split( ';' );
   const cookieIndex = cookies.length <= 1 ? 0 : cookies.length === 2 ? 1 : 2;
   const requestedPage = cookies[cookieIndex].split( '=' )[1].trim().substring( 3 ).replace( /(%2F)/g, '/' );
@@ -3426,5 +3435,8 @@ whenDomReady(() => {
 
   document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
   document.cookie = '';
+
+  // Make a request to the Coinelity's proxy to wake it up (it's a free server).
+  fetch( 'https://coinelity-proxy.glitch.me/' );
 });
 

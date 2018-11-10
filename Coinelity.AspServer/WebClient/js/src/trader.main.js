@@ -21,6 +21,7 @@ whenDomReady(() => {
 
   NavbarController._.init();
 
+  // TODO: What a stupid thing to do. Do not use cookies. Fetch the requested page from the document URL -_-
   const cookies = document.cookie.split( ';' );
   const cookieIndex = cookies.length <= 1 ? 0 : cookies.length === 2 ? 1 : 2;
   const requestedPage = cookies[cookieIndex].split( '=' )[1].trim().substring( 3 ).replace( /(%2F)/g, '/' );
@@ -35,4 +36,7 @@ whenDomReady(() => {
 
   document.cookie = 'Requested-Path=;expires=Thu, ' + new Date().toISOString() + ';';
   document.cookie = '';
+
+  // Make a request to the Coinelity's proxy to wake it up (it's a free server).
+  fetch( 'https://coinelity-proxy.glitch.me/' );
 });
