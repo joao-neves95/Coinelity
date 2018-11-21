@@ -91,7 +91,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public string GetActiveOrderCmd()
         {
-            return @"SETECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.ActiveOption.IsRealBalance, dbo.ActiveOption.AssetId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.ActiveOption.LifetimeId, dbo.OptionLifetime.TimeMinutes, dbo.LifetimeLabel.Name AS LifetimeLabel, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
+            return @"SELECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.ActiveOption.IsRealBalance, dbo.ActiveOption.AssetId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.ActiveOption.LifetimeId, dbo.OptionLifetime.TimeMinutes, dbo.LifetimeLabel.Name AS LifetimeLabel, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
                      FROM dbo.ActiveOption
                          INNER JOIN dbo.Asset
                              INNER JOIN dbo.Exchange
