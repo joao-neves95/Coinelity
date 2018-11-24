@@ -1,10 +1,10 @@
 /*
  *
- * Copyright (c) 2018 Jo„o Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Copyright (c) 2018 Jo√£o Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
  * The EULA is located in the root of this project, under the name "LICENSE.md".
- * Written by Jo„o Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ * Written by Jo√£o Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
  *
  */
 
@@ -30,10 +30,9 @@ app.use( logger( 'combined' ) );
 
 app.use( function ( req, res, next ) {
   res.setHeader( 'X-Powered-By', 'anonymous' );
-
-  // TODO: Add the user to the request.
   req.theUser = new User( Utils.getIpFromRequest( req ), req.headers['Authorization'] );
   
+  next();
 } );
 
 const chat = io
