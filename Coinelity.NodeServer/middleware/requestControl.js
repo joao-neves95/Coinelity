@@ -9,27 +9,26 @@
  */
 
 'user strict';
-const isAuthenticated = require( './isAuthenticated' );
 const Utils = require( '../middleware/utils' );
 const RequestControlModel = require( '../models/requestControlModel' );
 const IpControlModel = require( '../models/ipControlModel' );
 const ResponseStatusCode = require( '../enums/responseStatusCode' );
 
-// TODO: Add max auth failes.
-
 class RequestControl extends RequestControlModel {
-  constructor() {
+  constructor( authHandler ) {
 
     const config = {
-      rateLimitSecond: 1, // getter
-      rateLimitMinute: 60 , // getter
+      rateLimitSecond: 2, // getter
+      rateLimitMinute: 120 , // getter
       totalReqCountUntilAuthCheck: 60 * 10,
+      maxRateLimitFails: 3,
       delControlMinutesOffset: 60 * 12, // (minutes) getter
       delBlacklistedMinutesOffset: process.env.BLACKLISTED_TIME_MINUTES, // (minutes) getter
       authMinutesOffset: 5 // (minutes) getter
     };
 
     super( config );
+    this.authHandler = authHandler;
   }
 
   /**
@@ -48,10 +47,10 @@ class RequestControl extends RequestControlModel {
 
       const ip = Utils.getIpFromRequest( request );
       const thisRequestTimestamp = Utils.getUTCTimestamp();
-      let thisIpCanPass = false;
       let ipIsControlled = false;
       /** @type { IpControlModel } */
       let thisIpControl;
+      /** @type { number } */
       let thisIpControlIdx;
 
       for ( let i = 0; i < this.ipControl.length; ++i ) {
@@ -62,11 +61,18 @@ class RequestControl extends RequestControlModel {
         }
       }
 
+      // New IP to control.
       if ( !ipIsControlled ) {
         // Add an offset to the lastAuthTimestamp to request authentication.
-        thisIpControl = new IpControlModel( ip, request.theUser, 1, 1, 1, thisRequestTimestamp, thisRequestTimestamp - Utils.minutesToMiliseconds( this.authMinutesOffset + 1 ) );
+        thisIpControl = new IpControlModel(
+          ip,
+          request.theUser,
+          1, 1, 1,
+          thisRequestTimestamp,
+          thisRequestTimestamp - Utils.minutesToMiliseconds( this.authMinutesOffset + 1 )
+        );
+        
         this.ipControl.push( thisIpControl );
-        thisIpCanPass = true;
       }
 
       // Authentication.
@@ -80,27 +86,27 @@ class RequestControl extends RequestControlModel {
       }
 
       // Request control per second.
-      if ( thisRequestTimestamp - thisIpControl.lastRequest <= 1000 && thisIpCanPass ) {
-        if ( thisIpControl.requestsNumSecond >= this.rateLimitSecond ) {
-          this.blacklisted.push( thisIpControl.userIp );
+      if ( thisRequestTimestamp - thisIpControl.lastRequest <= 1000 ) {
+        if ( thisIpControl.requestsNumSecond >= this.rateLimitSecond &&
+             this._blacklisting( thisIpControl )
+           ) {
           return resolve( ResponseStatusCode.Blacklisted );
         }
 
       } else {
-        if ( thisIpCanPass )
-          thisIpControl.requestsNumSecond = 0;
+        thisIpControl.requestsNumSecond = 0;
       }
 
       // Request control per minute.
-      if ( thisRequestTimestamp - this.lastRequest <= 1000 * 60 && thisIpCanPass ) {
-        if ( thisIpControl.requestsNumMinute >= this.rateLimitMinute ) {
-          this.blacklisted.push( thisIpControl.userIp );
+      if ( thisRequestTimestamp - this.lastRequest <= 1000 * 60 ) {
+        if ( thisIpControl.requestsNumMinute >= this.rateLimitMinute &&
+             this._blacklisting( thisIpControl )
+           ) {
           return resolve( ResponseStatusCode.Blacklisted );
         }
 
       } else {
-        if ( thisIpCanPass )
-          thisIpControl.requestsNumMinute = 0;
+        thisIpControl.requestsNumMinute = 0;
       }
 
       thisIpControl.lastRequest = thisRequestTimestamp;
@@ -112,12 +118,23 @@ class RequestControl extends RequestControlModel {
     } );
   }
 
+  _blacklisting( thisIpControl ) {
+    ++thisIpControl.rateLimitFails;
+
+    if ( thisIpControl.rateLimitFails >= this.maxRateLimitFails ) {
+      this.blacklisted.push( thisIpControl.userIp );
+      return true;
+    }
+
+    return false;
+  }
+
   /**
    * @returns { Promise<ResponseStatusCode> }
    */
   _authenticate( JWTToken ) {
     return new Promise( async ( resolve, reject ) => {
-      return resolve( await isAuthenticated( JWTToken ) );
+      return resolve( await this.authHandler( JWTToken ) );
     } );
   }
 
@@ -135,3 +152,4 @@ class RequestControl extends RequestControlModel {
 }
 
 module.exports = RequestControl;
+

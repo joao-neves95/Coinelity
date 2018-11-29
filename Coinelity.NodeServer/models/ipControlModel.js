@@ -31,6 +31,7 @@ class IpControlModel {
      */
     this.lastRequest = lastRequest;
     this.lastAuthTimestamp = lastAuthTimestamp;
+    this.rateLimitFails;
   }
 }
 
