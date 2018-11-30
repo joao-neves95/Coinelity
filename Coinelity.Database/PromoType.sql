@@ -1,0 +1,6 @@
+﻿CREATE TABLE dbo.PromoType
+(
+    Id INT NOT NULL PRIMARY KEY,
+    Label NVARCHAR(100)
+)
+

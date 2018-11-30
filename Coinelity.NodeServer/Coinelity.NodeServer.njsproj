@@ -52,6 +52,7 @@
     <Compile Include="models\requestControlModel.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="models\userMessage.js" />
     <Compile Include="models\userModel.js">
       <SubType>Code</SubType>
     </Compile>

@@ -76,6 +76,9 @@
     <Build Include="OptionPayout.sql" />
     <Build Include="OptionLifetime.sql" />
     <Build Include="LifetimeLabel.sql" />
+    <Build Include="PromoCode.sql" />
+    <Build Include="PromoType.sql" />
+    <Build Include="RedeemedPromoCode.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Inserts\ApplicationRole_Inserts.sql" />

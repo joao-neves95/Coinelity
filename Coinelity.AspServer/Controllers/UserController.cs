@@ -303,5 +303,13 @@ namespace Coinelity.AspServer.Controllers
         }
 
         #endregion
+        
+        [HttpGet("redeem-code/{id}")]
+        public async Task<IActionResult> RedeemCode( int id )
+        {
+            // Find the user.
+            // Check what the code type does.
+            // Implement effect.
+        }
     }
 }
