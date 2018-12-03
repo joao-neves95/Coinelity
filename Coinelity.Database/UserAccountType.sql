@@ -1,5 +1,5 @@
 CREATE TABLE dbo.UserAccountType
 (
-   Id INT NOT NULL PRIMARY KEY,
+   Id TINYINT NOT NULL PRIMARY KEY,
    Label VARCHAR(50)
 )

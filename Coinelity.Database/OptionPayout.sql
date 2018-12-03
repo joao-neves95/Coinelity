@@ -10,7 +10,7 @@
 
 CREATE TABLE dbo.OptionPayout
 (
-    Id INT NOT NULL PRIMARY KEY,
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     AssetId INT NOT NULL FOREIGN KEY REFERENCES dbo.Asset( Id ),
     LifetimeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionLifetime( Id ),
     Payout TINYINT NOT NULL CHECK ( Payout >= 0 ) 

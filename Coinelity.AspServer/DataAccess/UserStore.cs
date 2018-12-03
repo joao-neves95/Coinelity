@@ -196,6 +196,25 @@ namespace Coinelity.AspServer.DataAccess
             return userDictionaryList[0]["Id"].ToString();
         }
 
+        public async Task<int?> GetUserIdByAffiliateCode(string code)
+        {
+            IList<Dictionary<string, object>> userDictList = await MSSQLClient.QueryOnceAsync(
+                _connection,
+                @"SELECT Id
+                  FROM dbo.ApplicationUser
+                  WHERE AffiliateCode = @Code",
+                new Dictionary<string, object>
+                {
+                    { "@Code", code }
+                }
+            );
+
+            if (userDictList.Count <= 0)
+                return null;
+
+            return Convert.ToInt32( userDictList[0]["Id"] );
+        }
+
         /// <summary>
         /// (Extra) Returns the user password as [string] or [null] if there is no user with the provided email.
         /// </summary>

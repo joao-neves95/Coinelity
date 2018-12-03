@@ -24,6 +24,7 @@ using Coinelity.Core.Errors;
 using Coinelity.Core.Models;
 
 // TODO: Add consistency to the JSON responses (**Successes**/Errors). Something like: { error: [], result: [] }
+// TODO: Add try/catch.
 // TODO: Update AuditLog table.
 namespace Coinelity.AspServer.Controllers
 {
@@ -59,6 +60,13 @@ namespace Coinelity.AspServer.Controllers
 
             if (userExists)
                 return BadRequest( new ApiResponse(400, "Client Error", ErrorMessages.EmailAlreadyInUse, null ).ToJSON() );
+
+            string affiliatedTo = _httpContextAccessor.HttpContext.Request.Cookies["AffiliateCode"];
+            int? affiliatedToId;
+            using (UserStore userStore = new UserStore())
+            {
+                affiliatedToId = await userStore.GetUserIdByAffiliateCode( affiliatedTo );
+            }
 
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
             // When running the server in localhost it returns "::1".
@@ -148,10 +156,6 @@ namespace Coinelity.AspServer.Controllers
             return Ok( Json( new jwtDTO { AccessToken = JWTTokens.Generate( userEmail, userId ) } ).Value );
         }
 
-        [HttpGet("invite/{code}")]
-        public async Task<IActionResult> Invite(string code)
-        {
-        }
 
         [Authorize]
         [HttpGet("authenticated")]
@@ -308,7 +312,19 @@ namespace Coinelity.AspServer.Controllers
         }
 
         #endregion
-        
+
+        [HttpGet("invite/{code}")]
+        public Task<IActionResult> Invite(string code)
+        {
+            CookieOptions cookieOptions = new CookieOptions();
+            cookieOptions.Expires = DateTime.UtcNow.AddDays( 30 );
+            cookieOptions.SameSite = SameSiteMode.Strict;
+            // Prevent client-side JS from accessing the cookie value.
+            cookieOptions.HttpOnly = true;
+            Response.Cookies.Append( "AffiliateCode", code, cookieOptions );
+            Response.Redirect( "/" );
+        }
+
         [HttpGet("redeem-code/{id}")]
         public async Task<IActionResult> RedeemCode( int id )
         {

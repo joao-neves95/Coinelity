@@ -10,7 +10,7 @@
 
 CREATE TABLE dbo.OptionLifetime
 (
-    Id INT NOT NULL PRIMARY KEY,
+    Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     LabelId INT NOT NULL FOREIGN KEY REFERENCES dbo.LifetimeLabel(Id),
     TimeMinutes INT NOT NULL UNIQUE CHECK (TimeMinutes > 0),
 )

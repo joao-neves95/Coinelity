@@ -88,5 +88,6 @@
     <None Include="Inserts\LifetimeLabel_Inserts.sql" />
     <None Include="Inserts\Exchange_Inserts.sql" />
     <None Include="Inserts\UserAccountType_Inserts.sql" />
+    <None Include="Inserts\PromoType_Inserts.sql" />
   </ItemGroup>
 </Project>
