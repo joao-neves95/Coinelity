@@ -13,7 +13,8 @@ CREATE TABLE dbo.ActiveOption
     Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
     UserId INT NOT NULL FOREIGN KEY REFERENCES dbo.ApplicationUser( Id ),
     AssetId INT NOT NULL FOREIGN KEY REFERENCES dbo.Asset( Id ),
-    IsRealBalance BIT NOT NULL,
+    -- IsRealBalance BIT NOT NULL,
+    UserAccountTypeId TINYINT NOT NULL FOREIGN KEY REFERENCES dbo.UserAccountType( Id ),
     OperationTypeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OperationType( Id ),
     LifetimeId INT NOT NULL FOREIGN KEY REFERENCES dbo.OptionLifetime( Id ),
     -- This is the acitve option's payout percent, not the closed option payout percent.
@@ -26,3 +27,4 @@ GO
 
 CREATE INDEX idx_OptionBook_UserId ON dbo.ActiveOption( UserId );
 GO
+

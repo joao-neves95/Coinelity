@@ -54,13 +54,13 @@ namespace Coinelity.AspServer.DataAccess
             connection = connection == null ? _connection : connection;
 
             return MSSQLClient.ParameterizeCommand( connection,
-                @"INSERT INTO dbo.ActiveOption (UserId, AssetId, IsRealBalance, OperationTypeId, LifetimeId, PayoutPercent, StrikePrice, InvestmentAmount)
-                  VALUES (@UserId, @AssetId, @IsRealBalance, @OperationTypeId, @LifetimeId, @PayoutPercent, @StrikePrice, @InvestmentAmount)",
+                @"INSERT INTO dbo.ActiveOption (UserId, AssetId, UserAccountType, OperationTypeId, LifetimeId, PayoutPercent, StrikePrice, InvestmentAmount)
+                  VALUES (@UserId, @AssetId, @UserAccountType, @OperationTypeId, @LifetimeId, @PayoutPercent, @StrikePrice, @InvestmentAmount)",
                 new Dictionary<string, object>
                 {
                     { "@UserId", placeOrderDTO.UserId },
                     { "@AssetId", placeOrderDTO.AssetId },
-                    { "@IsRealBalance", placeOrderDTO.IsRealBalance },
+                    { "@UserAccountType", placeOrderDTO.UserAccountType },
                     { "@OperationTypeId", placeOrderDTO.OperationTypeId },
                     { "@LifetimeId", placeOrderDTO.LifetimeId },
                     { "@PayoutPercent", payoutPercent },
@@ -91,7 +91,7 @@ namespace Coinelity.AspServer.DataAccess
         /// <returns></returns>
         public string GetActiveOrderCmd()
         {
-            return @"SELECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.ActiveOption.IsRealBalance, dbo.ActiveOption.AssetId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.ActiveOption.LifetimeId, dbo.OptionLifetime.TimeMinutes, dbo.LifetimeLabel.Name AS LifetimeLabel, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
+            return @"SELECT dbo.ActiveOption.Id, dbo.ActiveOption.UserId, dbo.ActiveOption.UserAccountType, dbo.ActiveOption.AssetId, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.ActiveOption.OperationTypeId, dbo.ActiveOption.LifetimeId, dbo.OptionLifetime.TimeMinutes, dbo.LifetimeLabel.Name AS LifetimeLabel, dbo.ActiveOption.PayoutPercent, dbo.ActiveOption.StrikePrice, dbo.ActiveOption.InvestmentAmount, dbo.ActiveOption.OpenTimestamp
                      FROM dbo.ActiveOption
                          INNER JOIN dbo.Asset
                              INNER JOIN dbo.Exchange
@@ -189,7 +189,7 @@ namespace Coinelity.AspServer.DataAccess
                      (
                          UserId,
                          AssetId,
-                         IsRealBalance,
+                         UserAccountType,
                          OperationTypeId,
                          LifetimeId,
                          PayoutPercent,
@@ -203,7 +203,7 @@ namespace Coinelity.AspServer.DataAccess
                        (
                            {closedOptionDTO.UserId},
                            {closedOptionDTO.AssetId},
-                           {closedOptionDTO.IsRealBalance},
+                           {closedOptionDTO.UserAccountType},
                            {closedOptionDTO.OperationTypeId},
                            {closedOptionDTO.LifetimeId},
                            {closedOptionDTO.PayoutPercent},
@@ -330,7 +330,8 @@ namespace Coinelity.AspServer.DataAccess
                    FROM dbo.Asset
                        INNER JOIN dbo.Exchange
                        ON dbo.Asset.ExchangeId = dbo.Exchange.Id
-                   WHERE dbo.Asset.Id = {assetId} " );
+                   WHERE dbo.Asset.Id = {assetId} "
+           );
         }
     }
 }

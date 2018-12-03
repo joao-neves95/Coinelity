@@ -148,6 +148,11 @@ namespace Coinelity.AspServer.Controllers
             return Ok( Json( new jwtDTO { AccessToken = JWTTokens.Generate( userEmail, userId ) } ).Value );
         }
 
+        [HttpGet("invite/{code}")]
+        public async Task<IActionResult> Invite(string code)
+        {
+        }
+
         [Authorize]
         [HttpGet("authenticated")]
         public IActionResult Authenticated()

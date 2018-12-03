@@ -60,7 +60,7 @@ namespace Coinelity.AspServer.BusinessLogic
         /// <returns></returns>
         public static async Task<CheckOptionLogicResponse> CheckOrderAsync(Exchange exchange, ActiveOptionJoined activeOption)
         {
-            UserAccountType userAccountType = Utils.UserAccountTypeResolver( activeOption.IsRealBalance );
+            UserAccountType userAccountType = Utils.UserAccountTypeResolver( activeOption.UserAccountType );
             int lifetimeMinutes = activeOption.TimeMinutes;
 
             DateTime currentUtcTimestamp = DateTime.UtcNow;
@@ -93,6 +93,7 @@ namespace Coinelity.AspServer.BusinessLogic
                 // Win/Loss Logic.
                 bool addToBalance = false;
 
+                // TODO: Add the no profit/loss (same price) event.
                 switch (activeOption.OperationTypeId)
                 {
                     case (int)OperationType.Call:

@@ -79,6 +79,7 @@
     <Build Include="PromoCode.sql" />
     <Build Include="PromoType.sql" />
     <Build Include="RedeemedPromoCode.sql" />
+    <Build Include="UserAccountType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Inserts\ApplicationRole_Inserts.sql" />
@@ -86,5 +87,6 @@
     <None Include="Inserts\OptionLifetime_Inserts.sql" />
     <None Include="Inserts\LifetimeLabel_Inserts.sql" />
     <None Include="Inserts\Exchange_Inserts.sql" />
+    <None Include="Inserts\UserAccountType_Inserts.sql" />
   </ItemGroup>
 </Project>

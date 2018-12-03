@@ -145,3 +145,4 @@ namespace Coinelity.AspServer.DataAccess
         }
     }
 }
+

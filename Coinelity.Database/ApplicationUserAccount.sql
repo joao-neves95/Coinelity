@@ -14,9 +14,10 @@ CREATE TABLE dbo.ApplicationUserAccount
     UserId INT NOT NULL FOREIGN KEY REFERENCES dbo.ApplicationUser( Id ),
     RealBalance DECIMAL(16,4) NOT NULL DEFAULT 0.0,
     FreezedRealBalance DECIMAL(16,4) NOT NULL DEFAULT 0.0,
+    CreditsBalance FLOAT(24) NOT NULL DEFAULT 0.0,
+    FreezedCreditsBalance FLOAT(24) NOT NULL DEFAULT 0.0,
     PaperBalance DECIMAL(16,4) NOT NULL DEFAULT 0.0,
     FreezedPaperBalance DECIMAL(16,4) NOT NULL DEFAULT 0.0,
-    Points INT NOT NULL DEFAULT 0
 )
 GO
 

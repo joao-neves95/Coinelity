@@ -19,6 +19,7 @@ namespace Coinelity.AspServer.Enums
     {
         Unknown = 0,
         RealBalance = 1,
-        PaperBalance = 2
+        CreditsBalance = 2,
+        PaperBalance = 3
     }
 }

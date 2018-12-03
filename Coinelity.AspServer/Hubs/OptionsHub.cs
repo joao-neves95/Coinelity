@@ -60,7 +60,7 @@ namespace Coinelity.AspServer.Hubs
                 PlaceOptionDTO order = JsonConvert.DeserializeObject<PlaceOptionDTO>( placeOrderDTO );
                 // Check if user has enough money.
                 int thisUserId = Convert.ToInt32( Middleware.Utils.GetUserIdClaim( Context.User ) );
-                UserAccountType accountType = Middleware.Utils.UserAccountTypeResolver( order.IsRealBalance );
+                UserAccountType accountType = Middleware.Utils.UserAccountTypeResolver( order.UserAccountType );
 
                 if (accountType == UserAccountType.Unknown)
                     return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 400, "Client Error",  ErrorMessages.WrongAccountType, null ).ToJSON() );
@@ -91,6 +91,7 @@ namespace Coinelity.AspServer.Hubs
                         exchangeName = symbolAndExchange[1]["Exchange"].ToString();
                     }
 
+                    // Get the order's strike price.
                     using (exchange = new Exchange( exchangeName ))
                     {
                         if (exchange.API == null)

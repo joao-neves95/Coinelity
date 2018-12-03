@@ -36,12 +36,19 @@ namespace Coinelity.AspServer.Middleware
             return errors;
         }
 
-        public static UserAccountType UserAccountTypeResolver(byte isRealBalance)
+        public static UserAccountType UserAccountTypeResolver(byte userAccountTypeId)
         {
-            return
-                isRealBalance == 1 ? UserAccountType.RealBalance :
-                isRealBalance == 0 ? UserAccountType.PaperBalance :
-                UserAccountType.Unknown;
+            switch (userAccountTypeId)
+            {
+                case 1:
+                    return UserAccountType.RealBalance;
+                case 2:
+                    return UserAccountType.CreditsBalance;
+                case 3:
+                    return UserAccountType.PaperBalance;
+                default:
+                    return UserAccountType.Unknown;
+            }
         }
 
         /// <summary>
