@@ -32,6 +32,8 @@ namespace Coinelity.AspServer.Controllers
     [Produces("application/json")]
     public class UserController : Controller
     {
+        const string AFFILIATE_TOKEN_KEY = "ReferrerAffiliateCode";
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -61,7 +63,7 @@ namespace Coinelity.AspServer.Controllers
             if (userExists)
                 return BadRequest( new ApiResponse(400, "Client Error", ErrorMessages.EmailAlreadyInUse, null ).ToJSON() );
 
-            string affiliatedTo = _httpContextAccessor.HttpContext.Request.Cookies["AffiliateCode"];
+            string affiliatedTo = _httpContextAccessor.HttpContext.Request.Cookies[AFFILIATE_TOKEN_KEY];
             int? affiliatedToId;
             using (UserStore userStore = new UserStore())
             {
@@ -346,7 +348,7 @@ namespace Coinelity.AspServer.Controllers
             cookieOptions.SameSite = SameSiteMode.Strict;
             // Prevent client-side JS from accessing the cookie value.
             cookieOptions.HttpOnly = true;
-            Response.Cookies.Append( "AffiliateCode", code, cookieOptions );
+            Response.Cookies.Append( AFFILIATE_TOKEN_KEY, code, cookieOptions );
             Response.Redirect( "/" );
         }
 
