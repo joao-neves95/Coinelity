@@ -38,7 +38,18 @@ namespace Coinelity.AspServer.DataAccess
             Dispose();
         }
 
-        public async Task<decimal> GetUserBalanceAsync(int userId, UserAccountType userAccountType)
+        public async Task<Dictionary<string, object>> GetBalancesAsync(int userId)
+        {
+            IList<Dictionary<string, object>> balances = await MSSQLClient.QueryOnceAsync( _connection,
+                $@"SELECT RealBalance, CreditsBalance, PaperBalance
+                   FROM dbo.ApplicationUserAccount
+                   WHERE UserId = {userId}"
+            );
+
+            return balances[0];
+        }
+
+        public async Task<decimal> GetBalanceAsync(int userId, UserAccountType userAccountType)
         {
             string select = "SELECT ";
             const string query = @"FROM dbo.ApplicationUserAccount

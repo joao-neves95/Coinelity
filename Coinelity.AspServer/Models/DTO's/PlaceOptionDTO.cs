@@ -29,7 +29,7 @@ namespace Coinelity.AspServer.Models
         [MinLength(1, ErrorMessage = "The isRealBalance property must be provided. Use 1 for true or 0 for false.", ErrorMessageResourceName = "userId")]
         [MaxLength(1, ErrorMessage = "The isRealBalance property must be provided. Use 1 for true or 0 for false.", ErrorMessageResourceName = "userId")]
         [Range(0, 1, ErrorMessage = "Invalid range. Use 1 for true or 0 for false.", ErrorMessageResourceName = "isRealBalance")]
-        public byte IsRealBalance { get; set; }
+        public byte UserAccountType { get; set; }
 
         [Required]
         public int AssetId { get; set; }

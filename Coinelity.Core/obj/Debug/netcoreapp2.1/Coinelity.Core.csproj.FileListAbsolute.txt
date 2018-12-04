@@ -16,3 +16,12 @@ D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coi
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.AssemblyInfo.cs
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.dll
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.pdb
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.deps.json
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.dll
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.pdb
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.csprojAssemblyReference.cache
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.csproj.CoreCompileInputs.cache
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.AssemblyInfoInputs.cache
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.AssemblyInfo.cs
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.dll
+C:\Users\utilizador\Documents\REPO\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.pdb

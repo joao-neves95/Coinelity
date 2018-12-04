@@ -22,7 +22,7 @@ namespace Coinelity.AspServer.Models
         {
             this.Id = activeOptionJoined.Id;
             this.UserId = activeOptionJoined.UserId;
-            this.IsRealBalance = activeOptionJoined.IsRealBalance;
+            this.IsRealBalance = activeOptionJoined.UserAccountType;
             this.OperationTypeId = activeOptionJoined.OperationTypeId;
             this.AssetId = activeOptionJoined.AssetId;
             this.Symbol = activeOptionJoined.Symbol;

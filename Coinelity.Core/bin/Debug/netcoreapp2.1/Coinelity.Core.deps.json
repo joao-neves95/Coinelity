@@ -347,35 +347,35 @@
     "DotNetEnv/1.2.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-TT7pY8szkPDptJPDt/Uct/rgrkpfx2TdzFprDjU1Il3h6lRhG1xI3spw58CbtcFF68XTSGlaoydMRiFi92GLyw==",
+      "sha512": "sha512-rz5dn2dP9yyvZTAR5Ae+5RuyvrPG9Hd3qgMJ4/5Lrv6DzHtowSiV2hpEFbRjRLJFug7TzHfa7titUQnwNMhUIA==",
       "path": "dotnetenv/1.2.0",
       "hashPath": "dotnetenv.1.2.0.nupkg.sha512"
     },
     "Isopoh.Cryptography.Argon2/1.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-PeDHkg4QTyWo3HFajB62shI//DVTnUX9ZarlyGqT1HJ51WTAkNDhrJhwi3kmd0JDvrbvqFLk3aKleHeLlxBDpQ==",
+      "sha512": "sha512-qAQ8CU66vW0kxdxtfLzcdr86OIIXQgzlEgzAjaFEy0h+vw5vVwz0QW3pDfaxHYnkeVqjGQb0CCf8czzD/I8yzw==",
       "path": "isopoh.cryptography.argon2/1.0.8",
       "hashPath": "isopoh.cryptography.argon2.1.0.8.nupkg.sha512"
     },
     "Isopoh.Cryptography.Blake2b/1.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ezd7sUy+K/b5UCWkjxBYHh6uLWAIrxFfm25K8kA47mACn4qmx/Xdx/6XBS15s4MOGpoyyEpyMDH2bvQkLL5sDw==",
+      "sha512": "sha512-F4J82rhnqCVw5SCp7HSMlRpT3FLm0W3K6rvycFPHXBxQYb83+TVNHWwJJISmECn16Od/T5+R5gqs5aSz4qKgsg==",
       "path": "isopoh.cryptography.blake2b/1.0.8",
       "hashPath": "isopoh.cryptography.blake2b.1.0.8.nupkg.sha512"
     },
     "Isopoh.Cryptography.SecureArray/1.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-HgsU04CpHwGkk1OcPNxvo3BmbKMJ8CbNLuJjtXKxvlzOGKmElyMjFRfx1p+EhzSCsRn8FzoJSSlc6lypbIMuLg==",
+      "sha512": "sha512-e2WdgCYO/oJzxVKMD39iadv7L8S0adH7zaRO9gTnTb0tiF3YqUr8ByGeDL9jrP6t9uPJrc1yKQMeDjtGRKwauw==",
       "path": "isopoh.cryptography.securearray/1.0.8",
       "hashPath": "isopoh.cryptography.securearray.1.0.8.nupkg.sha512"
     },
     "Microsoft.AspNet.SignalR.Client/2.3.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-4yc83kBdDuL/8A3f7LQ71tmEGTZfpApiuRC2nTdjSGbCAoO2TavR8rn/By34aNxID2FufZCRAoj3EW4oOW0nkg==",
+      "sha512": "sha512-XgUxSeNlwsdK7m1T0SJiPSAICGP3xNHLVYgAgUOEzrHVuP5G7ooYyY+uLZ00X5FXu1TMGHp0vPXd8YaQACuJKg==",
       "path": "microsoft.aspnet.signalr.client/2.3.0",
       "hashPath": "microsoft.aspnet.signalr.client.2.3.0.nupkg.sha512"
     },
@@ -389,7 +389,7 @@
     "Newtonsoft.Json/11.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ==",
+      "sha512": "sha512-znZGbws7E4BA9jxNZ7FuiIRI3C9hrgatVQSTKhIYZYNOud4M5VfGlTYi6RdYO5sQrebFuF/g9UEV3hOxDMXF6Q==",
       "path": "newtonsoft.json/11.0.2",
       "hashPath": "newtonsoft.json.11.0.2.nupkg.sha512"
     },
@@ -403,7 +403,7 @@
     "NLog/4.5.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-t0NJVxerdU9QYgQQLa4XA3v1eLDBnJ5MF7AyoMxmJu38iAzrB4hVZYcCH3j0tKFKm7fOIx5jNbnAd9GD4mRTEA==",
+      "sha512": "sha512-8MzV81cLzeg4oIR04GvRa9YdaKHuvF+mPPwNHBs0hsSOkhFdVg2jsRU+vUZJ5Z693dBHZrxjjr0f/il1Nrioww==",
       "path": "nlog/4.5.8",
       "hashPath": "nlog.4.5.8.nupkg.sha512"
     },
@@ -438,14 +438,14 @@
     "System.Configuration.ConfigurationManager/4.5.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-NIY8VUJuSNeXPrV5wjQBKKMcd/vctzEGzQuY15zt3/j7Vd4PXfk/QVIOBlqU1/ONRRUu0dsdk5uUTLSSNY+now==",
+      "sha512": "sha512-+2SYYKwbN0n+9SrBanflZdaVleFkytEfTNzOu+f3SK0vROMMrorpw1UJyHJQ1ZooughRxPmLj8Fh5N2tSe7sdA==",
       "path": "system.configuration.configurationmanager/4.5.0",
       "hashPath": "system.configuration.configurationmanager.4.5.0.nupkg.sha512"
     },
     "System.Data.SqlClient/4.5.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-qXTvTFkBds7bnN+ntBMHGvmH3pCAkfT4TE1z2Xvfqo4wKMQC77O4aXsYCc7dzCESC+/Gom6l0GLuebpFx7MDvg==",
+      "sha512": "sha512-cTPUCClr34EGBnyazUeciMD6sNm9aiE/li3uGvJ7z5dGup9QxKwysUeKXIrCO0E5KtQQAzGORFEYmowyEpcL2A==",
       "path": "system.data.sqlclient/4.5.1",
       "hashPath": "system.data.sqlclient.4.5.1.nupkg.sha512"
     },
@@ -508,7 +508,7 @@
     "System.Security.Cryptography.ProtectedData/4.5.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-wZGwRoLGTuEQBOYXlZmEK41OfmO+vYWbLk7q5ePoFqs6vOKP2kUsOeviEjQoR6MbW9udlDjx9iWhcWOTzSj05w==",
+      "sha512": "sha512-s/MFK8BvgtejZj5a8qAPDXEGBtWkpFX98qwQP/wqVa9CgIC7LrKHxDFdlN5x6afGAb0ZVBVGIZlCdBLnO2QjZw==",
       "path": "system.security.cryptography.protecteddata/4.5.0",
       "hashPath": "system.security.cryptography.protecteddata.4.5.0.nupkg.sha512"
     },

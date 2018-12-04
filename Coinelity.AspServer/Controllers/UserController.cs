@@ -156,7 +156,6 @@ namespace Coinelity.AspServer.Controllers
             return Ok( Json( new jwtDTO { AccessToken = JWTTokens.Generate( userEmail, userId ) } ).Value );
         }
 
-
         [Authorize]
         [HttpGet("authenticated")]
         public IActionResult Authenticated()
@@ -313,8 +312,34 @@ namespace Coinelity.AspServer.Controllers
 
         #endregion
 
+        [Authorize]
+        [HttpGet("balances")]
+        public async Task<string> GetBalances()
+        {
+            string userIdClaim = Utils.GetUserIdClaim( User );
+            UserAccountStore userAccountStore = new UserAccountStore();
+
+            try
+            {
+                using (userAccountStore)
+                {
+                    Dictionary<string, object> userBalances = await userAccountStore.GetBalancesAsync( Convert.ToInt32( userIdClaim ) );
+                    return new ApiResponse( 200, "Success", null, new object[] { userBalances } ).ToJSON();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(  "ERROR in UserController.GetBalances() ", e );
+                return new ApiResponse( 500, "Unknown Error", "Unknown Error", null ).ToJSON();
+            }
+            finally
+            {
+                userAccountStore?.Dispose();
+            }
+        }
+
         [HttpGet("invite/{code}")]
-        public Task<IActionResult> Invite(string code)
+        public void Invite(string code)
         {
             CookieOptions cookieOptions = new CookieOptions();
             cookieOptions.Expires = DateTime.UtcNow.AddDays( 30 );
@@ -326,7 +351,7 @@ namespace Coinelity.AspServer.Controllers
         }
 
         [HttpGet("redeem-code/{id}")]
-        public async Task<IActionResult> RedeemCode( int id )
+        public void RedeemCode( int id )
         {
             // Find the user.
             // Check what the code type does.

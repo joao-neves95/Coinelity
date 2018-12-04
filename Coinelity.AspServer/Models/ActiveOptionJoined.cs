@@ -21,9 +21,7 @@ namespace Coinelity.AspServer.Models
 
         public int UserId { get; set; }
 
-        // public byte IsRealBalance { get; set; }
-        
-        public byte BalanceTypeId { get; set; }
+        public byte UserAccountType { get; set; }
 
         public int OperationTypeId { get; set; }
 

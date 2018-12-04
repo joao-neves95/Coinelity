@@ -95,12 +95,6 @@ namespace Coinelity.AspServer
                 };
             });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.Name = "AuthToken";
-                options.LoginPath = "/";
-            });
-
             services.AddCors();
 
             services.AddHttpContextAccessor();
@@ -108,12 +102,12 @@ namespace Coinelity.AspServer
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                    .AddJsonOptions(options =>
-                    {
-                        options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
-                        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    });
+                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_1 )
+                    .AddJsonOptions( options =>
+                     {
+                         options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                     } );
 
             services.AddSignalR()
                 .AddJsonProtocol( options =>

@@ -8,23 +8,27 @@
  *
  */
 
+/**
+ * Note: All methods are asynchronous.
+ */
 class HttpClient {
   constructor() {
-    DevErrors.cantInstantiateStatic( 'HttpClient' );
+    throw new Error( 'Can not instantiate the static classs HttpClient' );
   }
 
-  // res.json()
   /**
-   * Awaitable (async/await) Fetch Response object or an error.
+   * Awaitable (async/await) Fetch JSON object or an error.
    * 
    * @param { string } url
    * @param { boolean } jwtAuth
    * 
-   * @return { Promise<Response | Error> }
+   * @return { Promise<JSON | Error> }
    */
-  static get( url, jwtAuth = true, Callback ) {
-    HttpClient.request( RequestType.Get, url, null, jwtAuth, ( err, res ) => {
-      return Callback( err, res );
+  static get( url, jwtAuth = true ) {
+    return new Promise( async ( resolve, reject ) => {
+      HttpClient.request( RequestType.Get, url, null, jwtAuth )
+        .then( res => resolve( res.json() ) )
+        .catch( e => reject( e ) );
     } );
   }
 
@@ -38,10 +42,12 @@ class HttpClient {
    * 
    * @return { Response }
    */
-  static post( url, body, jwtAuth = true, Callback ) {
-    //HttpClient.request( RequestType.Post, url, body, jwtAuth )
-    //  .then( res => { Callback( null, res ); } )
-    //  .catch( err => { Callback( err, null ); } );
+  static post( url, body, jwtAuth = true ) {
+    return new Promise( async ( resolve, reject ) => {
+      HttpClient.request( RequestType.Post, url, body, jwtAuth )
+        .then( res => { resolve( res.json() ); } )
+        .catch( err => { reject( err ); } );
+    } );
   }
 
   /**
@@ -50,47 +56,57 @@ class HttpClient {
    * @param {any} url
    * @param {any} body
    * @param {any} jwtAuth
-   * @param {any} Callback
    * 
-   * @return { Response }
+   * @return { Promise<JSON | Error> }
    */
-  static put( url, body, jwtAuth = true, Callback ) {
-    //HttpClient.request( RequestType.Put, url, body, jwtAuth )
-    //  .then( res => { Callback( null, res ); } )
-    //  .catch( err => { Callback( err, null ); } );
+  static put( url, body, jwtAuth = true ) {
+    return new Promise( async ( resolve, reject ) => {
+      HttpClient.request( RequestType.Put, url, body, jwtAuth )
+        .then( res => { resolve( res.json() ); } )
+        .catch( err => { reject( err ); } );
+    } );
+  }
+
+  static delete( url, jwtAuth = true ) {
+    return new Promise( async ( resolve, reject ) => {
+      HttpClient.request( RequestType.Delete, url, null, jwtAuth )
+        .then( res => { resolve( res.json() ); } )
+        .catch( err => { reject( err ); } );
+    } );
   }
 
   /**
    * Returns a Fetch Response object or an error.
    * 
-   * @param {any} requestType
-   * @param {any} url
-   * @param {any} body
-   * @param {any} jwtAuth
+   * @param { RequestType } requestType
+   * @param { string } url
+   * @param { any } body
+   * @param { boolean } jwtAuth Whether or not to use JWT authentication (from localStorage).
    * @param {any} Callback
    * 
    * @return { Response }
    */
   static request( requestType, url, body = null, jwtAuth = true, Callback ) {
-    let requestObject = {
-      method: requestType,
-      headers: new Headers()
-    };
+    return new Promise( async ( resolve, reject ) => {
 
-    if ( jwtAuth )
-      requestObject.headers['Authorization'] = 'Bearer ' + localStorage.getItem( AUTH_TOKEN_ID );
+      let requestObject = {
+        method: requestType,
+        headers: {}
+      };
 
-    if ( requestType === RequestType.Post || requestType === RequestType.Put ) {
-      requestObject.body = body | '';
-      requestObject.headers['Content-Type'] = 'application/json;charset=utf-8';
-    }
+      if ( jwtAuth )
+        requestObject.headers['Authorization'] = 'Bearer ' + localStorage.getItem( AUTH_TOKEN_ID );
 
-    ( async () => {
+      if ( requestType === RequestType.Post || requestType === RequestType.Put ) {
+        requestObject.body = !body ? '' : JSON.stringify( body );
+        requestObject.headers['Content-Type'] = 'application/json;charset=utf-8';
+      }
+
       await fetch( url, requestObject )
         //.then( res => { return res.json(); } )
         //.then( jsonData => { return Callback( null, jsonData ); } )
-        .then( res => { return Callback( null, res ); } )
-        .catch( err => { return Callback( err, null ); } );
-      } )();
+        .then( res => { return resolve( res ); } )
+        .catch( err => { return reject( err ); } );
+    } );
   }
 }

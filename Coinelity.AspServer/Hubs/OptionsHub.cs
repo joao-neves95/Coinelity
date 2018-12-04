@@ -68,7 +68,7 @@ namespace Coinelity.AspServer.Hubs
                 decimal userBalance = 0.0M;
                 using (userAccountStore = new UserAccountStore())
                 {
-                    userBalance = await userAccountStore.GetUserBalanceAsync( thisUserId, accountType );
+                    userBalance = await userAccountStore.GetBalanceAsync( thisUserId, accountType );
                 }
 
                 if (Convert.ToDecimal( order.InvestmentAmount ) > userBalance)
