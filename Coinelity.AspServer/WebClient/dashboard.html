@@ -28,14 +28,14 @@
 
 <body>
   <div class="grid-container fluid">
-    <!-- DESKTOP TOPBAR -->
+    <!-- TOPBAR -->
     <header class="top-bar">
       <div class="top-bar-left">
         <button class="menu-icon mobile-burger" type="button"></button>
         <h3 class="title-bar-title">Coinelity</h3>
       </div>
-      <div class="top-bar-right">
-        <div class="profile-btn">
+      <section class="top-bar-right">
+        <div class="profile-btn" data-toggle="profile-dropdown">
           <figure class="profile">
           </figure>
           <span class="arrow"></span>
@@ -43,14 +43,39 @@
         <div class="balance-wrapper">
           <p id="balance" class="demo"> 1000.00€ </p>
         </div>
-      </div>
+      </section>
+      <section class="dropdown-pane" id="profile-dropdown" data-position="bottom" data-alignment="left" data-dropdown data-auto-focus="true">
+        <form class="grid-container">
+          <div class="grid-y grid-margin-y">
+            <div class="cell medium-12">
+              <div class="grid-x menu">
+                <div class="cell medium-6">
+                  <button id="real-account-btn" class="button" type="button" role="button">Real Account</button>
+                </div>
+                <div class="cell medium-6">
+                  <button id="demo-account-btn" class="button active" type="button" role="button" autofocus active>Demo Account</button>
+                </div>
+              </div>
+            </div>
+            <div class="cell medium-12">
+              <button id="prof-logout-btn" class="button" type="button" role="button">Logout</button>
+            </div>
+          </div>
+        </form>
+      </section>
     </header>
-    <div class="grid-x container-content">
+    <section class="grid-x container-content">
+
+      <!-- SIDEBAR -->
       <aside class="cell sidenav anim" id="sidenav">
         <ul class="grid-y no-bullet" id="icon-container"></ul>
       </aside>
-      <section class="cell small-12 medium-12 large-12 page-container anim" id="page-container"></section>
-    </div>
+
+      <!-- PAGE -->
+      <section class="cell small-12 medium-12 large-12 page-container anim" id="page-container">
+      </section>
+    </section>
+
   </div>
   <!-- JQUERY JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>

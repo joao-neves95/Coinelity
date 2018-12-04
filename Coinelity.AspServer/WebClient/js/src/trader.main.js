@@ -20,6 +20,8 @@ whenDomReady(() => {
   NavbarController._.mapItem( NavItemID.Settings, new SettingsController() );
 
   NavbarController._.init();
+  TopnavController._.init();
+  new Authentication();
 
   // TODO: What a stupid thing to do. Do not use cookies. Fetch the requested page from the document URL -_-
   const cookies = document.cookie.split( ';' );

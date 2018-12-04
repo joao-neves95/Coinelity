@@ -20,9 +20,10 @@
 // @import '/services/errorHandler'
 // @import '/services/httpClient'
 // @import '/services/exchangeClient'
+// @import '/services/authentication'
 // @import '/services/traderRoutes'
-// @import '/services/loadingPage'
 // @import '/services/notifications'
+// @import '/services/loadingPage'
 // @import '/navbar/navbarItemBase'
 // @import<<DIR '/interfaces/'
 // @import '/pages/dashboard/dashboard.templates'
@@ -49,6 +50,9 @@
 // @import '/navbar/navbar.model'
 // @import '/navbar/navbar.view'
 // @import '/navbar/navbar.controller'
+// @import '/topbar/topbar.model'
+// @import '/topbar/topbar.view'
+// @import '/topbar/topbar.controller'
 // @import '/services/themes'
 // @import 'trader.main'
 // @import '/services/traderRoutes'
@@ -1334,6 +1338,25 @@ class ExchangeClient {
 
 new ExchangeClient();
 
+let authentication = null;
+
+class Authentication {
+  constructor() {
+    if ( authentication )
+      throw DevErrors.singleIntance( 'Authentication' );
+
+    authentication = this;
+    Object.seal( authentication );
+  }
+
+  static get _() { return authentication; }
+
+  logout() {
+    localStorage.removeItem( AUTH_TOKEN_ID );
+    window.location = BASE_URL;
+  }
+}
+
 /*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
@@ -1367,17 +1390,6 @@ page( `/${NavItemID.Trade}/:assetID`, ( ctx ) => {
 page( `/${NavItemID.Settings}`, () => {
   NavbarController._.activateItem( NavItemID.Settings );
 } );
-
-/*
- *
- * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
- * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
- * Proprietary and confidential.
- * The EULA is located in the root of this project, under the name "LICENSE.md".
- * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
- *
- */
-
 
 /*
  *
@@ -1445,6 +1457,17 @@ class Notifications {
     swall();
   }
 }
+
+/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
 
 /*
  *
@@ -3353,6 +3376,125 @@ class NavbarController {
 
 new NavbarController();
 
+let topbarModel = null;
+
+class TopbarModel {
+  constructor() {
+    if ( topbarModel )
+      throw DevErrors.singleIntance( 'TopbarModel' );
+
+    this.currentAccountType = UserAccountType.PaperBalance;
+
+    this.realBalance = 0;
+    this.creditsBalance = 0;
+    this.paperBalance = 0;
+
+    topbarModel = this;
+    Object.seal( topbarModel );
+  }
+
+  fetchUserBalances() {
+    return new Promise( async ( resolve, reject ) => {
+      try {
+        const userBalances = await HttpClient.get( BASE_API_URL + 'users/balances' );
+        this.realBalance = userBalances.realBalance;
+        this.creditsBalance = userBalances.creditsBalance;
+        this.paperBalance = userBalances.paperBalance;
+        return resolve( userBalances );
+
+      } catch ( e ) {
+        return reject( e );
+      }
+    } );
+  }
+}
+
+let topbarView = null;
+
+class TopbarView {
+  constructor() {
+    if ( topbarView )
+      throw DevErrors.singleIntance( 'TopbarView' );
+
+    topbarView = this;
+    Object.freeze( topbarView );
+  }
+
+  get realAccountBtn() { return document.getElementById( 'real-account-btn' ); }
+  get demoAccountBtn() { return document.getElementById( 'demo-account-btn' ); }
+  get logoutBtn() { return document.getElementById( 'prof-logout-btn' ); }
+
+  activateRealAccountBtn() {
+    this.__activateBtn( this.realAccountBtn );
+    this.__deactivateBtn( this.demoAccountBtn );
+  }
+
+  activateRealDemoBtn() {
+    this.__activateBtn( this.demoAccountBtn );
+    this.__deactivateBtn( this.realAccountBtn );
+  }
+
+  /**
+   * 
+   * @param { HTMLElement } btnElem
+   */
+  __activateBtn( btnElem ) {
+    btnElem.classList.add( 'active' );
+    btnElem.focus();
+  }
+
+  /**
+   * 
+   * @param { HTMLElement } btnElem
+   */
+  __deactivateBtn( btnElem ) {
+    btnElem.classList.remove( 'active' );
+  }
+}
+
+let topnavController = null;
+
+class TopnavController {
+  constructor() {
+    if ( topnavController )
+      throw DevErrors.singleIntance( 'TopnavController' );
+
+    this.model = new TopbarModel();
+    this.view = new TopbarView();
+
+    topnavController = this;
+    Object.freeze( topnavController );
+  }
+
+  /**
+   * @returns { TopnavController }
+   */
+  static get _() { return topnavController; }
+
+  init() {
+    this.__addListeners();
+    this.model.fetchUserBalances();
+  }
+
+  __addListeners() {
+    DOM.on( 'click', this.view.realAccountBtn, () => {
+      this.view.activateRealAccountBtn();
+      this.model.currentAccountType = UserAccountType.RealBalance;
+    } );
+
+    DOM.on( 'click', this.view.demoAccountBtn, () => {
+      this.view.activateRealDemoBtn();
+      this.model.currentAccountType = UserAccountType.PaperBalance;
+    } );
+
+    DOM.on( 'click', this.view.logoutBtn, () => {
+      Authentication._.logout();
+    } );
+  }
+}
+
+new TopnavController();
+
 /*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
@@ -3479,6 +3621,8 @@ whenDomReady(() => {
   NavbarController._.mapItem( NavItemID.Settings, new SettingsController() );
 
   NavbarController._.init();
+  TopnavController._.init();
+  new Authentication();
 
   // TODO: What a stupid thing to do. Do not use cookies. Fetch the requested page from the document URL -_-
   const cookies = document.cookie.split( ';' );
