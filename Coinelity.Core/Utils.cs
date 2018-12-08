@@ -82,5 +82,24 @@ namespace Coinelity.Core
 
             return (T)obj;
         }
+
+        public static readonly string alphaNum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+        public static int RandomInt(int min = 0, int max = 100)
+        {
+            return new Random().Next( min, max );
+        }
+
+        public static string RandomAlphaNumeric(uint size = 5)
+        {
+            StringBuilder result = new StringBuilder( (int)size );
+
+            for (uint i = 0; i <= size; ++i)
+            {
+                result.Append( Utils.alphaNum[Utils.RandomInt( 0, 62 )] );
+            }
+
+            return result.ToString();
+        }
     }
 }

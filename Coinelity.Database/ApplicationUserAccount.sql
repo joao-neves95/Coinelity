@@ -11,7 +11,7 @@
 CREATE TABLE dbo.ApplicationUserAccount
 (
     Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
-    UserId INT NOT NULL FOREIGN KEY REFERENCES dbo.ApplicationUser( Id ),
+    UserId INT UNIQUE NOT NULL FOREIGN KEY REFERENCES dbo.ApplicationUser( Id ),
     RealBalance DECIMAL(16,4) NOT NULL DEFAULT 0.0,
     FreezedRealBalance DECIMAL(16,4) NOT NULL DEFAULT 0.0,
     CreditsBalance FLOAT(24) NOT NULL DEFAULT 0.0,

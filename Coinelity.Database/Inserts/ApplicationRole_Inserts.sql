@@ -14,7 +14,9 @@ GO
 INSERT INTO dbo.ApplicationRole (Id, Name)
 VALUES 
     (1, 'Admin'),
-    (2, 'Trader')
+    (2, 'Trader'),
+    (3, 'Client_Support'),
+    (4, 'Content_Creator')
 GO
 
 SET IDENTITY_INSERT dbo.ApplicationRole OFF;

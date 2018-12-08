@@ -33,6 +33,12 @@ namespace Coinelity.AspServer.Models
 
         public bool PhoneNumberConfirmed { get; set; }
 
+        public string AffiliateCode { get; set; }
+
+        public int? AffiliatedTo { get; set; }
+
+        public byte FailedLogins { get; set; }
+
         public bool LockoutEnabled { get; set; }
 
         public DateTime LockoutEnd { get; set; }

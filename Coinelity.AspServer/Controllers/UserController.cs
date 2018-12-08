@@ -61,18 +61,17 @@ namespace Coinelity.AspServer.Controllers
             }
 
             if (userExists)
-                return BadRequest( new ApiResponse(400, "Client Error", ErrorMessages.EmailAlreadyInUse, null ).ToJSON() );
-
-            string affiliatedTo = _httpContextAccessor.HttpContext.Request.Cookies[AFFILIATE_TOKEN_KEY];
-            int? affiliatedToId;
-            using (UserStore userStore = new UserStore())
-            {
-                affiliatedToId = await userStore.GetUserIdByAffiliateCode( affiliatedTo );
-            }
+                return BadRequest( new ApiResponse( 400, "Client Error", ErrorMessages.EmailAlreadyInUse, null ).ToJSON() );
 
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
-            // When running the server in localhost it returns "::1".
             user.IpAddress = Utils.GetUserIp( _httpContextAccessor );
+
+            // TODO (MIDDLEWARE) Test affiliate (empty and populated) cookie on register.
+            string affiliatedTo = _httpContextAccessor.HttpContext.Request.Cookies[AFFILIATE_TOKEN_KEY];
+            using (UserStore userStore = new UserStore())
+            {
+                user.AffiliatedTo = await userStore.GetIdByAffiliateCodeAsync( affiliatedTo );
+            }
 
             IdentityResult registerSuccess = await _userManager.CreateAsync( user, user.Password );
 
@@ -81,7 +80,7 @@ namespace Coinelity.AspServer.Controllers
                 // return StatusCode( 500 );
                 return StatusCode( 500, new ApiResponse( 400, "Client Error", JsonConvert.SerializeObject( registerSuccess.Errors, Formatting.Indented ) ).ToJSON() );
 
-            // Do not await. Ignore warning.
+            // Do not await. Ignore VS warning.
             Task.Run( async () =>
             {
                 AuditLogStore auditLogStore = null;
@@ -92,12 +91,12 @@ namespace Coinelity.AspServer.Controllers
                 {
                     using (userStore = new UserStore())
                     {
-                        userId = await userStore.GetUserIdByEmailAsync( registerDTO.Email );
+                        userId = await userStore.GetIdByEmailAsync( registerDTO.Email );
                     }
 
                     using (auditLogStore = new AuditLogStore())
                     {
-                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Register, Utils.GetUserIp( _httpContextAccessor ) );
+                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Register,  Utils.GetUserIp( _httpContextAccessor ) );
                     }
                 }
                 catch (Exception e)
@@ -129,10 +128,10 @@ namespace Coinelity.AspServer.Controllers
             if (!signInResult.Succeeded)
                 return BadRequest( Json( new ErrorMessage( ErrorType.LoginError ) ).Value );
 
-            string userId = await userStore.GetUserIdByEmailAsync( userEmail );
+            string userId = await userStore.GetIdByEmailAsync( userEmail );
             userStore.Dispose();
 
-            // Do not await. Ignore warning.
+            // Do not await. Ignore VS warning.
             Task.Run( async () =>
             {
                  AuditLogStore auditLogStore = null;

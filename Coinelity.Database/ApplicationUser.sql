@@ -8,6 +8,7 @@
  *
  */
 
+-- TODO: (BACKEND) Add country, birth date, etc.
 CREATE TABLE dbo.ApplicationUser
 (
 	Id INT NOT NULL PRIMARY KEY IDENTITY(1,1),
@@ -18,11 +19,10 @@ CREATE TABLE dbo.ApplicationUser
     GoogleCode NVARCHAR(100) NULL DEFAULT '',
     PhoneNumber NVARCHAR(40) NULL DEFAULT '',
     PhoneNumberConfirmed BIT NOT NULL DEFAULT 0,
-    AffiliateCode NVARCHAR(50) NOT NULL,
+    AffiliateCode NVARCHAR(50) UNIQUE NOT NULL,
     AffiliatedTo INT NULL FOREIGN KEY REFERENCES dbo.ApplicationUser( Id ),
-    -- TODO: Add country, birth date, etc.
     FailedLogins TINYINT NOT NULL DEFAULT 0,
-    LockoutEnabledEnabled BIT NOT NULL DEFAULT 0,
+    LockoutEnabled BIT NOT NULL DEFAULT 0,
     LockoutEnd DATETIME NULL,
     CreateDate DATETIME NOT NULL DEFAULT GETUTCDATE(),
     LastLogin DATETIME NOT NULL DEFAULT GETUTCDATE()

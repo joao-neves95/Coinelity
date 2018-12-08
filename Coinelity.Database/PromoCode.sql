@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
@@ -11,9 +11,11 @@
 CREATE TABLE dbo.PromoCode
 (
     Id INT NOT NULL PRIMARY KEY,
-    User_Id INT NOT NULL FOREIGN KEY REFERENCES ApplicationUserAccount( Id ),
-    MaxRedeems INT NOT NULL CHECK (MaxRedeems > 0),
+    Code NVARCHAR(100) UNIQUE NOT NULL,
+    UserId INT NOT NULL FOREIGN KEY REFERENCES ApplicationUserAccount( Id ),
+    MaxRedeems INT NULL CHECK (MaxRedeems > 0 OR MaxRedeems IS NULL),
     RedeemCount INT DEFAULT 0,
-    ExpirationTimeStamp DATETIME NULL,
-    CreditsValue INT NULL
+    ExpirationTimestamp DATETIME NULL,
+    CreditsValue INT NULL,
+    CONSTRAINT chk_PromoCode_notNull CHECK ( MaxRedeems IS NOT NULL OR ExpirationTimestamp IS NOT NULL )
 )

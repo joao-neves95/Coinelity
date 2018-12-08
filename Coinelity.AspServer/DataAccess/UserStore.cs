@@ -56,8 +56,8 @@ namespace Coinelity.AspServer.DataAccess
             {
                 MSSQLClient.ParameterizeCommand(
                     connection,
-                    @"INSERT INTO dbo.ApplicationUser (Email, NormalizedEmail, Password)
-                      VALUES (@Email, @NormalizedEmail, @Password)",
+                    $@"INSERT INTO dbo.ApplicationUser (Email, NormalizedEmail, Password, AffiliateCode, AffiliatedTo)
+                       VALUES (@Email, @NormalizedEmail, @Password, {Utils.RandomAlphaNumeric()}, {user.AffiliatedTo}",
                     new Dictionary<string, object>
                     {
                         { "@Email", user.Email },
@@ -69,12 +69,12 @@ namespace Coinelity.AspServer.DataAccess
                        VALUES ({ userIdQuery })",
                     connection),
                 new SqlCommand(
-                    $@"INSERT INTO dbo.ApplicationUserSettings (UserId, LastUpdate)
-                      VALUES ({ userIdQuery }, GETUTCDATE())",
+                    $@"INSERT INTO dbo.ApplicationUserSettings (UserId)
+                       VALUES ({ userIdQuery })",
                     connection),
                 new SqlCommand(
                     $@"INSERT INTO dbo.ApplicationUserAccount (UserId)
-                      VALUES ({ userIdQuery })",
+                       VALUES ({ userIdQuery })",
                     connection),
                 MSSQLClient.ParameterizeCommand(
                     connection,
@@ -86,7 +86,7 @@ namespace Coinelity.AspServer.DataAccess
                     })
             };
 
-            bool success = await MSSQLClient.NonQueryTransactionOnceAsync(connection, commands);
+            bool success = await MSSQLClient.NonQueryTransactionOnceAsync( connection, commands );
 
             if (!success)
                 return IdentityResult.Failed();
@@ -130,13 +130,18 @@ namespace Coinelity.AspServer.DataAccess
             return true;
         }
 
+        public string FindQuery()
+        {
+            return $@"SELECT *
+                      FROM dbo.ApplicationUser ";
+        }
+
         public async Task<ApplicationUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(_connection,
-                $@"SELECT *
-                   FROM dbo.ApplicationUser
+                $@"{ FindQuery() }
                    WHERE Id = @ID",
                 new Dictionary<string, object>()
                 {
@@ -152,8 +157,7 @@ namespace Coinelity.AspServer.DataAccess
             cancellationToken.ThrowIfCancellationRequested();
 
             IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(_connection,
-                $@"SELECT *
-                   FROM dbo.ApplicationUser
+                $@"{ FindQuery() }
                    WHERE NormalizedEmail = @NormalizedEmail",
                 new Dictionary<string, object>
                 {
@@ -177,7 +181,7 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="userEmail"></param>
         /// <returns></returns>
-        public async Task<string> GetUserIdByEmailAsync(string userEmail)
+        public async Task<string> GetIdByEmailAsync(string userEmail)
         {
             IList<Dictionary<string, object>> userDictionaryList = await MSSQLClient.QueryOnceAsync(
                 _connection,
@@ -196,7 +200,14 @@ namespace Coinelity.AspServer.DataAccess
             return userDictionaryList[0]["Id"].ToString();
         }
 
-        public async Task<int?> GetUserIdByAffiliateCode(string code)
+        /// <summary>
+        /// 
+        /// It returns the affiliate id or null.
+        /// 
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public async Task<int?> GetIdByAffiliateCodeAsync(string code)
         {
             IList<Dictionary<string, object>> userDictList = await MSSQLClient.QueryOnceAsync(
                 _connection,

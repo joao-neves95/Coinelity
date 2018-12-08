@@ -16,7 +16,10 @@ VALUES
     (1, 'Call'),
     (2, 'Put'),
     (3, 'Long'),
-    (4, 'Short')
+    (4, 'Short'),
+    (5, 'Deposit'),
+    (6, 'Withdraw'),
+    (7, 'Affiliated_Deposit')
 GO
 
 SET IDENTITY_INSERT dbo.EventType OFF;

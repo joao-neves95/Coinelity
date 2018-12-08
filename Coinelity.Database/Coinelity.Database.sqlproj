@@ -89,5 +89,7 @@
     <None Include="Inserts\Exchange_Inserts.sql" />
     <None Include="Inserts\UserAccountType_Inserts.sql" />
     <None Include="Inserts\PromoType_Inserts.sql" />
+    <None Include="Inserts\Asset_Inserts.sql" />
+    <None Include="Inserts\OptionPayout_Inserts.sql" />
   </ItemGroup>
 </Project>
