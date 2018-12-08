@@ -1,0 +1,8 @@
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.deps.json
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.pdb
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.csproj.CoreCompileInputs.cache
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.AssemblyInfoInputs.cache
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.AssemblyInfo.cs
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.pdb

@@ -63,7 +63,7 @@ namespace Coinelity.AspServer.DataAccess
         public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserEmailAsync(string userEmail)
         {
             UserStore userStore = new UserStore();
-            string userId = await userStore.GetUserIdByEmailAsync( userEmail );
+            string userId = await userStore.GetIdByEmailAsync( userEmail );
             userStore.Dispose();
 
             return await GetUserRolesByUserIdAsync( userId );

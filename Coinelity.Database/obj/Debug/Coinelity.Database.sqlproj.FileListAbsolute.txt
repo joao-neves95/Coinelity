@@ -1,0 +1,5 @@
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.dacpac
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\bin\Debug\Coinelity.Database.pdb
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.dll
+D:\Utilizador\Documents\DEV\Coinelity\Coinelity.Database\obj\Debug\Coinelity.Database.pdb
