@@ -26,6 +26,9 @@ class TradeView extends ViewBase {
   get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
   get tradingToolsFiatSymbolElem() { return document.getElementById( 'trading-tools_fiat-symbol' ); }
 
+  /** @returns { UserAccountType } */
+  getCurrentAccountType() { return document.getElementById( 'account-btns' ).getElementsByClassName( 'active' )[0].id === 'real-account-btn' ? UserAccountType.RealBalance : UserAccountType.PaperBalance; }
+
   injectContainer() {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
   }
@@ -39,6 +42,8 @@ class TradeView extends ViewBase {
    * @param { TradingMode } tradingToolsType
    */
   injectTradingTools( tradingToolsType ) {
+    // TODO: (FRONTEND) Get the current account type from the topbar.
+    const currentAccountType = this.getCurrentAccountType();
     let tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' )[0];
 
     if ( tradingToolsType === TradingMode.BinaryOptions )

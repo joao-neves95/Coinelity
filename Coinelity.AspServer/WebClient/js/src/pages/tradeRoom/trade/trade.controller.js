@@ -8,9 +8,6 @@
  *
  */
 
-// Add chart candlesticks with Plotly.extendTraces
-// Update existing chart candlesticks with Plotly.restyle
-
 let tradeController = null;
 
 class TradeController extends ControllerBase {
@@ -41,6 +38,7 @@ class TradeController extends ControllerBase {
 
   injectChart() {
     return new Promise( async ( resolve, reject ) => {
+      this.model.currentAccountType = this.view.getCurrentAccountType();
       this.view.injectChartTemplate();
       await this.model.getInitChartData();
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
@@ -61,6 +59,7 @@ class TradeController extends ControllerBase {
         await this.__updateCandles();
       }, Utils.getMilisecondsFromChartTimeframe( this.model.currentTimeframe ) );
 
+       // Only start at the next timeframe candle.
     }, Utils.getTimeToNextTimeframe( this.model.currentTimeframe ) );
   }
 
@@ -90,7 +89,7 @@ class TradeController extends ControllerBase {
         this.view.updateTradingToolsCurrPrice( lastPrice.toString() );
 
       } catch {
-        // TODO: Send error notification.
+        // TODO: (FRONTEND) Show error notification.
         return console.error( 'There was an error while trying to connect to the data provider.' );
       }
     }, TRADE_PRICE_UPDATE_RATE );
@@ -127,7 +126,7 @@ class TradeController extends ControllerBase {
       this.model.chart.setOption( this.model.chartConfig );
 
     } catch {
-      // TODO: Send error notification.
+      // TODO: (FRONTEND) Show error notification.
       return console.error( 'There was an error while trying to connect to the data provider.' );
     }
   }

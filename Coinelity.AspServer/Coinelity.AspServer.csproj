@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="WebClient\js\src\navbarPanelItems\news\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 

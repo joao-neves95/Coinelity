@@ -8,6 +8,8 @@
  *
  */
 
+// TODO: (FRONTEND) Add the line chart.
+
 let tradeModel = null;
 
 class TradeModel extends ModelBase {
@@ -17,6 +19,8 @@ class TradeModel extends ModelBase {
 
     super( '', '', '', '' );
 
+    /** @type { UserAccountType } */
+    this.currentAccounType;
     this.currentTradeMode = TradingMode.BinaryOptions;
     this.currentSymbol = 'BTC/EUR';
     this.currentFiatSymbol = FiatSymbol.Euro;
@@ -151,7 +155,7 @@ class TradeModel extends ModelBase {
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
         this.chartData.categoryData.push( Utils.unixMilisecondsToHuman( OHLCVArray[i][0] ) );
-        // open，close, lowest, highest.
+        //                                 open             close             lowest           highest
         this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }
 
