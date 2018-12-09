@@ -27,6 +27,11 @@ class TradeModel extends ModelBase {
     this.currentExchange = 'KRAKEN';
     this.currentTimeframe = ChartTimeframeType.Min1;
 
+    this.optionsConnection;
+
+    this.chartUpdatePriceInterval = null;
+    this.chartUpdateCandleInterval = null;
+
     this.chart = {};
 
     this.chartData = {
@@ -132,9 +137,6 @@ class TradeModel extends ModelBase {
       ]
     };
 
-    this.chartUpdatePriceInterval = null;
-    this.chartUpdateCandleInterval = null;
-
     tradeModel = this;
     Object.seal( tradeModel );
   }
@@ -183,6 +185,54 @@ class TradeModel extends ModelBase {
       await this.getInitChartData();
       this.chart.setOption( this.chartConfig );
     } );
+  }
+
+  connectToOptionsHub() {
+    this.optionsConnection = new signalR.HubConnectionBuilder()
+      .withUrl( 'options' )
+      // TODO: (FRONTEND) (PRODUCTION) Change to only show errors.
+      // .configureLogging( signalR.LogLevel.Error )
+      .configureLogging( signalR.LogLevel.Trace )
+      .build();
+
+    this.__initOptionsHubListeners();
+    this.__startOptionsHubConnection();
+
+    // Reconnection loop.
+    this.optionsConnection.onclose( async () => {
+      await this.__startOptionsHubConnection();
+    } );
+  }
+
+  async __startOptionsHubConnection() {
+    try {
+      await this.optionsConnection.start();
+
+    } catch ( e ) {
+      console.error( e );
+      setTimeout( () => this.__startOptionsHubConnection(), 5000 );
+    }
+  }
+
+  async stopOptionsHubConnection() {
+    try {
+      await this.optionsConnection.stop();
+
+    } catch ( e ) {
+      console.error( e );
+      setTimeout( () => this.stopOptionsHubConnection(), 5000 );
+    }
+  }
+
+  __initOptionsHubListeners() {
+    this.optionsConnection.on( 'ReceivePlaceOptionResult', ( res ) => {
+      console.debug( res );
+    } );
+  }
+
+  placeOrder( placeOptionDTO ) {
+    this.optionsConnection.invoke( 'PlaceOrder', placeOptionDTO )
+      .catch( e => console.error( e ) );
   }
 
   /**

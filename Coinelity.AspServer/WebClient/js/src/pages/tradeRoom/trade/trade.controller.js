@@ -31,12 +31,13 @@ class TradeController extends ControllerBase {
   async injectContent( symbolId ) {
     this.model.currentSymbol = symbolId;
     this.view.injectContainer();
-    await this.injectChart();
-    this.injectTradeTools();
+    await this.__injectChart();
+    this.__injectTradeTools();
+    this.model.connectToOptionsHub();
     this.view.updateTradingToolsFiatSymbol();
   }
 
-  injectChart() {
+  __injectChart() {
     return new Promise( async ( resolve, reject ) => {
       this.model.currentAccountType = this.view.getCurrentAccountType();
       this.view.injectChartTemplate();
@@ -44,14 +45,14 @@ class TradeController extends ControllerBase {
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();
-      await this.startChartPriceUpdate();
-      this.startChartCandleUpdate();
+      await this.__startChartPriceUpdate();
+      this.__startChartCandleUpdate();
 
       resolve();
     } );
   }
 
-  startChartCandleUpdate() {
+  __startChartCandleUpdate() {
     setTimeout( () => {
       this.__updateCandles();
 
@@ -63,7 +64,7 @@ class TradeController extends ControllerBase {
     }, Utils.getTimeToNextTimeframe( this.model.currentTimeframe ) );
   }
 
-  startChartPriceUpdate() {
+  __startChartPriceUpdate() {
     this.model.chartUpdatePriceInterval = setInterval( async () => {
       let ticker = undefined;
 
@@ -103,7 +104,7 @@ class TradeController extends ControllerBase {
       clearInterval( this.model.chartUpdatePriceInterval );
   }
 
-  injectTradeTools() {
+  __injectTradeTools() {
     this.view.injectTradingTools( this.model.currentTradeMode );
   }
 

@@ -15,6 +15,9 @@ class TradeTemplates {
 
   static get chartElemId() { return 'trading-chart'; }
 
+  /**
+   * The page content container (grid).
+   */
   static container() {
     return `
       <section id="trade" class="grid-container fluid">

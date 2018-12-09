@@ -133,14 +133,14 @@ namespace Coinelity.AspServer
                 app.UseHsts();
             }
 
-            app.UseCors(policyBuilder => {
-                policyBuilder.WithOrigins("http://localhost:3000", "http://localhost:5000", "http://localhost:33620", "http://localhost" )
+            app.UseCors( policyBuilder => {
+                policyBuilder.WithOrigins( "http://localhost:3000", "http://localhost:5000", "http://localhost:33620" )
                              .AllowAnyHeader()
                              .AllowAnyMethod()
                              .AllowCredentials();
-            });
+            } );
 
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            app.UseForwardedHeaders( new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
                 ForwardedHostHeaderName = "Anonymous",
@@ -172,7 +172,7 @@ namespace Coinelity.AspServer
              {
                  context.Response.OnStarting( () =>
                  {
-                     context.Response.Headers.Add("Server", "Anonymous");
+                     context.Response.Headers.Add( "Server", "Anonymous" );
                      return Task.FromResult( 0 );
                  } );
 
