@@ -18,4 +18,4 @@ VALUES (1, '1 Min'),
        (7, '1 Hour'),
        (8, '5 Hours'),
        (9, '12 Hours'),
-       (10, '1 Day')
+       (10, '1 Day');

@@ -58,7 +58,7 @@ class TradeModel extends ModelBase {
 
       } catch {
         Notifications.errorToast( 'There was an error connecting to the data provider. Trying again...' );
-        return this.getInitChartData();
+        return this.initChartData();
       }
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
