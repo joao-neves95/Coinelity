@@ -28,114 +28,17 @@ class TradeModel extends ModelBase {
     this.currentTimeframe = ChartTimeframeType.Min1;
 
     this.optionsConnection;
+    this.openOrders = new Dictionary( true );
 
     this.chartUpdatePriceInterval = null;
     this.chartUpdateCandleInterval = null;
 
     this.chart = {};
-
     this.chartData = {
       categoryData: [],
       values: []
     };
-
-    // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
-    this.chartConfig = {
-      backgroundColor: Colors.LighterGrey,// '#21202D',
-      title: {
-        text: this.currentSymbol,
-        left: 'center'
-      },
-      animation: true,
-      grid: {
-        left: '10%',
-        right: '10%',
-        bottom: '15%'
-      },
-      toolbox: {
-        show: true,
-        right: 10,
-        feature: {
-          saveAsImage: {
-            title: 'Save image as'
-          },
-          dataZoom: {
-            yAxisIndex: 'none',
-            title: {
-              zoom: 'Area zoom',
-              back: 'Restore area zoom'
-            }
-          },
-          restore: {
-            title: 'Restore'
-          }
-        }
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-          animation: true
-        }
-      },
-      xAxis: {
-        type: 'category',
-        data: this.chartData.categoryData,
-        scale: true,
-        boundaryGap: false,
-        axisLine: { onZero: false },
-        splitLine: { show: false },
-        splitNumber: 20,
-        min: 'dataMin',
-        max: 'dataMax'
-      },
-      yAxis: {
-        scale: true,
-        splitArea: {
-          show: true
-        }
-      },
-      dataZoom: [
-        {
-          type: 'inside',
-          start: 90,
-          end: 100
-        },
-        {
-          show: true,
-          type: 'slider',
-          y: '90%',
-          start: 50,
-          end: 100
-        }
-      ],
-      series: [
-        {
-          type: 'candlestick',
-          data: this.chartData.values,
-          itemStyle: {
-            // Bullish candles.
-            color: Colors.BullishGreen,
-            borderColor: Colors.BullishGreen,
-            // Bearish candles.
-            color0: Colors.BearishRed,
-            borderColor0: Colors.BearishRed
-          }
-        }//,
-        //{
-        //  name: 'MA10',
-        //  type: 'line',
-        //  data: calculateMA( 10, data ),
-        //  smooth: true,
-        //  showSymbol: false,
-        //  lineStyle: {
-        //    normal: {
-        //      width: 1
-        //    }
-        //  }
-        //},
-      ]
-    };
+    this.chartConfig = CHART_CONFIG;
 
     tradeModel = this;
     Object.seal( tradeModel );
@@ -187,26 +90,31 @@ class TradeModel extends ModelBase {
     } );
   }
 
-  connectToOptionsHub() {
-    this.optionsConnection = new signalR.HubConnectionBuilder()
-      .withUrl( 'options' )
-      // TODO: (FRONTEND) (PRODUCTION) Change to only show errors.
-      // .configureLogging( signalR.LogLevel.Error )
-      .configureLogging( signalR.LogLevel.Trace )
-      .build();
+  /** 
+   * It returns the promise when it finishes connecting or gets in an infinite loop.
+   */
+   connectToOptionsHub() {
+    return new Promise( async (resolve, reject) => { 
+      this.optionsConnection = new signalR.HubConnectionBuilder()
+        .withUrl( 'options' )
+        // TODO: (FRONTEND) (PRODUCTION) Change to only show errors.
+        // .configureLogging( signalR.LogLevel.Error )
+        .configureLogging( signalR.LogLevel.Trace )
+        .build();
 
-    this.__initOptionsHubListeners();
-    this.__startOptionsHubConnection();
+      this.__initOptionsHubListeners();
+      this.__startOptionsHubConnection();
 
-    // Reconnection loop.
-    this.optionsConnection.onclose( async () => {
-      await this.__startOptionsHubConnection();
+      // Reconnection loop.
+      this.optionsConnection.onclose( async () => {
+        returns await this.__startOptionsHubConnection();
+      } );
     } );
   }
 
   async __startOptionsHubConnection() {
     try {
-      await this.optionsConnection.start();
+      return await this.optionsConnection.start();
 
     } catch ( e ) {
       console.error( e );
@@ -228,11 +136,30 @@ class TradeModel extends ModelBase {
     this.optionsConnection.on( 'ReceivePlaceOptionResult', ( res ) => {
       console.debug( res );
     } );
+
+    this.optionsConnection.on( 'ReceiveCheckOptionResult', ( res ) => {
+      console.debug( res );
+    } );
+
+    this.optionsConnection.on( 'ReceiveSyncResult', ( res ) => {
+      console.debug( res );
+    } );
   }
 
+  // TODO: (FRONTEND) Show notification.
   placeOrder( placeOptionDTO ) {
     this.optionsConnection.invoke( 'PlaceOrder', placeOptionDTO )
-      .catch( e => console.error( e ) );
+                          .catch( e => console.error( e ) );
+  }
+
+  checkOrder( checkOrderDTO ) {
+    this.optionsConnection.invoke( 'CheckOrder', checkOrderDTO ) 
+                          .catch( e => console.error( e ) );
+  }
+
+  syncOrders() {
+    this.optionsConnection.invoke( 'SyncOrders' )
+                          .catch( e => console.error( e ) );
   }
 
   /**

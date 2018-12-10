@@ -41,13 +41,19 @@ class TradeTemplates {
     `;
   }
 
-  static binaryOptionsTools() {
+  static binaryOptionsTools( userAccountType ) {
+    /**
+     * (Refactor the inputs: Add plus/minus signs to the money inputs and the option lifetimes; ).
+     * Here inject the rigth tools based on the user account type (real or demo).
+     * Real: erous and credits.
+     * Demo: paper euros.
+     */
     return `
       <form class="cell">
         ${
           // PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
-          PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+          TradeTemplates.realAccountInputs() +
           PageTemplates.button( `
             <span class="icon call"></span>
             <span class="lbl">Call</span>`,
@@ -65,6 +71,14 @@ class TradeTemplates {
          }
       </form>
     `;
+  }
+
+  static realAccountInputs {
+    return PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+  }
+  
+  static demoAccountInputs {
+    return '';
   }
 
   static CFDTools() {

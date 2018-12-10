@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
@@ -33,8 +33,8 @@ class TradeController extends ControllerBase {
     this.view.injectContainer();
     await this.__injectChart();
     this.__injectTradeTools();
-    this.model.connectToOptionsHub();
     this.view.updateTradingToolsFiatSymbol();
+    await this.model.connectToOptionsHub();
   }
 
   __injectChart() {
@@ -48,7 +48,7 @@ class TradeController extends ControllerBase {
       await this.__startChartPriceUpdate();
       this.__startChartCandleUpdate();
 
-      resolve();
+      return resolve();
     } );
   }
 

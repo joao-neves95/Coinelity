@@ -182,13 +182,28 @@ declare module 'sweetalert2' {
          * Shows a validation error message.
          *
          * @param error The error message.
+         * @deprecated
          */
         function showValidationError(error: string): void;
 
         /**
          * Hides validation error message.
+         *
+         * @deprecated
          */
         function resetValidationError(): void;
+
+        /**
+         * Shows a validation message.
+         *
+         * @param validationMessage The validation message.
+         */
+        function showValidationMessage(validationMessage: string): void;
+
+        /**
+         * Hides validation message.
+         */
+        function resetValidationMessage(): void;
 
         /**
          * Gets the input DOM node, this method works with input parameter.
@@ -206,10 +221,48 @@ declare module 'sweetalert2' {
         function enableInput(): void;
 
         /**
-         * If `timer` parameter is set, returns number os milliseconds of timer remained.
-         * Otherwise, returns null.
+         * Gets the validation message container.
          */
-        function getTimerLeft(): number | null;
+        function getValidationMessage(): HTMLElement;
+
+        /**
+         * If `timer` parameter is set, returns number of milliseconds of timer remained.
+         * Otherwise, returns undefined.
+         */
+        function getTimerLeft(): number | undefined;
+
+        /**
+         * Stop timer. Returns number of milliseconds of timer remained.
+         * If `timer` parameter isn't set, returns undefined.
+         */
+        function stopTimer(): number | undefined;
+
+        /**
+         * Resume timer. Returns number of milliseconds of timer remained.
+         * If `timer` parameter isn't set, returns undefined.
+         */
+        function resumeTimer(): number | undefined;
+
+        /**
+         * Toggle timer. Returns number of milliseconds of timer remained.
+         * If `timer` parameter isn't set, returns undefined.
+         */
+        function toggleTimer(): number | undefined;
+
+        /**
+         * Check if timer is running. Returns true if timer is running, 
+         * and false is timer is paused / stopped. 
+         * If `timer` parameter isn't set, returns undefined.
+         */
+        function isTimerRunning(): boolean | undefined;
+
+        /**
+         * Increase timer. Returns number of milliseconds of an updated timer.
+         * If `timer` parameter isn't set, returns undefined.
+         *
+         * @param n The number of milliseconds to add to the currect timer
+         */
+        function increaseTimer(n: number): number | undefined;
 
         /**
          * Provide an array of SweetAlert2 parameters to show multiple modals, one modal after another.
@@ -335,7 +388,7 @@ declare module 'sweetalert2' {
          *
          * @default null
          */
-        html?: string | JQuery;
+        html?: string | HTMLElement | JQuery;
 
         /**
          * The footer of the modal, as HTML.
@@ -734,6 +787,19 @@ declare module 'sweetalert2' {
         inputValidator?: (inputValue: string) => SyncOrAsync<string | null>;
 
         /**
+         * A custom validation message for default validators (email, url).
+         *
+         * ex.
+         *   swal({
+         *     input: 'email',
+         *     validationMessage: 'Adresse e-mail invalide'
+         *   })
+         *
+         * @default null
+         */
+        validationMessage?: string;
+
+        /**
          * A custom CSS class for the input field.
          *
          * @default null
@@ -791,7 +857,7 @@ declare module 'sweetalert2' {
 
         /**
          * Determines whether given `inputValidator` and `preConfirm` functions should be expected to to signal
-         * validation errors by rejecting, or by their respective means (see documentation for each option).
+         * validation message by rejecting, or by their respective means (see documentation for each option).
          *
          * @default false
          * @deprecated

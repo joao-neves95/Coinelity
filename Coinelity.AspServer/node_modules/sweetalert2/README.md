@@ -49,7 +49,7 @@ Or:
 bower install --save sweetalert2
 ```
 
-Or download from CDN: [jsdelivr.net/npm/sweetalert2](https://cdn.jsdelivr.net/npm/sweetalert2)
+Or download from CDN: [jsdelivr.com/package/npm/sweetalert2](https://www.jsdelivr.com/package/npm/sweetalert2)
 
 
 Usage
@@ -59,7 +59,7 @@ Usage
 <script src="sweetalert2/dist/sweetalert2.all.min.js"></script>
 
 <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
-<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>
 ```
 
 You can also include the stylesheet separately if desired:
@@ -168,16 +168,9 @@ Related community projects
 Collaborators
 -------------
 
-[![](https://avatars3.githubusercontent.com/u/3198597?v=4&s=80)](https://github.com/zenflow) | [![](https://avatars1.githubusercontent.com/u/1343250?v=4&s=80)](https://github.com/toverux) | [![](https://avatars3.githubusercontent.com/u/9093699?v=4&s=80)](https://github.com/acupajoe) | [![](https://avatars1.githubusercontent.com/u/5918348?v=4&s=80)](https://github.com/samturrell) | [![](https://avatars2.githubusercontent.com/u/4542461?v=4&s=80)](https://github.com/birjolaxew)
--|-|-|-|-
-[@zenflow](https://github.com/zenflow) | [@toverux](https://github.com/toverux) | [@acupajoe](https://github.com/acupajoe) | [@samturrell](https://github.com/samturrell) | [@birjolaxew](https://github.com/birjolaxew)
-
-
-Contributors
-------------
-
-This project exists thanks to all the people who contribute.
-<a href="https://github.com/sweetalert2/sweetalert2/graphs/contributors"><img src="https://opencollective.com/SweetAlert2/contributors.svg?width=890&button=false" /></a>
+[![](https://avatars3.githubusercontent.com/u/3198597?v=4&s=80)](https://github.com/zenflow) | [![](https://avatars1.githubusercontent.com/u/1343250?v=4&s=80)](https://github.com/toverux) | [![](https://avatars3.githubusercontent.com/u/9093699?v=4&s=80)](https://github.com/acupajoe) | [![](https://avatars1.githubusercontent.com/u/5918348?v=4&s=80)](https://github.com/samturrell) | [![](https://avatars2.githubusercontent.com/u/4542461?v=4&s=80)](https://github.com/birjolaxew) | [![](https://avatars3.githubusercontent.com/u/17089396?v=4&s=80)](https://github.com/gverni)
+-|-|-|-|-|-
+[@zenflow](https://github.com/zenflow) | [@toverux](https://github.com/toverux) | [@acupajoe](https://github.com/acupajoe) | [@samturrell](https://github.com/samturrell) | [@birjolaxew](https://github.com/birjolaxew) | [@gverni](https://github.com/gverni)
 
 
 Contributing
@@ -197,6 +190,13 @@ If you would like to contribute enhancements or fixes, please do the following:
  - Serves sandbox.html @ http://localhost:8080/ (browser-sync ui:  http://localhost:8081/)
  - Serves unit tests @ http://localhost:3000
  - Re-lints, re-builds, re-loads and re-tests as necessary when files change
+
+Backers
+-------
+
+[![](https://avatars0.githubusercontent.com/u/5826089?v=4&s=80)](https://sheetjs.com/) | [![](https://avatars2.githubusercontent.com/u/12075795?v=4&s=80)](https://www.unique-p.ch)
+-|-
+[SheetJS LLC](https://sheetjs.com/) | [Unique-P GmbH](https://www.unique-p.ch)
 
 Donations
 ---------

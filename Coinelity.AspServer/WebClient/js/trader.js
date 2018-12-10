@@ -77,6 +77,16 @@ const ButtonType = Object.freeze( {
   Warning: 'warning'
 } );
 
+/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
 /** 1m, 5m, 15m, 30m, 1h, 4h, 1d, 7d, 1M. */
 const ChartTimeframeType = Object.freeze( {
   Min1: '1m',
@@ -240,6 +250,16 @@ const TradingMode = Object.freeze( {
   BinaryOptions: 1,
   CFD: 2
 } );
+
+/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
 
 const UserAccountType = Object.freeze( {
   RealBalance: 1,
@@ -1338,6 +1358,16 @@ class ExchangeClient {
 
 new ExchangeClient();
 
+/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
 let authentication = null;
 
 class Authentication {
@@ -1843,6 +1873,9 @@ class TradeTemplates {
 
   static get chartElemId() { return 'trading-chart'; }
 
+  /**
+   * The page content container (grid).
+   */
   static container() {
     return `
       <section id="trade" class="grid-container fluid">
@@ -1866,13 +1899,19 @@ class TradeTemplates {
     `;
   }
 
-  static binaryOptionsTools() {
+  static binaryOptionsTools( userAccountType ) {
+    /**
+     * (Refactor the inputs: Add plus/minus signs to the money inputs and the option lifetimes; ).
+     * Here inject the rigth tools based on the user account type (real or demo).
+     * Real: erous and credits.
+     * Demo: paper euros.
+     */
     return `
       <form class="cell">
         ${
           // PageTemplates.selectInput( 'trade-mode', 'Trade Mode', [new SelectInputOptions( 'Binary Option', TradingMode.BinaryOptions ), new SelectInputOptions( 'CFD', TradingMode.CFD )], 'round-borders-1' ) +
           PageTemplates.selectInput( 'option-lifetime', 'Option Lifetime', [new SelectInputOptions( '1m', '1m' ), new SelectInputOptions( '15m', '15m' ), new SelectInputOptions( '1h', '1h' )], 'round-borders-1' ) +
-          PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+          TradeTemplates.realAccountInputs() +
           PageTemplates.button( `
             <span class="icon call"></span>
             <span class="lbl">Call</span>`,
@@ -1890,6 +1929,14 @@ class TradeTemplates {
          }
       </form>
     `;
+  }
+
+  static realAccountInputs {
+    return PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+  }
+  
+  static demoAccountInputs {
+    return '';
   }
 
   static CFDTools() {
@@ -1910,6 +1957,8 @@ class TradeTemplates {
  *
  */
 
+// TODO: (FRONTEND) Add the line chart.
+
 let tradeModel = null;
 
 class TradeModel extends ModelBase {
@@ -1919,119 +1968,26 @@ class TradeModel extends ModelBase {
 
     super( '', '', '', '' );
 
+    /** @type { UserAccountType } */
+    this.currentAccounType;
     this.currentTradeMode = TradingMode.BinaryOptions;
     this.currentSymbol = 'BTC/EUR';
     this.currentFiatSymbol = FiatSymbol.Euro;
     this.currentExchange = 'KRAKEN';
     this.currentTimeframe = ChartTimeframeType.Min1;
 
-    this.chart = {};
+    this.optionsConnection;
+    this.openOrders = new Dictionary( true );
 
+    this.chartUpdatePriceInterval = null;
+    this.chartUpdateCandleInterval = null;
+
+    this.chart = {};
     this.chartData = {
       categoryData: [],
       values: []
     };
-
-    // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
-    this.chartConfig = {
-      backgroundColor: Colors.LighterGrey,// '#21202D',
-      title: {
-        text: this.currentSymbol,
-        left: 'center'
-      },
-      animation: true,
-      grid: {
-        left: '10%',
-        right: '10%',
-        bottom: '15%'
-      },
-      toolbox: {
-        show: true,
-        right: 10,
-        feature: {
-          saveAsImage: {
-            title: 'Save image as'
-          },
-          dataZoom: {
-            yAxisIndex: 'none',
-            title: {
-              zoom: 'Area zoom',
-              back: 'Restore area zoom'
-            }
-          },
-          restore: {
-            title: 'Restore'
-          }
-        }
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-          animation: true
-        }
-      },
-      xAxis: {
-        type: 'category',
-        data: this.chartData.categoryData,
-        scale: true,
-        boundaryGap: false,
-        axisLine: { onZero: false },
-        splitLine: { show: false },
-        splitNumber: 20,
-        min: 'dataMin',
-        max: 'dataMax'
-      },
-      yAxis: {
-        scale: true,
-        splitArea: {
-          show: true
-        }
-      },
-      dataZoom: [
-        {
-          type: 'inside',
-          start: 90,
-          end: 100
-        },
-        {
-          show: true,
-          type: 'slider',
-          y: '90%',
-          start: 50,
-          end: 100
-        }
-      ],
-      series: [
-        {
-          type: 'candlestick',
-          data: this.chartData.values,
-          itemStyle: {
-            // Bullish candles.
-            color: Colors.BullishGreen,
-            borderColor: Colors.BullishGreen,
-            // Bearish candles.
-            color0: Colors.BearishRed,
-            borderColor0: Colors.BearishRed
-          }
-        }//,
-        //{
-        //  name: 'MA10',
-        //  type: 'line',
-        //  data: calculateMA( 10, data ),
-        //  smooth: true,
-        //  showSymbol: false,
-        //  lineStyle: {
-        //    normal: {
-        //      width: 1
-        //    }
-        //  }
-        //},
-      ]
-    };
-
-    this.chartUpdatePriceInterval = null;
-    this.chartUpdateCandleInterval = null;
+    this.chartConfig = CHART_CONFIG;
 
     tradeModel = this;
     Object.seal( tradeModel );
@@ -2053,7 +2009,7 @@ class TradeModel extends ModelBase {
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
         this.chartData.categoryData.push( Utils.unixMilisecondsToHuman( OHLCVArray[i][0] ) );
-        // open，close, lowest, highest.
+        //                                 open             close             lowest           highest
         this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }
 
@@ -2081,6 +2037,78 @@ class TradeModel extends ModelBase {
       await this.getInitChartData();
       this.chart.setOption( this.chartConfig );
     } );
+  }
+
+  /** 
+   * It returns the promise when it finishes connecting or gets in an infinite loop.
+   */
+   connectToOptionsHub() {
+    return new Promise( async (resolve, reject) => { 
+      this.optionsConnection = new signalR.HubConnectionBuilder()
+        .withUrl( 'options' )
+        // TODO: (FRONTEND) (PRODUCTION) Change to only show errors.
+        // .configureLogging( signalR.LogLevel.Error )
+        .configureLogging( signalR.LogLevel.Trace )
+        .build();
+
+      this.__initOptionsHubListeners();
+      this.__startOptionsHubConnection();
+
+      // Reconnection loop.
+      this.optionsConnection.onclose( async () => {
+        returns await this.__startOptionsHubConnection();
+      } );
+    } );
+  }
+
+  async __startOptionsHubConnection() {
+    try {
+      return await this.optionsConnection.start();
+
+    } catch ( e ) {
+      console.error( e );
+      setTimeout( () => this.__startOptionsHubConnection(), 5000 );
+    }
+  }
+
+  async stopOptionsHubConnection() {
+    try {
+      await this.optionsConnection.stop();
+
+    } catch ( e ) {
+      console.error( e );
+      setTimeout( () => this.stopOptionsHubConnection(), 5000 );
+    }
+  }
+
+  __initOptionsHubListeners() {
+    this.optionsConnection.on( 'ReceivePlaceOptionResult', ( res ) => {
+      console.debug( res );
+    } );
+
+    this.optionsConnection.on( 'ReceiveCheckOptionResult', ( res ) => {
+      console.debug( res );
+    } );
+
+    this.optionsConnection.on( 'ReceiveSyncResult', ( res ) => {
+      console.debug( res );
+    } );
+  }
+
+  // TODO: (FRONTEND) Show notification.
+  placeOrder( placeOptionDTO ) {
+    this.optionsConnection.invoke( 'PlaceOrder', placeOptionDTO )
+                          .catch( e => console.error( e ) );
+  }
+
+  checkOrder( checkOrderDTO ) {
+    this.optionsConnection.invoke( 'CheckOrder', checkOrderDTO ) 
+                          .catch( e => console.error( e ) );
+  }
+
+  syncOrders() {
+    this.optionsConnection.invoke( 'SyncOrders' )
+                          .catch( e => console.error( e ) );
   }
 
   /**
@@ -2179,6 +2207,9 @@ class TradeView extends ViewBase {
   get tradingToolsPriceElem() { return document.getElementById( 'trading-tools_current-price' ); }
   get tradingToolsFiatSymbolElem() { return document.getElementById( 'trading-tools_fiat-symbol' ); }
 
+  /** @returns { UserAccountType } */
+  getCurrentAccountType() { return document.getElementById( 'account-btns' ).getElementsByClassName( 'active' )[0].id === 'real-account-btn' ? UserAccountType.RealBalance : UserAccountType.PaperBalance; }
+
   injectContainer() {
     document.getElementById( NavItemID.Markets ).innerHTML = TradeTemplates.container();
   }
@@ -2192,6 +2223,8 @@ class TradeView extends ViewBase {
    * @param { TradingMode } tradingToolsType
    */
   injectTradingTools( tradingToolsType ) {
+    // TODO: (FRONTEND) Get the current account type from the topbar.
+    const currentAccountType = this.getCurrentAccountType();
     let tradingToolsWrapper = document.getElementsByClassName( 'trading-tools-wrapper' )[0];
 
     if ( tradingToolsType === TradingMode.BinaryOptions )
@@ -2220,9 +2253,6 @@ class TradeView extends ViewBase {
  *
  */
 
-// Add chart candlesticks with Plotly.extendTraces
-// Update existing chart candlesticks with Plotly.restyle
-
 let tradeController = null;
 
 class TradeController extends ControllerBase {
@@ -2246,26 +2276,28 @@ class TradeController extends ControllerBase {
   async injectContent( symbolId ) {
     this.model.currentSymbol = symbolId;
     this.view.injectContainer();
-    await this.injectChart();
-    this.injectTradeTools();
+    await this.__injectChart();
+    this.__injectTradeTools();
     this.view.updateTradingToolsFiatSymbol();
+    this.model.connectToOptionsHub();
   }
 
-  injectChart() {
+  __injectChart() {
     return new Promise( async ( resolve, reject ) => {
+      this.model.currentAccountType = this.view.getCurrentAccountType();
       this.view.injectChartTemplate();
       await this.model.getInitChartData();
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();
-      await this.startChartPriceUpdate();
-      this.startChartCandleUpdate();
+      await this.__startChartPriceUpdate();
+      this.__startChartCandleUpdate();
 
-      resolve();
+      return resolve();
     } );
   }
 
-  startChartCandleUpdate() {
+  __startChartCandleUpdate() {
     setTimeout( () => {
       this.__updateCandles();
 
@@ -2273,10 +2305,11 @@ class TradeController extends ControllerBase {
         await this.__updateCandles();
       }, Utils.getMilisecondsFromChartTimeframe( this.model.currentTimeframe ) );
 
+       // Only start at the next timeframe candle.
     }, Utils.getTimeToNextTimeframe( this.model.currentTimeframe ) );
   }
 
-  startChartPriceUpdate() {
+  __startChartPriceUpdate() {
     this.model.chartUpdatePriceInterval = setInterval( async () => {
       let ticker = undefined;
 
@@ -2302,7 +2335,7 @@ class TradeController extends ControllerBase {
         this.view.updateTradingToolsCurrPrice( lastPrice.toString() );
 
       } catch {
-        // TODO: Send error notification.
+        // TODO: (FRONTEND) Show error notification.
         return console.error( 'There was an error while trying to connect to the data provider.' );
       }
     }, TRADE_PRICE_UPDATE_RATE );
@@ -2316,7 +2349,7 @@ class TradeController extends ControllerBase {
       clearInterval( this.model.chartUpdatePriceInterval );
   }
 
-  injectTradeTools() {
+  __injectTradeTools() {
     this.view.injectTradingTools( this.model.currentTradeMode );
   }
 
@@ -2339,7 +2372,7 @@ class TradeController extends ControllerBase {
       this.model.chart.setOption( this.model.chartConfig );
 
     } catch {
-      // TODO: Send error notification.
+      // TODO: (FRONTEND) Show error notification.
       return console.error( 'There was an error while trying to connect to the data provider.' );
     }
   }
@@ -3376,6 +3409,16 @@ class NavbarController {
 
 new NavbarController();
 
+/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
 let topbarModel = null;
 
 class TopbarModel {
@@ -3408,6 +3451,16 @@ class TopbarModel {
     } );
   }
 }
+
+/*
+ *
+ * Copyright (c) 2018 Jo�o Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by Jo�o Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
 
 let topbarView = null;
 
@@ -3451,6 +3504,16 @@ class TopbarView {
     btnElem.classList.remove( 'active' );
   }
 }
+
+/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
 
 let topnavController = null;
 
