@@ -16,51 +16,52 @@ class Notifications {
     throw DevErrors.cantInstantiateStatic( 'Notifications' );
   }
 
-  static successToast( title, description = '' ) {
-    swall( { toast: true, timer: 5000, title: title } );
-  }
-
-  static successToastAndIcon( title, description = '' ) {
-    swall( { type: 'success', timer: 5000, title: title } );
+  static successToast( title = 'Success' ) {
+    Notifications.____toast( title )( { type: 'success' } );
   }
 
   static successPopUp( title, description = '' ) {
-    swall();
   }
 
-  static successPopUpAndIcon( title, description = '' ) {
-    swall();
-  }
-
-  static infoToast( title, description = '' ) {
-    swall();
-  }
-
-  static infoToastAndIcon( title, description = '' ) {
-    swall();
+  static infoToast( title ) {
+    Notifications.____toast( title )( { type: 'info' } );
   }
 
   static infoPopUp( title, description = '' ) {
-    swall();
   }
 
-  static infoPopUpAndIcon( title, description = '' ) {
-    swall();
+  static warningToast( title ) {
+    Notifications.____toast( title )( { type: 'warning' } );
   }
 
-  static errorToast( title, description = '' ) {
-    swall();
+  static warningPopUp( title, description = '' ) {
   }
 
-  static errorToastAndIcon( title, description = '' ) {
-    swall();
+  static errorToast( title = 'Error' ) {
+    Notifications.____toast( title )( { type: 'error' } );
   }
 
   static errorPopUp( title, description = '' ) {
-    swall();
   }
 
-  static errorPopUpAndIcon( title, description = '' ) {
-    swall();
+  static optionToast() {
+  }
+
+  /**
+   * 
+   * @param {any} title
+   * @param { string } position Can be 'top', 'top-start', 'top-end', 'center', 'center-start', 'center-end', 'bottom', 'bottom-start', or 'bottom-end'.
+   * @param {any} timer
+   */
+  static ____toast( title, position = 'top-end', timer = 10000 ) {
+    return Swal.mixin( {
+      target: '#page-container',
+      title: title,
+      timer: timer,
+      position: position,
+      toast: true,
+      showConfirmButton: false,
+      allowOutsideClick: false
+    } );
   }
 }

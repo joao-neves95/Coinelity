@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
@@ -46,7 +46,10 @@ class TradeModel extends ModelBase {
 
   get _() { return tradeModel; }
 
-  getInitChartData() {
+  /**
+   * It populates the model with the initial price data.
+   */
+  initChartData() {
     return new Promise( async ( resolve, reject ) => {
       let OHLCVArray;
 
@@ -54,8 +57,8 @@ class TradeModel extends ModelBase {
         OHLCVArray = await this.getOHLCV();
 
       } catch {
-        // TODO: Send error notification.
-        return console.error( 'There was an error while trying to connect to the data provider.' );
+        Notifications.errorToast( 'There was an error connecting to the data provider. Trying again...' );
+        return this.getInitChartData();
       }
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
@@ -64,7 +67,7 @@ class TradeModel extends ModelBase {
         this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }
 
-      return resolve( [this.chartData] );
+      return resolve();
     } );
   }
 
@@ -92,6 +95,7 @@ class TradeModel extends ModelBase {
 
   /** 
    * It returns the promise when it finishes connecting or gets in an infinite loop.
+   * @returns { Promise<void> }
    */
    connectToOptionsHub() {
     return new Promise( async (resolve, reject) => { 
@@ -103,12 +107,15 @@ class TradeModel extends ModelBase {
         .build();
 
       this.__initOptionsHubListeners();
-      this.__startOptionsHubConnection();
 
       // Reconnection loop.
       this.optionsConnection.onclose( async () => {
-        returns await this.__startOptionsHubConnection();
+        Notifications.warningToast( 'The connection dropped. Trying to reconnect...' );
+        return await this.__startOptionsHubConnection();
       } );
+
+      await this.__startOptionsHubConnection();
+      return resolve();
     } );
   }
 
@@ -146,20 +153,24 @@ class TradeModel extends ModelBase {
     } );
   }
 
-  // TODO: (FRONTEND) Show notification.
   placeOrder( placeOptionDTO ) {
     this.optionsConnection.invoke( 'PlaceOrder', placeOptionDTO )
-                          .catch( e => console.error( e ) );
+      .catch( e => {
+        console.error( e );
+        return Notifications.errorToast( 'There was an error while placing the trade.' );
+      } );
+
+    return Notifications.successToast( 'Order successfuly placed!' );
   }
 
   checkOrder( checkOrderDTO ) {
     this.optionsConnection.invoke( 'CheckOrder', checkOrderDTO ) 
-                          .catch( e => console.error( e ) );
+      .catch( e => console.error( e ) );
   }
 
   syncOrders() {
     this.optionsConnection.invoke( 'SyncOrders' )
-                          .catch( e => console.error( e ) );
+      .catch( e => console.error( e ) );
   }
 
   /**
@@ -185,6 +196,7 @@ class TradeModel extends ModelBase {
         } finally {
           if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
             console.error( 'There was an error while fetching the data.', lastError );
+            Notifications.errorToast( 'There was an error while fetching the chart data.' );
             return reject( lastError );
           }
 
@@ -216,6 +228,7 @@ class TradeModel extends ModelBase {
         } finally {
           if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
             console.error( 'There was an error while fetching the data.', lastError );
+            Notifications.errorToast( 'There was an error while fetching the chart data.' );
             return reject( lastError );
           }
 

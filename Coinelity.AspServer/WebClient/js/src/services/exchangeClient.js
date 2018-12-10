@@ -19,7 +19,7 @@ const exchangeClientUtils = Object.freeze( {
 } );
 
 // TODO: Add support for multiple exchanges.
-
+// Errors are ignored. Track them in the future.
 let exchangeClient = null;
 
 class ExchangeClient {
@@ -105,7 +105,7 @@ class ExchangeClient {
         ticker = await this.getExchangeObject( exchangeName ).fetchTicker( symbol );
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       if ( Callback )
@@ -129,7 +129,7 @@ class ExchangeClient {
    * @param { string } exchangeName The exchange name.
    * @param { string } symbol The asset symbol.
    * @param { string } timeframe 1m, 5m, 15m, 30m, 1h, 4h, 1d, 7d, 1M.
-   * @param { Function } Callback Receives a <string> representation of the last OHLC candle.
+   * @param { Function } Callback Receives a <string> representation of the last OHLC candle or undefined in case of error.
    */
   getLastOHLCV( exchangeName, symbol, timeframe, Callback ) {
     ( async () => {
@@ -139,7 +139,7 @@ class ExchangeClient {
         OHLCV = await this.getExchangeObject( exchangeName ).fetchOHLCV( symbol, timeframe, null, 10 );
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       return Callback( OHLCV[OHLCV.length - 1] );
@@ -190,7 +190,7 @@ class ExchangeClient {
   /**
    * 
    * @param { string } symbol
-   * @param { Function } Callback Called in the end of the execution. Receives a <string> representation of SpreadPricesModel.
+   * @param { Function } Callback Called in the end of the execution. Receives a <string> representation of SpreadPricesModel on undefined in case of error.
    */
   getCurrentSpreadPrices( exchangeName, symbol, Callback ) {
     ( async () => {
@@ -199,7 +199,7 @@ class ExchangeClient {
       try {
         orderBook = await this.getExchangeObject( exchangeName ).fetchOrderBook( symbol, 4 );
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       const bid = orderBook.bids.length > 0 ? orderBook.bids[0][0] : undefined;
@@ -220,7 +220,7 @@ class ExchangeClient {
         trades = trades[trades.length - 1];
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       return Callback( trades );
@@ -235,7 +235,7 @@ class ExchangeClient {
       } );
 
     } catch ( e ) {
-      console.error( `EXCEPTION: \n${e}` );
+      //
     }
   }
 
@@ -253,7 +253,7 @@ class ExchangeClient {
       } );
 
     } catch ( e ) {
-      console.error( `EXCEPTION: \n${e}` );
+      //
     }
   }
 

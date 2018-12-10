@@ -41,7 +41,7 @@ class TradeController extends ControllerBase {
     return new Promise( async ( resolve, reject ) => {
       this.model.currentAccountType = this.view.getCurrentAccountType();
       this.view.injectChartTemplate();
-      await this.model.getInitChartData();
+      await this.model.initChartData();
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();
