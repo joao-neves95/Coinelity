@@ -25,7 +25,7 @@ using Coinelity.AspServer.Models;
 
 namespace Coinelity.AspServer.DataAccess
 {
-    public class UserStore : IUserStore<ApplicationUser>, IUserEmailStore<ApplicationUser>, IUserPhoneNumberStore<ApplicationUser>, IUserPasswordStore<ApplicationUser>, IUserTwoFactorStore<ApplicationUser>
+    public class UserStore : IDisposable, IUserStore<ApplicationUser>, IUserEmailStore<ApplicationUser>, IUserPhoneNumberStore<ApplicationUser>, IUserPasswordStore<ApplicationUser>, IUserTwoFactorStore<ApplicationUser>
     {
         private readonly SqlConnection _connection;
 

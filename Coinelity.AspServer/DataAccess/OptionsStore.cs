@@ -307,31 +307,5 @@ namespace Coinelity.AspServer.DataAccess
 
             return lifetimeListDict.Count > 0 ? Convert.ToInt32( lifetimeListDict[0]["LifetimeMinutes"] ) : -1;
         }
-
-        // TODO: Finish the GetSymbolMeta query.
-        public async Task GetSymbolMeta(int assetId)
-        {
-            IList<Dictionary<string, object>> symbolMetaListDict = await MSSQLClient.QueryOnceAsync( _connection, "" );
-        }
-
-        /// <summary>
-        /// 
-        /// Task<IList<Dictionary<string, object>>>
-        /// [0] Symbol, (value)
-        /// [1] Exchange, (value)
-        /// 
-        /// </summary>
-        /// <param name="assetId"></param>
-        /// <returns></returns>
-        public async Task<IList<Dictionary<string, object>>> GetSymbolAndExchange(int assetId)
-        {
-            return await MSSQLClient.QueryOnceAsync( _connection,
-                $@"SELECT dbo.Asset.Symbol, dbo.Exchange.Name AS Exchange
-                   FROM dbo.Asset
-                       INNER JOIN dbo.Exchange
-                       ON dbo.Asset.ExchangeId = dbo.Exchange.Id
-                   WHERE dbo.Asset.Id = {assetId} "
-           );
-        }
     }
 }
