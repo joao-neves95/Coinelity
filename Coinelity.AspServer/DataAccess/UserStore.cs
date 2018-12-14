@@ -23,6 +23,7 @@ using Coinelity.Core.Data;
 using Coinelity.Core.Errors;
 using Coinelity.AspServer.Models;
 
+// TODO: (Middleware) Add try/catch
 namespace Coinelity.AspServer.DataAccess
 {
     public class UserStore : IDisposable, IUserStore<ApplicationUser>, IUserEmailStore<ApplicationUser>, IUserPhoneNumberStore<ApplicationUser>, IUserPasswordStore<ApplicationUser>, IUserTwoFactorStore<ApplicationUser>

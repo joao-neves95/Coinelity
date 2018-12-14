@@ -25,9 +25,14 @@ namespace Coinelity.AspServer.DataAccess
             Dispose();
         }
 
-        public void GetAll()
+        public async Task<IList<Dictionary<string, object>>> GetAll()
         {
-
+            return await MSSQLClient.QueryOnceAsync( _connection,
+                $@"SELECT dbo.Asset.Id, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.Asset.LogoImageUrl
+                       INNER JOIN dbo.Exchange
+                       ON dbo.Asset.ExchangeId = dbo.Exchange.Id
+                   FROM dbo.Asset
+                   ORDER BY dbo.Asset.Symbol";
         }
 
         public void Get()

@@ -1,4 +1,4 @@
-﻿/*
+/*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
@@ -25,7 +25,7 @@ using Coinelity.Core.Models;
 
 // TODO: Add consistency to the JSON responses (**Successes**/Errors). Something like: { error: [], result: [] }
 // TODO: Add try/catch.
-// TODO: Update AuditLog table.
+// TODO: Update AuditLog table (change max password fails).
 namespace Coinelity.AspServer.Controllers
 {
     [Route("api/users")]
@@ -246,8 +246,10 @@ namespace Coinelity.AspServer.Controllers
                         auditLogStore?.Dispose();
                     }
                 } );
+
                 return Ok( Json( "Successfully changed the password" ).Value );
             }
+
             return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
         }
 
