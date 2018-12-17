@@ -35,25 +35,25 @@ namespace Coinelity.Core.Data
         /// <param name="connection"> Opened connection </param>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        public static Task<IList<Dictionary<string, object>>> QueryOnceAsync(SqlConnection connection, SqlCommand cmd)
+        public static Task<SQLClientResult> QueryOnceAsync(SqlConnection connection, SqlCommand cmd)
         {
             return ExecuteQueryOnceAsync(connection, cmd);
         }
 
-        public static Task<IList<Dictionary<string, object>>> QueryOnceAsync(SqlConnection connection, string queryString)
+        public static Task<SQLClientResult> QueryOnceAsync(SqlConnection connection, string queryString)
         {
             SqlCommand cmd = new SqlCommand(queryString, connection);
             return ExecuteQueryOnceAsync(connection, cmd);
         }
 
-        public static Task<IList<Dictionary<string, object>>> QueryOnceAsync(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
+        public static Task<SQLClientResult> QueryOnceAsync(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
         {
             SqlCommand parameterizedCmd = ParameterizeCommand(connection, queryString, parameters);
             return ExecuteQueryOnceAsync(connection, parameterizedCmd);
         }
 
 
-        private static async Task<IList<Dictionary<string, object>>> ExecuteQueryOnceAsync(SqlConnection connection, SqlCommand cmd)
+        private static async Task<SQLClientResult> ExecuteQueryOnceAsync(SqlConnection connection, SqlCommand cmd)
         {
             try
             {
@@ -65,10 +65,13 @@ namespace Coinelity.Core.Data
                 }
 
             }
+            catch (SqlException e)
+            {
+                return new SQLClientResult( e );
+            }
             catch (Exception e)
             {
-                // TODO: Exception handling.
-                return ReturnErrorMessageObject( e );
+                return new SQLClientResult( e );
             }
             finally
             {
@@ -85,24 +88,24 @@ namespace Coinelity.Core.Data
         /// <param name="connection"> Opened connection </param>
         /// <param name="cmd"></param>
         /// <returns></returns>
-        public static Task<IList<Dictionary<string, object>>> QueryAsync(SqlConnection connection, SqlCommand cmd)
+        public static Task<SQLClientResult> QueryAsync(SqlConnection connection, SqlCommand cmd)
         {
             return ExecuteQueryAsync( cmd );
         }
 
-        public static Task<IList<Dictionary<string, object>>> QueryAsync(SqlConnection connection, string queryString)
+        public static Task<SQLClientResult> QueryAsync(SqlConnection connection, string queryString)
         {
             SqlCommand cmd = new SqlCommand(queryString, connection);
             return ExecuteQueryAsync( cmd );
         }
 
-        public static Task<IList<Dictionary<string, object>>> QueryAsync(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
+        public static Task<SQLClientResult> QueryAsync(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
         {
             SqlCommand parameterizedCmd = ParameterizeCommand(connection, queryString, parameters);
             return ExecuteQueryAsync( parameterizedCmd );
         }
 
-        private static async Task<IList<Dictionary<string, object>>> ExecuteQueryAsync(SqlCommand cmd)
+        private static async Task<SQLClientResult> ExecuteQueryAsync(SqlCommand cmd)
         {
             try
             {
@@ -111,16 +114,20 @@ namespace Coinelity.Core.Data
 
                 while (dataReader.Read())
                 {
-                    recordSet.Add(GetRowAsDictionary(dataReader));
+                    recordSet.Add( GetRowAsDictionary( dataReader ) );
                 }
 
-                return recordSet;
+                return new SQLClientResult( recordSet );
 
+            }
+            catch (SqlException e)
+            {
+                return new SQLClientResult( e );
             }
             catch (Exception e)
             {
                 // TODO: Exception handling.
-                return ReturnErrorMessageObject( e );
+                return new SQLClientResult( e );
             }
         }
 
@@ -136,24 +143,24 @@ namespace Coinelity.Core.Data
         /// <param name="connection"></param>
         /// <param name="sqlCommand"></param>
         /// <returns></returns>
-        public static Task<int> CommandOnceAsync(SqlConnection connection, SqlCommand sqlCommand)
+        public static Task<SQLClientResult> CommandOnceAsync(SqlConnection connection, SqlCommand sqlCommand)
         {
             return ExecuteCommandOnceAsync(connection, sqlCommand);
         }
 
-        public static Task<int> CommandOnceAsync(SqlConnection connection, string commandString)
+        public static Task<SQLClientResult> CommandOnceAsync(SqlConnection connection, string commandString)
         {
             SqlCommand cmd = new SqlCommand(commandString, connection);
             return ExecuteCommandOnceAsync(connection, cmd);
         }
 
-        public static Task<int> CommandOnceAsync(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
+        public static Task<SQLClientResult> CommandOnceAsync(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
         {
             SqlCommand parameterizedCmd = ParameterizeCommand(connection, commandString, parameters);
             return ExecuteCommandOnceAsync(connection, parameterizedCmd);
         }
 
-        private static async Task<int> ExecuteCommandOnceAsync(SqlConnection connection, SqlCommand cmd)
+        private static async Task<SQLClientResult> ExecuteCommandOnceAsync(SqlConnection connection, SqlCommand cmd)
         {
             try
             {
@@ -161,15 +168,17 @@ namespace Coinelity.Core.Data
 
                 using (connection)
                 {
-                    return await cmd.ExecuteNonQueryAsync();
+                    return new SQLClientResult( null, await cmd.ExecuteNonQueryAsync() );
                 }
 
             }
+            catch (SqlException e)
+            {
+                return new SQLClientResult( e );
+            }
             catch (Exception e)
             {
-                // TODO: Exception handling.
-                Console.WriteLine( e.Message );
-                return -1;
+                return new SQLClientResult( e );
             }
             finally
             {
@@ -190,35 +199,37 @@ namespace Coinelity.Core.Data
         /// <param name="connection"></param>
         /// <param name="sqlCommand"></param>
         /// <returns></returns>
-        public static Task<int> CommandAsync(SqlCommand sqlCommand)
+        public static Task<SQLClientResult> CommandAsync(SqlCommand sqlCommand)
         {
             return ExecuteCommandAsync( sqlCommand );
         }
 
-        public static Task<int> CommandAsync(SqlConnection connection, string commandString)
+        public static Task<SQLClientResult> CommandAsync(SqlConnection connection, string commandString)
         {
             SqlCommand cmd = new SqlCommand(commandString, connection);
             return ExecuteCommandAsync( cmd );
         }
 
-        public static Task<int> CommandAsync(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
+        public static Task<SQLClientResult> CommandAsync(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
         {
             SqlCommand parameterizedCmd = ParameterizeCommand(connection, commandString, parameters);
             return ExecuteCommandAsync( parameterizedCmd );
         }
 
-        private static async Task<int> ExecuteCommandAsync(SqlCommand cmd)
+        private static async Task<SQLClientResult> ExecuteCommandAsync(SqlCommand cmd)
         {
             try
             {
-                return await cmd.ExecuteNonQueryAsync();
+                return new SQLClientResult( null, await cmd.ExecuteNonQueryAsync() );
 
+            }
+            catch (SqlException e)
+            {
+                return new SQLClientResult( e );
             }
             catch (Exception e)
             {
-                // TODO: Exception handling.
-                Console.WriteLine( e.Message );
-                return -1;
+                return new SQLClientResult( e );
             }
         }
 
@@ -232,7 +243,7 @@ namespace Coinelity.Core.Data
         /// <param name="connection"></param>
         /// <param name="sqlCommands"> Use MSSQLClient.ParameterizeCommand() </param>
         /// <returns></returns>
-        public static async Task<bool> NonQueryTransactionOnceAsync(SqlConnection connection, SqlCommand[] sqlCommands)
+        public static async Task<SQLClientResult> NonQueryTransactionOnceAsync(SqlConnection connection, SqlCommand[] sqlCommands)
         {
             try
             {
@@ -261,8 +272,9 @@ namespace Coinelity.Core.Data
         /// <param name="connection"></param>
         /// <param name="sqlCommands"> Use MSSQLClient.ParameterizeCommand() </param>
         /// <returns></returns>
-        public static async Task<bool> NonQueryTransactionAsync(SqlConnection connection, SqlCommand[] sqlCommands)
+        public static async Task<SQLClientResult> NonQueryTransactionAsync(SqlConnection connection, SqlCommand[] sqlCommands)
         {
+            // TODO: (SERVER) Finish (refactoring)
             try
             {
                 SqlTransaction transaction = connection.BeginTransaction();
@@ -276,28 +288,22 @@ namespace Coinelity.Core.Data
                     }
 
                     transaction.Commit();
-                    return true;
+                    return new SQLClientResult( null, sqlCommands.Length );
                 }
                 catch (Exception e)
                 {
-                    // TODO: Exception handling.
-                    Console.WriteLine(e.Message);
-
                     // Attempt to roll back the transaction.
                     try
                     {
                         transaction.Rollback();
-                        return false;
+                        return new SQLClientResult( e );
                     }
                     catch (Exception ex2)
                     {
-                        // TODO: Exception handling.
                         // This catch block will handle any errors that may have occurred
                         // on the server that would cause the rollback to fail, such as
                         // a closed connection.
-                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
-                        Console.WriteLine("  Message: {0}", ex2.Message);
-                        return false;
+                        return new SQLClientResult( new List<string> { e.Message, ex2.Message } );
                     }
                 }
                 finally
@@ -312,6 +318,7 @@ namespace Coinelity.Core.Data
             }
             catch (Exception e)
             {
+
                 // TODO: Exception handling.
                 Console.WriteLine(e.Message);
                 return false;
@@ -319,17 +326,5 @@ namespace Coinelity.Core.Data
         }
 
         #endregion
-
-        public static async Task<object> GetLastInsertedIDOnceAsync(SqlConnection _connection)
-        {
-            IList<Dictionary<string, object>> userIdResponse = await MSSQLClient.QueryOnceAsync(_connection, "SELECT SCOPE_IDENTITY()");
-            return userIdResponse[0].First().Value;
-        }
-
-        public static async Task<object> GetLastInsertedIDAsync(SqlConnection _connection)
-        {
-            IList<Dictionary<string, object>> userIdResponse = await MSSQLClient.QueryAsync(_connection, "SELECT SCOPE_IDENTITY()");
-            return userIdResponse[0].First().Value;
-        }
     }
 }

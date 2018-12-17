@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.SqlClient;
 
+// TODO: (MIDDLEWARE) Handle errors (send SQLCientResult) with the error result.
+
 namespace Coinelity.Core.Data
 {
     public static partial class MSSQLClient
