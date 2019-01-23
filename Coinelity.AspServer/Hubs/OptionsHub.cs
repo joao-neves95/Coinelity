@@ -1,3 +1,5 @@
+// THIS LOGIC NEEDS A BIG REFACTORING FOR PERFORMANCE ENHANCEMENT.
+
 /*
  *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
