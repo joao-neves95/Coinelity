@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Coinelity.Core.Models;
 
 namespace Coinelity.Core.Data
 {
@@ -29,6 +30,46 @@ namespace Coinelity.Core.Data
 
         /// <summary>
         /// 
+        /// Execute an asyncronous query on the provided opened connection. NOTE: The method doesn't open or close the connection (no disposing control).
+        /// 
+        /// </summary>
+        /// <param name="connection"> Opened connection </param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public static Task<SQLClientResult> QueryAsync( SqlConnection connection, SqlCommand cmd )
+        {
+            return ExecuteQueryAsync( cmd );
+        }
+
+        /// <summary>
+        /// 
+        /// <para>Execute an asyncronous query once on the provided opened connection.</para>
+        /// 
+        /// <para>
+        /// NOTES:
+        /// The method does not close the connection when finished.
+        /// This overload does not use parameterized commands, so be aware of potential SQL injections
+        /// (To be use only for queries like: "SELECT TOP 10 Id FROM Users").
+        /// </para> 
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="queryString"></param>
+        /// <returns></returns>
+        public static Task<SQLClientResult> QueryAsync( SqlConnection connection, string queryString )
+        {
+            SqlCommand cmd = new SqlCommand( queryString, connection );
+            return ExecuteQueryAsync( cmd );
+        }
+
+        public static Task<SQLClientResult> QueryAsync( SqlConnection connection, string queryString, Dictionary<string, object> parameters )
+        {
+            SqlCommand parameterizedCmd = ParameterizeCommand( connection, queryString, parameters );
+            return ExecuteQueryAsync( parameterizedCmd );
+        }
+
+        /// <summary>
+        /// 
         /// Execute an asyncronous query once on the provided opened connection. NOTE: The method opens and closes the connection when finished.
         /// 
         /// </summary>
@@ -40,6 +81,20 @@ namespace Coinelity.Core.Data
             return ExecuteQueryOnceAsync(connection, cmd);
         }
 
+        /// <summary>
+        /// 
+        /// <para>Execute an asyncronous query once on the provided opened connection.</para>
+        /// <para>
+        /// NOTES:
+        /// The method opens and closes the connection when finished.
+        /// This overload does not use parameterized commands, so be aware of potential SQL injections
+        /// (To be use only for queries like: "SELECT TOP 10 Id FROM Users").
+        /// </para>
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="queryString"></param>
+        /// <returns></returns>
         public static Task<SQLClientResult> QueryOnceAsync(SqlConnection connection, string queryString)
         {
             SqlCommand cmd = new SqlCommand(queryString, connection);
@@ -52,8 +107,7 @@ namespace Coinelity.Core.Data
             return ExecuteQueryOnceAsync(connection, parameterizedCmd);
         }
 
-
-        private static async Task<SQLClientResult> ExecuteQueryOnceAsync(SqlConnection connection, SqlCommand cmd)
+        private static async Task<SQLClientResult> ExecuteQueryOnceAsync( SqlConnection connection, SqlCommand cmd )
         {
             try
             {
@@ -80,32 +134,7 @@ namespace Coinelity.Core.Data
             }
         }
 
-        /// <summary>
-        /// 
-        /// Execute an asyncronous query on the provided opened connection. NOTE: The method doesn't open or close the connection (no disposing control).
-        /// 
-        /// </summary>
-        /// <param name="connection"> Opened connection </param>
-        /// <param name="cmd"></param>
-        /// <returns></returns>
-        public static Task<SQLClientResult> QueryAsync(SqlConnection connection, SqlCommand cmd)
-        {
-            return ExecuteQueryAsync( cmd );
-        }
-
-        public static Task<SQLClientResult> QueryAsync(SqlConnection connection, string queryString)
-        {
-            SqlCommand cmd = new SqlCommand(queryString, connection);
-            return ExecuteQueryAsync( cmd );
-        }
-
-        public static Task<SQLClientResult> QueryAsync(SqlConnection connection, string queryString, Dictionary<string, object> parameters)
-        {
-            SqlCommand parameterizedCmd = ParameterizeCommand(connection, queryString, parameters);
-            return ExecuteQueryAsync( parameterizedCmd );
-        }
-
-        private static async Task<SQLClientResult> ExecuteQueryAsync(SqlCommand cmd)
+        private static async Task<SQLClientResult> ExecuteQueryAsync( SqlCommand cmd )
         {
             try
             {
@@ -131,9 +160,39 @@ namespace Coinelity.Core.Data
             }
         }
 
+
         #endregion
 
         #region COMMAND
+
+        /// <summary>
+        /// 
+        /// Executes an asyncronous non-query command on the provided opened connection. NOTE: The method doesn't open or close the connection (no disposing control).
+        /// 
+        /// <para />
+        /// 
+        /// It returns an int with the number of changed rows, or -1 in case of error.
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="sqlCommand"></param>
+        /// <returns></returns>
+        public static Task<SQLClientResult> CommandAsync( SqlCommand sqlCommand )
+        {
+            return ExecuteCommandAsync( sqlCommand );
+        }
+
+        public static Task<SQLClientResult> CommandAsync( SqlConnection connection, string commandString )
+        {
+            SqlCommand cmd = new SqlCommand( commandString, connection );
+            return ExecuteCommandAsync( cmd );
+        }
+
+        public static Task<SQLClientResult> CommandAsync( SqlConnection connection, string commandString, Dictionary<string, object> parameters )
+        {
+            SqlCommand parameterizedCmd = ParameterizeCommand( connection, commandString, parameters );
+            return ExecuteCommandAsync( parameterizedCmd );
+        }
 
         /// <summary>
         /// 
@@ -160,7 +219,24 @@ namespace Coinelity.Core.Data
             return ExecuteCommandOnceAsync(connection, parameterizedCmd);
         }
 
-        private static async Task<SQLClientResult> ExecuteCommandOnceAsync(SqlConnection connection, SqlCommand cmd)
+        private static async Task<SQLClientResult> ExecuteCommandAsync( SqlCommand cmd )
+        {
+            try
+            {
+                return new SQLClientResult( null, await cmd.ExecuteNonQueryAsync() );
+
+            }
+            catch (SqlException e)
+            {
+                return new SQLClientResult( e );
+            }
+            catch (Exception e)
+            {
+                return new SQLClientResult( e );
+            }
+        }
+
+        private static async Task<SQLClientResult> ExecuteCommandOnceAsync( SqlConnection connection, SqlCommand cmd )
         {
             try
             {
@@ -186,64 +262,19 @@ namespace Coinelity.Core.Data
                 connection.Close();
             }
         }
-
-        /// <summary>
-        /// 
-        /// Executes an asyncronous non-query command on the provided opened connection. NOTE: The method doesn't open or close the connection (no disposing control).
-        /// 
-        /// <para />
-        /// 
-        /// It returns an int with the number of changed rows, or -1 in case of error.
-        /// 
-        /// </summary>
-        /// <param name="connection"></param>
-        /// <param name="sqlCommand"></param>
-        /// <returns></returns>
-        public static Task<SQLClientResult> CommandAsync(SqlCommand sqlCommand)
-        {
-            return ExecuteCommandAsync( sqlCommand );
-        }
-
-        public static Task<SQLClientResult> CommandAsync(SqlConnection connection, string commandString)
-        {
-            SqlCommand cmd = new SqlCommand(commandString, connection);
-            return ExecuteCommandAsync( cmd );
-        }
-
-        public static Task<SQLClientResult> CommandAsync(SqlConnection connection, string commandString, Dictionary<string, object> parameters)
-        {
-            SqlCommand parameterizedCmd = ParameterizeCommand(connection, commandString, parameters);
-            return ExecuteCommandAsync( parameterizedCmd );
-        }
-
-        private static async Task<SQLClientResult> ExecuteCommandAsync(SqlCommand cmd)
-        {
-            try
-            {
-                return new SQLClientResult( null, await cmd.ExecuteNonQueryAsync() );
-
-            }
-            catch (SqlException e)
-            {
-                return new SQLClientResult( e );
-            }
-            catch (Exception e)
-            {
-                return new SQLClientResult( e );
-            }
-        }
-
         #endregion
 
         #region TRANSACTION
 
         /// <summary>
         /// 
+        /// It closes/disposes the connection.
+        /// 
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="sqlCommands"> Use MSSQLClient.ParameterizeCommand() </param>
         /// <returns></returns>
-        public static async Task<SQLClientResult> NonQueryTransactionOnceAsync(SqlConnection connection, SqlCommand[] sqlCommands)
+        public static async Task<SQLClientResult> NonQueryTransactionOnceAsync( SqlConnection connection, SqlCommand[] sqlCommands )
         {
             try
             {
@@ -251,18 +282,19 @@ namespace Coinelity.Core.Data
 
                 using (connection)
                 {
-                    return await NonQueryTransactionAsync(connection, sqlCommands);
+                    return await NonQueryTransactionAsync( connection, sqlCommands );
                 }
             }
             catch (Exception e)
             {
-                // TODO: Exception handling.
                 Console.WriteLine( e.Message );
-                return false;
+                return new SQLClientResult( e );
             }
             finally
             {
+                // Just to be sure.
                 connection.Close();
+                connection.Dispose();
             }
         }
 
@@ -272,9 +304,8 @@ namespace Coinelity.Core.Data
         /// <param name="connection"></param>
         /// <param name="sqlCommands"> Use MSSQLClient.ParameterizeCommand() </param>
         /// <returns></returns>
-        public static async Task<SQLClientResult> NonQueryTransactionAsync(SqlConnection connection, SqlCommand[] sqlCommands)
+        public static async Task<SQLClientResult> NonQueryTransactionAsync( SqlConnection connection, SqlCommand[] sqlCommands )
         {
-            // TODO: (SERVER) Finish (refactoring)
             try
             {
                 SqlTransaction transaction = connection.BeginTransaction();
@@ -288,22 +319,26 @@ namespace Coinelity.Core.Data
                     }
 
                     transaction.Commit();
-                    return new SQLClientResult( null, sqlCommands.Length );
+                    SQLClientResult sqlClientResult = new SQLClientResult( null, sqlCommands.Length );
+                    sqlClientResult.Freeze();
+                    return sqlClientResult;
                 }
                 catch (Exception e)
                 {
+                    SQLClientResult sqlClientResult = new SQLClientResult( e );
+
                     // Attempt to roll back the transaction.
                     try
                     {
                         transaction.Rollback();
-                        return new SQLClientResult( e );
+                        sqlClientResult.Freeze();
+                        return sqlClientResult;
                     }
-                    catch (Exception ex2)
+                    catch (Exception rollbackEx)
                     {
-                        // This catch block will handle any errors that may have occurred
-                        // on the server that would cause the rollback to fail, such as
-                        // a closed connection.
-                        return new SQLClientResult( new List<string> { e.Message, ex2.Message } );
+                        sqlClientResult.AddExceptions( new List<Exception> { e, rollbackEx } );
+                        sqlClientResult.Freeze();
+                        return sqlClientResult;
                     }
                 }
                 finally
@@ -318,10 +353,10 @@ namespace Coinelity.Core.Data
             }
             catch (Exception e)
             {
-
-                // TODO: Exception handling.
-                Console.WriteLine(e.Message);
-                return false;
+                Console.WriteLine( e.Message );
+                SQLClientResult sqlClientResult = new SQLClientResult( e );
+                sqlClientResult.Freeze();
+                return sqlClientResult;
             }
         }
 
