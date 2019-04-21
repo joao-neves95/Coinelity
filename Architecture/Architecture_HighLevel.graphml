@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:java="http://www.yworks.com/xml/yfiles-common/1.0/java" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
-  <!--Created by yEd 3.18.1-->
+  <!--Created by yEd 3.19-->
   <key attr.name="Description" attr.type="string" for="graph" id="d0"/>
   <key for="port" id="d1" yfiles.type="portgraphics"/>
   <key for="port" id="d2" yfiles.type="portgeometry"/>
@@ -199,7 +199,7 @@
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="5" bottomF="5.0" left="5" leftF="5.0" right="5" rightF="5.0" top="5" topF="5.0"/>
-              <y:BorderInsets bottom="0" bottomF="0.0" left="18" leftF="17.843842315673726" right="0" rightF="0.0" top="12" topF="11.999999999999943"/>
+              <y:BorderInsets bottom="0" bottomF="0.0" left="18" leftF="17.843842315673726" right="24" rightF="23.999999999999943" top="12" topF="11.999999999999943"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="61.75" width="111.5154037475586" x="-149.91159667968748" y="33.61175600290571"/>
@@ -283,11 +283,10 @@
         <node id="n2::n4">
           <data key="d6">
             <y:GenericNode configuration="com.yworks.sbgn.Macromolecule">
-              <y:Geometry height="46.887996673583984" width="131.18" x="323.475486108161" y="36.06541390112204"/>
+              <y:Geometry height="46.887996673583984" width="131.18" x="299.475486108161" y="36.06541390112204"/>
               <y:Fill color="#FFFFFF" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="center" visible="true" width="127.375" x="1.9025000000000318" xml:space="preserve" y="6.742826461791992">Real-time 
-cryptocurrencies prices<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="center" visible="true" width="81.361328125" x="24.909335937500032" xml:space="preserve" y="14.093412399291992">Real-time chat<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
               <y:StyleProperties>
                 <y:Property class="java.lang.Integer" name="com.yworks.sbgn.style.radius" value="10"/>
               </y:StyleProperties>
@@ -446,35 +445,7 @@ cryptocurrencies prices<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e6" source="n2::n1" target="n4">
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="245.37644656827513" y="-68.15458439086905"/>
-            <y:Point x="478.3451965682751" y="-68.15458439086905"/>
-            <y:Point x="478.3451965682751" y="-98.48784439086893"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e7" source="n4" target="n2::n1">
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="478.3451965682751" y="-98.48784439086893"/>
-            <y:Point x="478.3451965682751" y="-68.15458439086905"/>
-            <y:Point x="245.37644656827513" y="-68.15458439086905"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e8" source="n3::n1" target="n2::n2">
+    <edge id="e6" source="n3::n1" target="n2::n2">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="14.700178555106334" ty="14.309230077980033">
@@ -505,7 +476,7 @@ cryptocurrencies prices<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:
         </y:GenericEdge>
       </data>
     </edge>
-    <edge id="e9" source="n2::n2" target="n4">
+    <edge id="e7" source="n2::n2" target="n4">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-31.87115882741091" ty="11.883193228078085">
@@ -525,14 +496,15 @@ cryptocurrencies prices<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:
     <edge id="n2::e1" source="n2::n0" target="n2::n4">
       <data key="d10">
         <y:GenericEdge configuration="com.yworks.edge.framed">
-          <y:Path sx="0.0" sy="0.0" tx="3.126388037344441E-13" ty="2.2737367544323206E-13"/>
+          <y:Path sx="0.0" sy="0.0" tx="3.126388037344441E-13" ty="2.2737367544323206E-13">
+            <y:Point x="292.5" y="77.5"/>
+          </y:Path>
           <y:LineStyle color="#000000" type="line" width="3.0"/>
           <y:Arrows source="none" target="standard"/>
         </y:GenericEdge>
       </data>
     </edge>
     <edge id="n2::e2" source="n2::n1" target="n2::n2">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -543,7 +515,6 @@ cryptocurrencies prices<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:
       </data>
     </edge>
     <edge id="n2::e3" source="n2::n2" target="n2::n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
