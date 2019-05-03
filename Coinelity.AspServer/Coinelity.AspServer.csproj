@@ -5,6 +5,7 @@
     <Version>0.1.0</Version>
     <UserSecretsId>1b6e824e-ae0a-48f7-93a3-2e24fe81f2b8</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <TypeScriptToolsVersion>3.4</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="WebApp\src\app\constants.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="WebApp\src\app\models\" />
+    <Folder Include="WebApp\src\app\enums\" />
     <Folder Include="WebClient\js\src\navbarPanelItems\news\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
@@ -45,6 +52,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Coinelity.Core\Coinelity.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="WebApp\src\app\constants.ts" />
   </ItemGroup>
 
   <ItemGroup>
