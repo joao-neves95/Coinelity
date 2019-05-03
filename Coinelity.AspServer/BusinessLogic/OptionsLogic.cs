@@ -18,6 +18,7 @@ using System.Data.SqlClient;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.AspServer.Middleware;
 using Coinelity.Core.Data;
+using Coinelity.Core.Models;
 
 namespace Coinelity.AspServer.BusinessLogic
 {
@@ -150,14 +151,14 @@ namespace Coinelity.AspServer.BusinessLogic
         /// <returns></returns>
         public static async Task<CloseOrderLogicResponse> CloseOrderAsync(UserAccountStore userAccountStore, OptionsStore optionsStore, SqlConnection connection, ClosedOptionDTO closedOption)
         {
-            bool success;
+            SQLClientResult result;
             userAccountStore = new UserAccountStore( false );
             optionsStore = new OptionsStore( false );
 
             using (connection = Env.GetMSSQLConnection())
             {
                 // TODO: Pass this to the BinaryOptionsLogic.CloseOrder()
-                success = await MSSQLClient.NonQueryTransactionOnceAsync( connection, new SqlCommand[]
+                result = await MSSQLClient.NonQueryTransactionOnceAsync( connection, new SqlCommand[]
                 {
                     new SqlCommand(userAccountStore.UnfreezeBalanceCmd(closedOption.UserId, closedOption.UserAccountType, Convert.ToDecimal( closedOption.InvestmentAmount ), closedOption.AddToBalance, closedOption.PayoutValue)),
                     // TODO: (If user lost) Send lost balance to Coinelity's bank account.
@@ -166,7 +167,7 @@ namespace Coinelity.AspServer.BusinessLogic
                 } );
             }
 
-            return new CloseOrderLogicResponse( success, null, closedOption );
+            return new CloseOrderLogicResponse( result.Success, null, closedOption );
         }
     }
 }

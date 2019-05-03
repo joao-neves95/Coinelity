@@ -1,10 +1,20 @@
-﻿using System;
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
+using System;
 using System.Windows;
 using System.Collections.Generic;
 using System.Text;
 using System.Data.SqlClient;
 
-namespace Coinelity.Core.Models
+namespace Coinelity.Core.Data
 {
     public class SQLClientResult : Freezable
     {
@@ -51,6 +61,12 @@ namespace Coinelity.Core.Models
         public SQLClientResult(List<string> errors)
         {
             this._errorMessages = errors;
+            this.Success = false;
+        }
+
+        public SQLClientResult(string error)
+        {
+            this._errorMessages = new List<string> { error };
             this.Success = false;
         }
 

@@ -17,3 +17,11 @@ D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\bin\Debug\netcoreapp2.2\Coinelity.AspServer.pdb
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.dll
 D:\Utilizador\Documents\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.pdb
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.csprojAssemblyReference.cache
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.Properties.Resources.resources
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.csproj.GenerateResource.cache
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.csproj.CoreCompileInputs.cache
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.RazorAssemblyInfo.cache
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.RazorAssemblyInfo.cs
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.AssemblyInfoInputs.cache
+D:\joao9\DEV\Coinelity\Coinelity.AspServer\obj\Debug\netcoreapp2.2\Coinelity.AspServer.AssemblyInfo.cs

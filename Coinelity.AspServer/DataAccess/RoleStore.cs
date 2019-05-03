@@ -44,7 +44,7 @@ namespace Coinelity.AspServer.DataAccess
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            int success = await MSSQLClient.CommandOnceAsync(
+            SQLClientResult result = await MSSQLClient.CommandOnceAsync(
                 _connection,
                 @"INSERT INTO dbo.ApplicationRole (Name)
                    VALUES (@RoleName)",
@@ -54,10 +54,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            if (success <= 0)
-                return IdentityResult.Failed();
-
-            return IdentityResult.Success;
+            return result.Success ? IdentityResult.Success : IdentityResult.Failed();
         }
 
         public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserEmailAsync(string userEmail)
@@ -72,7 +69,7 @@ namespace Coinelity.AspServer.DataAccess
         // TODO: Change to string[].
         public async Task<List<ApplicationRoleDTO>> GetUserRolesByUserIdAsync(string userId)
         {
-            IList<Dictionary<string, object>> userRolesDictionaryList = await MSSQLClient.QueryOnceAsync(
+            SQLClientResult result = await MSSQLClient.QueryOnceAsync(
                 _connection,
                 @"SELECT dbo.ApplicationRole.Name AS RoleName
                   FROM dbo.ApplicationRole
@@ -85,7 +82,7 @@ namespace Coinelity.AspServer.DataAccess
                 }
             );
 
-            return Utils.ToObjectList<ApplicationRoleDTO>( userRolesDictionaryList );
+            return Utils.ToObjectList<ApplicationRoleDTO>( result.QueryResult );
         }
 
         public Task<IdentityResult> DeleteAsync(ApplicationRole role, CancellationToken cancellationToken)

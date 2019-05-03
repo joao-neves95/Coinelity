@@ -38,18 +38,19 @@ namespace Coinelity.AspServer.DataAccess
             Dispose();
         }
 
-        public async Task<Dictionary<string, object>> GetBalancesAsync(int userId)
+        public async Task<SQLClientResult> GetBalancesAsync(int userId)
         {
-            IList<Dictionary<string, object>> balances = await MSSQLClient.QueryOnceAsync( _connection,
+            SQLClientResult result = await MSSQLClient.QueryOnceAsync( _connection,
                 $@"SELECT RealBalance, CreditsBalance, PaperBalance
                    FROM dbo.ApplicationUserAccount
                    WHERE UserId = {userId}"
             );
 
-            return balances[0];
+            result.Freeze();
+            return result;
         }
 
-        public async Task<decimal> GetBalanceAsync(int userId, UserAccountType userAccountType)
+        public async Task<SQLClientResult> GetBalanceAsync(int userId, UserAccountType userAccountType)
         {
             string select = "SELECT ";
             const string query = @"FROM dbo.ApplicationUserAccount
@@ -58,23 +59,15 @@ namespace Coinelity.AspServer.DataAccess
             string accountType = nameof( userAccountType );
             select += accountType;
 
-            IList<Dictionary<string, object>> balanceListDict = await MSSQLClient.QueryOnceAsync( _connection,
+            SQLClientResult result = await MSSQLClient.QueryOnceAsync( _connection,
                 select + query,
                 new Dictionary<string, object>
                 {
                     { "@UserId", userId }
                 } );
 
-            try
-            {
-                return Convert.ToDecimal( balanceListDict[0][accountType] );
-            }
-            catch (Exception e)
-            {
-                // TODO: Exception Handling.
-                Console.WriteLine( e );
-                return -1;
-            }
+            result.Freeze();
+            return result;
         }
 
         /// <summary>
@@ -113,13 +106,14 @@ namespace Coinelity.AspServer.DataAccess
         /// <param name="userAccountType"></param>
         /// <param name="amountToFreeze"></param>
         /// <returns></returns>
-        public Task<int> FreezeUserBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToFreeze)
+        public async Task<SQLClientResult> FreezeUserBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToFreeze)
         {
-            return MSSQLClient.CommandOnceAsync( _connection, FreezeUserBalanceCmd( userId, userAccountType, amountToFreeze ) );
+            return await MSSQLClient.CommandOnceAsync( _connection, FreezeUserBalanceCmd( userId, userAccountType, amountToFreeze ) );
         }
 
         public void UpdateBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUpdate)
         {
+            throw new NotImplementedException();
         }
 
         public string UnfreezeBalanceCmd(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
@@ -150,9 +144,9 @@ namespace Coinelity.AspServer.DataAccess
         /// <param name="addToBalance"> If true, it adds the amountToUnfreeze parameter to the user's balance. </param>
         /// <param name="amountToAdd"> Optional. The amount to add to the user's balance </param>
         /// <returns></returns>
-        public Task<int> UnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
+        public async Task<SQLClientResult> UnfreezeBalanceAsync(int userId, UserAccountType userAccountType, decimal amountToUnfreeze, bool addToBalance = false, decimal amountToAdd = 0.0m)
         {
-            return MSSQLClient.CommandOnceAsync( _connection, UnfreezeBalanceCmd( userId, userAccountType, amountToUnfreeze, addToBalance, amountToAdd ) );
+            return await MSSQLClient.CommandOnceAsync( _connection, UnfreezeBalanceCmd( userId, userAccountType, amountToUnfreeze, addToBalance, amountToAdd ) );
         }
     }
 }

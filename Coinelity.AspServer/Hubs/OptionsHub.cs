@@ -1,3 +1,13 @@
+/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
 // THIS LOGIC NEEDS A BIG REFACTORING FOR PERFORMANCE ENHANCEMENT.
 
 /*
@@ -107,14 +117,14 @@ namespace Coinelity.AspServer.Hubs
                         userAccountStore = new UserAccountStore( false );
                         optionsStore = new OptionsStore( false );
 
-                        bool success = await MSSQLClient.NonQueryTransactionAsync( connection,
+                        SQLClientResult result = await MSSQLClient.NonQueryTransactionAsync( connection,
                             new SqlCommand[]
                             {
                                 userAccountStore.FreezeUserBalanceCmd( thisUserId, accountType, Convert.ToDecimal( order.InvestmentAmount ), connection ),
                                 await optionsStore.OpenOrderCmdAsync( order, connection )
                             } );
 
-                        if (!success)
+                        if (!result.Success)
                         {
                             return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 500, "Unknown Error", ErrorMessages.UnknownError, null ).ToJSON() );
                         }

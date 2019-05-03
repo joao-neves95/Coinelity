@@ -37,7 +37,7 @@ namespace Coinelity.AspServer.DataAccess
             this.Dispose();
         }
 
-        public Task InsertNewLog(int userId, EventType eventType, string userIp)
+        public Task<SQLClientResult> InsertNewLog(int userId, EventType eventType, string userIp)
         {
             return MSSQLClient.CommandOnceAsync( _connection,
                 $@"INSERT INTO dbo.AuditLog (UserId, EventTypeId, UserIP)

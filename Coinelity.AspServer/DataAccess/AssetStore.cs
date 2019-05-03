@@ -1,7 +1,20 @@
-﻿using System;
+﻿/*
+ *
+ * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by João Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
+using System.Linq;
+using Coinelity.Core.Data;
+using Coinelity.Core.Models;
 
 namespace Coinelity.AspServer.DataAccess
 {
@@ -25,14 +38,15 @@ namespace Coinelity.AspServer.DataAccess
             Dispose();
         }
 
-        public async Task<IList<Dictionary<string, object>>> GetAll()
+        public async Task<SQLClientResult> GetAll()
         {
             return await MSSQLClient.QueryOnceAsync( _connection,
                 $@"SELECT dbo.Asset.Id, dbo.Asset.Symbol, dbo.Exchange.Name AS ExchangeName, dbo.Asset.LogoImageUrl
                        INNER JOIN dbo.Exchange
                        ON dbo.Asset.ExchangeId = dbo.Exchange.Id
                    FROM dbo.Asset
-                   ORDER BY dbo.Asset.Symbol";
+                   ORDER BY dbo.Asset.Symbol" 
+            );
         }
 
         public void Get()
@@ -49,7 +63,7 @@ namespace Coinelity.AspServer.DataAccess
         /// </summary>
         /// <param name="assetId"></param>
         /// <returns></returns>
-        public async Task<IList<Dictionary<string, object>>> GetSymbolAndExchange(int assetId)
+        public async Task<SQLClientResult> GetSymbolAndExchange(int assetId)
         {
             return await MSSQLClient.QueryOnceAsync( _connection,
                 $@"SELECT dbo.Asset.Symbol, dbo.Exchange.Name AS Exchange
