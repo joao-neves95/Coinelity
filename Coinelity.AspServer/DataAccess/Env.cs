@@ -24,7 +24,6 @@ namespace Coinelity.AspServer.DataAccess
         public static SqlConnection GetMSSQLConnection()
         {
             // Local database:
-            //
             return MSSQLClient.Create(
                 DotNetEnv.Env.GetString( "MSSQL_INSTANCE" ),
                 DotNetEnv.Env.GetString( "MSSQL_LOCALDATABASENAME" ),
@@ -33,7 +32,6 @@ namespace Coinelity.AspServer.DataAccess
             );
 
             // Azure Production SQL Server database:
-            //
             //return MSSQLClient.Create(
             //    DotNetEnv.Env.GetString( "MSSQL_SERVERNAME" ),
             //    DotNetEnv.Env.GetString( "MSSQL_DATABASENAME" ),

@@ -12,27 +12,46 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Coinelity.Core;
 
 namespace Coinelity.Core.Models
 {
     public class ApiResponse
     {
+        #region CONSTRUCTORS
+
         /// <summary>
         /// 
         /// The API Response schema.
         /// 
         /// </summary>
-        /// <param name="statusCode"> Defaults to 200 </param>
-        /// <param name="statusMessage"> Defaults to "Success" </param>
+        /// <param name="statusCode"> If null, it defaults to 200 </param>
+        /// <param name="statusMessage"> If null, it defaults to "Success" </param>
         /// <param name="errors"></param>
         /// <param name="data"></param>
         public ApiResponse(short? statusCode = null, string statusMessage = null, object[] errors = null, object[] data = null)
         {
-            this.StatusCode = ( statusCode == null ) ? 200 : statusCode;
-            this.StatusMessage = ( statusMessage == null ) ? "Success" : statusMessage;
-            this.Errors = (errors == null) ? new object[0] : errors;
-            this.Data = (data == null) ? new object[0] : data;
+            this.StatusCode = statusCode == null ? 200 : statusCode;
+            this.StatusMessage = statusMessage == null ? "Success" : statusMessage;
+            this.Errors = errors == null ? new object[0] : errors;
+            this.Data = data == null ? new object[0] : data;
+        }
+
+        /// <summary>
+        /// 
+        /// API Response schema using Lists instead of arrays.
+        /// 
+        /// </summary>
+        /// <param name="statusCode"> If null, it defaults to 200 </param>
+        /// <param name="statusMessage"> If null, it defaults to "Success" </param>
+        /// <param name="errors"></param>
+        /// <param name="data"></param>
+        public ApiResponse(short? statusCode = null, string statusMessage = null, List<object> errors = null, List<object> data = null)
+        {
+            this.StatusCode = statusCode == null ? 200 : statusCode;
+            this.StatusMessage = statusMessage == null ? "Success" : statusMessage;
+            this.Errors = errors == null ? new object[0] : errors.ToArray();
+            this.Data = data == null ? new object[0] : data.ToArray();
         }
 
         /// <summary>
@@ -87,6 +106,10 @@ namespace Coinelity.Core.Models
             this.Data = new object[1] { new Dictionary<string, string> { { "message", successMessage } } };
         }
 
+        #endregion
+
+        #region PROPERTIES
+
         public short? StatusCode { get; set; }
 
         public string StatusMessage { get; set; }
@@ -97,9 +120,11 @@ namespace Coinelity.Core.Models
         // TODO: Change to string[].
         public object[] Data { get; set; }
 
+        #endregion
+
         public string ToJSON()
         {
-            return JsonConvert.SerializeObject( this, Formatting.Indented );
+            return Utils.ToJSON( this );
         }
     }
 }

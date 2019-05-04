@@ -113,7 +113,6 @@ namespace Coinelity.AspServer
                  {
                      options.PayloadSerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
                      options.PayloadSerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                     
                  } );
         }
 

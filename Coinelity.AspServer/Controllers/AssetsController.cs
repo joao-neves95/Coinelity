@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Coinelity.AspServer.DataAccess;
 using Coinelity.Core.Models;
+using Coinelity.Core.Data;
+using Coinelity.Core.Errors;
 
 namespace Coinelity.AspServer.Controllers
 {
@@ -23,17 +25,17 @@ namespace Coinelity.AspServer.Controllers
     public class AssetsController : Controller
     {
         [HttpGet]
-        public void GetAll()
+        public async Task<ApiResponse> GetAll()
         {
             AssetStore assetStore;
             using ( assetStore = new AssetStore() )
             {
-                IList<Dictionary<string, object>>> assets = await assetStore.GetAll();
+                SQLClientResult assetsResult = await assetStore.GetAll();
 
-                if ( assets.Count <= 0 )
-                    return new ApiResponse( null, null, null, null );
+                if (assetsResult.QueryResult.Count <= 0)
+                    return new ApiResponse( 500, ErrorMessages.UnknownError, ErrorMessages.UnknownError, null );
 
-                return new ApiResponse( null, null, null, assets );
+                return new ApiResponse( 200, "OK", null, assetsResult.QueryResult.ToArray() );
             }
         }
     }

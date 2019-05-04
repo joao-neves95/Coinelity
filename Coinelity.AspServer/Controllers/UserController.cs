@@ -20,8 +20,10 @@ using Newtonsoft.Json;
 using Coinelity.AspServer.Middleware;
 using Coinelity.AspServer.Models;
 using Coinelity.AspServer.DataAccess;
+using Coinelity.Core;
 using Coinelity.Core.Errors;
 using Coinelity.Core.Models;
+using Coinelity.Core.Data;
 
 // TODO: Add consistency to the JSON responses (**Successes**/Errors). Something like: { error: [], result: [] }
 // TODO: Add try/catch.
@@ -46,10 +48,11 @@ namespace Coinelity.AspServer.Controllers
         #region AUTH
 
         [HttpPost("register")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromBody]RegisterDTO registerDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
+                return BadRequest( Json( Middleware.Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
             bool userExists = false;
 
@@ -64,7 +67,7 @@ namespace Coinelity.AspServer.Controllers
                 return BadRequest( new ApiResponse( 400, "Client Error", ErrorMessages.EmailAlreadyInUse, null ).ToJSON() );
 
             ApplicationUser user = new ApplicationUser { Email = registerDTO.Email, Password = registerDTO.Password };
-            user.IpAddress = Utils.GetUserIp( _httpContextAccessor );
+            user.IpAddress = Middleware.Utils.GetUserIp( _httpContextAccessor );
 
             // TODO (MIDDLEWARE) Test affiliate (empty and populated) cookie on register.
             string affiliatedTo = _httpContextAccessor.HttpContext.Request.Cookies[AFFILIATE_TOKEN_KEY];
@@ -81,6 +84,7 @@ namespace Coinelity.AspServer.Controllers
                 return StatusCode( 500, new ApiResponse( 400, "Client Error", JsonConvert.SerializeObject( registerSuccess.Errors, Formatting.Indented ) ).ToJSON() );
 
             // Do not await. Ignore VS warning.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run( async () =>
             {
                 AuditLogStore auditLogStore = null;
@@ -96,7 +100,7 @@ namespace Coinelity.AspServer.Controllers
 
                     using (auditLogStore = new AuditLogStore())
                     {
-                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Register,  Utils.GetUserIp( _httpContextAccessor ) );
+                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Register, Middleware.Utils.GetUserIp( _httpContextAccessor ) );
                     }
                 }
                 catch (Exception e)
@@ -109,15 +113,17 @@ namespace Coinelity.AspServer.Controllers
                     auditLogStore?.Dispose();
                 }
             } );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             return StatusCode( 201, new ApiResponse( 201, "Created", "User successfully registered." ).ToJSON() );
         }
 
         [HttpPost("login")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([FromBody]LoginDTO loginDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
+                return BadRequest( Json( Middleware.Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
             string userEmail = loginDTO.Email;
             UserStore userStore = new UserStore();
@@ -132,6 +138,7 @@ namespace Coinelity.AspServer.Controllers
             userStore.Dispose();
 
             // Do not await. Ignore VS warning.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run( async () =>
             {
                  AuditLogStore auditLogStore = null;
@@ -141,7 +148,7 @@ namespace Coinelity.AspServer.Controllers
                      using (auditLogStore = new AuditLogStore())
                      {
                         // TODO: Get user IP.
-                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Login, Utils.GetUserIp( _httpContextAccessor ) );
+                        await auditLogStore.InsertNewLog( Convert.ToInt32( userId ), EventType.Login, Middleware.Utils.GetUserIp( _httpContextAccessor ) );
                      }
                  }
                  catch (Exception e)
@@ -153,6 +160,7 @@ namespace Coinelity.AspServer.Controllers
                      auditLogStore?.Dispose();
                  }
             } );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             return Ok( Json( new jwtDTO { AccessToken = JWTTokens.Generate( userEmail, userId ) } ).Value );
         }
@@ -176,7 +184,7 @@ namespace Coinelity.AspServer.Controllers
             {
                 using (roleStore = new RoleStore())
                 {
-                    userIdClaim = Utils.GetUserIdClaim( User );
+                    userIdClaim = Middleware.Utils.GetUserIdClaim( User );
                 }
 
                 applicationUserRoles = await roleStore.GetUserRolesByUserIdAsync( userIdClaim );
@@ -207,50 +215,56 @@ namespace Coinelity.AspServer.Controllers
         /// <param name="setPasswordDTO"></param>
         /// <returns></returns>
         [Authorize]
+        [ValidateAntiForgeryToken]
         [HttpPut("password")]
-        public async Task<IActionResult> PutPassword([FromBody]SetPasswordDTO setPasswordDTO)
+        public async Task<ApiResponse> PutPassword([FromBody]SetPasswordDTO setPasswordDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
+                return new ApiResponse(400, ErrorMessages.BadRequest, Middleware.Utils.GetErrorsFromModelState( ModelState ).ToArray() );
 
-            string userIdClaim = Utils.GetUserIdClaim( User );
+            string userIdClaim = Middleware.Utils.GetUserIdClaim( User );
             UserStore userStore = new UserStore();
-            string result = await userStore.ChangePasswordAsync( userIdClaim, setPasswordDTO.CurrentPassword, setPasswordDTO.NewPassword );
-
-
-            if (result == ErrorMessages.ProvidedPassDoesNotMatch)
-                return BadRequest( Json( new ErrorMessage( ErrorType.ProvidedPassDoesNotMatch ) ).Value );
-            if (result == ErrorMessages.CouldNotChangePassword)
-                return BadRequest( Json( new ErrorMessage( ErrorType.CouldNotChangePassword ) ).Value );
-
-            if (result == "Success")
+            SQLClientResult result;
+            try
             {
-                // Do not await. Ignore warning.
-                Task.Run( async () =>
-                {
-                    AuditLogStore auditLogStore = null;
+                result = await userStore.ChangePasswordAsync( userIdClaim, setPasswordDTO.CurrentPassword, setPasswordDTO.NewPassword );
 
-                    try
-                    {
-                        using (auditLogStore = new AuditLogStore())
-                        {
-                            await auditLogStore.InsertNewLog( Convert.ToInt32( userIdClaim ), EventType.Password_Change, Utils.GetUserIp( _httpContextAccessor ) );
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine( $"Exception in \"/password\" - PutPassword():\n{e.Message}", e );
-                    }
-                    finally
-                    {
-                        auditLogStore?.Dispose();
-                    }
-                } );
-
-                return Ok( Json( "Successfully changed the password" ).Value );
+            }
+            catch
+            {
+                return new ApiResponse( 500, ErrorMessages.UnknownError, ErrorMessages.UnknownError, null );
             }
 
-            return StatusCode(500, Json( new ErrorMessage(ErrorType.UnknownError) ).Value);
+            if (!result.Success)
+            {
+                return new ApiResponse( 400, ErrorMessages.BadRequest, result.ErrorMessages[0], null );
+            }
+
+            // Do not await. Ignore warning.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Task.Run( async () =>
+            {
+                AuditLogStore auditLogStore = null;
+
+                try
+                {
+                    using (auditLogStore = new AuditLogStore())
+                    {
+                        await auditLogStore.InsertNewLog( Convert.ToInt32( userIdClaim ), EventType.Password_Change, Middleware.Utils.GetUserIp( _httpContextAccessor ) );
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine( $"Exception in \"/password\" - PutPassword():\n{e.Message}", e );
+                }
+                finally
+                {
+                    auditLogStore?.Dispose();
+                }
+            } );
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            return new ApiResponse( 200, "Ok", "Successfully changed the password" );
         }
 
         /// <summary>
@@ -261,13 +275,14 @@ namespace Coinelity.AspServer.Controllers
         /// <param name="setMaxLoginFailsDTO"></param>
         /// <returns></returns>
         [Authorize]
+        [ValidateAntiForgeryToken]
         [HttpPut("max-login-fails")]
         public async Task<IActionResult> PutMaxLoginFails([FromBody]SetMaxLoginFailsDTO setMaxLoginFailsDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest( Json( Utils.GetErrorsFromModelState( ModelState ) ).Value );
+                return BadRequest( Json( Middleware.Utils.GetErrorsFromModelState( ModelState ) ).Value );
 
-            string userId = Utils.GetUserIdClaim( User );
+            string userId = Middleware.Utils.GetUserIdClaim( User );
 
             UserStore userStore = new UserStore();
             int result = await userStore.SetMaxloginFailsAsync( userId, setMaxLoginFailsDTO.MaxLoginFails.ToString() );
@@ -291,7 +306,7 @@ namespace Coinelity.AspServer.Controllers
 
             try
             {
-                int thisUserId = Convert.ToInt32( Utils.GetUserIdClaim( User ) );
+                int thisUserId = Convert.ToInt32( Middleware.Utils.GetUserIdClaim( User ) );
 
                 using (optionsStore = new OptionsStore())
                 {
@@ -317,23 +332,23 @@ namespace Coinelity.AspServer.Controllers
 
         [Authorize]
         [HttpGet("balances")]
-        public async Task<string> GetBalances()
+        public async Task<ApiResponse> GetBalances()
         {
-            string userIdClaim = Utils.GetUserIdClaim( User );
+            string userIdClaim = Middleware.Utils.GetUserIdClaim( User );
             UserAccountStore userAccountStore = new UserAccountStore();
 
             try
             {
                 using (userAccountStore)
                 {
-                    Dictionary<string, object> userBalances = await userAccountStore.GetBalancesAsync( Convert.ToInt32( userIdClaim ) );
-                    return new ApiResponse( 200, "Success", null, new object[] { userBalances } ).ToJSON();
+                    SQLClientResult userBalancesResult = await userAccountStore.GetBalancesAsync( Convert.ToInt32( userIdClaim ) );
+                    return new ApiResponse( 200, "Success", null, userBalancesResult.QueryResult.ToJSON() );
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(  "ERROR in UserController.GetBalances() ", e );
-                return new ApiResponse( 500, "Unknown Error", "Unknown Error", null ).ToJSON();
+                Console.WriteLine( $"ERROR in UserController.GetBalances() \n{e.Message} \n{e.StackTrace}" );
+                return new ApiResponse( 500, "Unknown Error", "Unknown Error", null );
             }
             finally
             {

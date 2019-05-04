@@ -46,6 +46,8 @@ namespace Coinelity.Core.Errors
 
         public const string NotFound = "Not Found";
 
+        public const string BadRequest = "Bad Request";
+
         public const string UnknownError = "Unknown error.";
     }
 }

@@ -301,8 +301,6 @@ namespace Coinelity.AspServer.DataAccess
                 response.Freeze();
                 return response;
             }
-            // return ErrorMessages.CouldNotChangePassword;
-
             
             result.Freeze();
             return result;

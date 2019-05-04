@@ -80,7 +80,11 @@ namespace Coinelity.AspServer.Hubs
                 decimal userBalance = 0.0M;
                 using (userAccountStore = new UserAccountStore())
                 {
-                    userBalance = await userAccountStore.GetBalanceAsync( thisUserId, accountType );
+                    SQLClientResult userBalanceResult = await userAccountStore.GetBalanceAsync( thisUserId, accountType );
+                    if (!userBalanceResult.Success)
+                        return Clients.Caller.SendAsync( "ReceivePlaceOptionResult", new ApiResponse( 200, ErrorMessages.UnknownError, ErrorMessages.UnknownError, null ).ToJSON() );
+
+                    userBalance = Convert.ToDecimal( userBalanceResult.QueryResult[0][nameof( accountType )] );
                 }
 
                 if (Convert.ToDecimal( order.InvestmentAmount ) > userBalance)
@@ -98,7 +102,8 @@ namespace Coinelity.AspServer.Hubs
                     string exchangeName = "";
                     using (optionsStore = new OptionsStore())
                     {
-                        IList<Dictionary<string, object>> symbolAndExchange = await optionsStore.GetSymbolAndExchange( order.AssetId );
+                        // TODO: (SERVER) FIX THIS.
+                        IList<Dictionary<string, object>> symbolAndExchange = new List<Dictionary<string, object>>();// await optionsStore.GetSymbolAndExchange( order.AssetId );
                         symbol = symbolAndExchange[0]["Symbol"].ToString();
                         exchangeName = symbolAndExchange[1]["Exchange"].ToString();
                     }

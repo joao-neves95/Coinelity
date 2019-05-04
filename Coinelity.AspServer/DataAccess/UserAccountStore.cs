@@ -38,10 +38,17 @@ namespace Coinelity.AspServer.DataAccess
             Dispose();
         }
 
+        /// <summary>
+        /// 
+        /// Returns an SQLCLientResult with a dictionary containing the three BalanceTypeName values (decimals).
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<SQLClientResult> GetBalancesAsync(int userId)
         {
             SQLClientResult result = await MSSQLClient.QueryOnceAsync( _connection,
-                $@"SELECT RealBalance, CreditsBalance, PaperBalance
+                $@"SELECT {BalanceTypeName.Real}, {BalanceTypeName.Credits}, {BalanceTypeName.Paper}
                    FROM dbo.ApplicationUserAccount
                    WHERE UserId = {userId}"
             );

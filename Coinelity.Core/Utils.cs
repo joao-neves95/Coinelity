@@ -9,14 +9,21 @@
  */
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using System.Text;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Coinelity.Core
 {
     public static class Utils
     {
+        #region EXTENSIONS
+
+        public static string ToJSON(this object obj)
+        {
+            return JsonConvert.SerializeObject( obj, Formatting.Indented );
+        }
+
         public static List<T> ToObjectList<T>(this IList<Dictionary<string, object>> listDictionaries) where T : class
         {
             List<T> objectList = new List<T>();
@@ -82,6 +89,8 @@ namespace Coinelity.Core
 
             return (T)obj;
         }
+
+        #endregion
 
         public static readonly string alphaNum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
