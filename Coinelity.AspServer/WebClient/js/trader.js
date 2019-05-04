@@ -30,6 +30,7 @@
 // @import '/pages/dashboard/dashboard.model'
 // @import '/pages/dashboard/dashboard.view'
 // @import '/pages/dashboard/dashboard.controller'
+// @import '/pages/tradeRoom/trade/chartConfig'
 // @import '/pages/tradeRoom/trade/trade.templates'
 // @import '/pages/tradeRoom/trade/trade.model'
 // @import '/pages/tradeRoom/trade/trade.view'
@@ -1115,7 +1116,7 @@ const exchangeClientUtils = Object.freeze( {
 } );
 
 // TODO: Add support for multiple exchanges.
-
+// Errors are ignored. Track them in the future.
 let exchangeClient = null;
 
 class ExchangeClient {
@@ -1201,7 +1202,7 @@ class ExchangeClient {
         ticker = await this.getExchangeObject( exchangeName ).fetchTicker( symbol );
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       if ( Callback )
@@ -1225,7 +1226,7 @@ class ExchangeClient {
    * @param { string } exchangeName The exchange name.
    * @param { string } symbol The asset symbol.
    * @param { string } timeframe 1m, 5m, 15m, 30m, 1h, 4h, 1d, 7d, 1M.
-   * @param { Function } Callback Receives a <string> representation of the last OHLC candle.
+   * @param { Function } Callback Receives a <string> representation of the last OHLC candle or undefined in case of error.
    */
   getLastOHLCV( exchangeName, symbol, timeframe, Callback ) {
     ( async () => {
@@ -1235,7 +1236,7 @@ class ExchangeClient {
         OHLCV = await this.getExchangeObject( exchangeName ).fetchOHLCV( symbol, timeframe, null, 10 );
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       return Callback( OHLCV[OHLCV.length - 1] );
@@ -1286,7 +1287,7 @@ class ExchangeClient {
   /**
    * 
    * @param { string } symbol
-   * @param { Function } Callback Called in the end of the execution. Receives a <string> representation of SpreadPricesModel.
+   * @param { Function } Callback Called in the end of the execution. Receives a <string> representation of SpreadPricesModel on undefined in case of error.
    */
   getCurrentSpreadPrices( exchangeName, symbol, Callback ) {
     ( async () => {
@@ -1295,7 +1296,7 @@ class ExchangeClient {
       try {
         orderBook = await this.getExchangeObject( exchangeName ).fetchOrderBook( symbol, 4 );
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       const bid = orderBook.bids.length > 0 ? orderBook.bids[0][0] : undefined;
@@ -1316,7 +1317,7 @@ class ExchangeClient {
         trades = trades[trades.length - 1];
 
       } catch ( e ) {
-        console.error( `EXCEPTION: \n${e}` );
+        //
       }
 
       return Callback( trades );
@@ -1331,7 +1332,7 @@ class ExchangeClient {
       } );
 
     } catch ( e ) {
-      console.error( `EXCEPTION: \n${e}` );
+      //
     }
   }
 
@@ -1349,7 +1350,7 @@ class ExchangeClient {
       } );
 
     } catch ( e ) {
-      console.error( `EXCEPTION: \n${e}` );
+      //
     }
   }
 
@@ -1439,52 +1440,53 @@ class Notifications {
     throw DevErrors.cantInstantiateStatic( 'Notifications' );
   }
 
-  static successToast( title, description = '' ) {
-    swall( { toast: true, timer: 5000, title: title } );
-  }
-
-  static successToastAndIcon( title, description = '' ) {
-    swall( { type: 'success', timer: 5000, title: title } );
+  static successToast( title = 'Success' ) {
+    Notifications.____toast( title )( { type: 'success' } );
   }
 
   static successPopUp( title, description = '' ) {
-    swall();
   }
 
-  static successPopUpAndIcon( title, description = '' ) {
-    swall();
-  }
-
-  static infoToast( title, description = '' ) {
-    swall();
-  }
-
-  static infoToastAndIcon( title, description = '' ) {
-    swall();
+  static infoToast( title ) {
+    Notifications.____toast( title )( { type: 'info' } );
   }
 
   static infoPopUp( title, description = '' ) {
-    swall();
   }
 
-  static infoPopUpAndIcon( title, description = '' ) {
-    swall();
+  static warningToast( title ) {
+    Notifications.____toast( title )( { type: 'warning' } );
   }
 
-  static errorToast( title, description = '' ) {
-    swall();
+  static warningPopUp( title, description = '' ) {
   }
 
-  static errorToastAndIcon( title, description = '' ) {
-    swall();
+  static errorToast( title = 'Error' ) {
+    Notifications.____toast( title )( { type: 'error' } );
   }
 
   static errorPopUp( title, description = '' ) {
-    swall();
   }
 
-  static errorPopUpAndIcon( title, description = '' ) {
-    swall();
+  static optionToast() {
+  }
+
+  /**
+   * 
+   * @param {any} title
+   * @param { string } position Can be 'top', 'top-start', 'top-end', 'center', 'center-start', 'center-end', 'bottom', 'bottom-start', or 'bottom-end'.
+   * @param {any} timer
+   */
+  static ____toast( title, position = 'top-end', timer = 10000 ) {
+    return Swal.mixin( {
+      target: '#page-container',
+      title: title,
+      timer: timer,
+      position: position,
+      toast: true,
+      showConfirmButton: false,
+      allowOutsideClick: false
+    } );
   }
 }
 
@@ -1858,6 +1860,116 @@ class DashboardController extends ControllerBase {
 
 /*
  *
+ * Copyright (c) 2018 Jo�o Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
+ * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * The EULA is located in the root of this project, under the name "LICENSE.md".
+ * Written by Jo�o Pedro Martins Neves <joao95neves@gmail.com>, Portugal, CIVIL ID: 14298812.
+ *
+ */
+
+ // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
+const CHART_CONFIG = {
+  backgroundColor: Colors.LighterGrey,// '#21202D',
+  title: {
+    //text: this.currentSymbol,
+    text: '',
+    left: 'center'
+  },
+  animation: true,
+  grid: {
+    left: '10%',
+    right: '10%',
+    bottom: '15%'
+  },
+  toolbox: {
+    show: true,
+    right: 10,
+    feature: {
+      saveAsImage: {
+        title: 'Save image as'
+      },
+      dataZoom: {
+        yAxisIndex: 'none',
+        title: {
+          zoom: 'Area zoom',
+          back: 'Restore area zoom'
+        }
+      },
+      restore: {
+        title: 'Restore'
+      }
+    }
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      animation: true
+    }
+  },
+  xAxis: {
+    type: 'category',
+    data: [],
+    scale: true,
+    boundaryGap: false,
+    axisLine: { onZero: false },
+    splitLine: { show: false },
+    splitNumber: 20,
+    min: 'dataMin',
+    max: 'dataMax'
+  },
+  yAxis: {
+    scale: true,
+    splitArea: {
+      show: true
+    }
+  },
+  dataZoom: [
+    {
+      type: 'inside',
+      start: 90,
+      end: 100
+    },
+    {
+      show: true,
+      type: 'slider',
+      y: '90%',
+      start: 50,
+      end: 100
+    }
+  ],
+  series: [
+    {
+      type: 'candlestick',
+      data: [],
+      itemStyle: {
+        // Bullish candles.
+        color: Colors.BullishGreen,
+        borderColor: Colors.BullishGreen,
+        // Bearish candles.
+        color0: Colors.BearishRed,
+        borderColor0: Colors.BearishRed
+      }
+    }//,
+    //{
+    //  name: 'MA10',
+    //  type: 'line',
+    //  data: calculateMA( 10, data ),
+    //  smooth: true,
+    //  showSymbol: false,
+    //  lineStyle: {
+    //    normal: {
+    //      width: 1
+    //    }
+    //  }
+    //},
+  ]
+};
+
+
+/*
+ *
  * Copyright (c) 2018 João Pedro Martins Neves <joao95neves@gmail.com> - All Rights Reserved.
  * Unauthorized copying/remixing/sharing of this file, via any medium is strictly prohibited.
  * Proprietary and confidential.
@@ -1931,11 +2043,11 @@ class TradeTemplates {
     `;
   }
 
-  static realAccountInputs {
-    return PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+  static realAccountInputs() {
+    return PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"' );
   }
   
-  static demoAccountInputs {
+  static demoAccountInputs() {
     return '';
   }
 
@@ -1995,7 +2107,10 @@ class TradeModel extends ModelBase {
 
   get _() { return tradeModel; }
 
-  getInitChartData() {
+  /**
+   * It populates the model with the initial price data.
+   */
+  initChartData() {
     return new Promise( async ( resolve, reject ) => {
       let OHLCVArray;
 
@@ -2003,8 +2118,8 @@ class TradeModel extends ModelBase {
         OHLCVArray = await this.getOHLCV();
 
       } catch {
-        // TODO: Send error notification.
-        return console.error( 'There was an error while trying to connect to the data provider.' );
+        Notifications.errorToast( 'There was an error connecting to the data provider. Trying again...' );
+        return this.initChartData();
       }
 
       for ( let i = 0; i < OHLCVArray.length; ++i ) {
@@ -2013,7 +2128,7 @@ class TradeModel extends ModelBase {
         this.chartData.values.push( [OHLCVArray[i][1], OHLCVArray[i][4], OHLCVArray[i][3], OHLCVArray[i][2]] );
       }
 
-      return resolve( [this.chartData] );
+      return resolve();
     } );
   }
 
@@ -2041,6 +2156,7 @@ class TradeModel extends ModelBase {
 
   /** 
    * It returns the promise when it finishes connecting or gets in an infinite loop.
+   * @returns { Promise<void> }
    */
    connectToOptionsHub() {
     return new Promise( async (resolve, reject) => { 
@@ -2052,12 +2168,15 @@ class TradeModel extends ModelBase {
         .build();
 
       this.__initOptionsHubListeners();
-      this.__startOptionsHubConnection();
 
       // Reconnection loop.
       this.optionsConnection.onclose( async () => {
-        returns await this.__startOptionsHubConnection();
+        Notifications.warningToast( 'The connection dropped. Trying to reconnect...' );
+        return await this.__startOptionsHubConnection();
       } );
+
+      await this.__startOptionsHubConnection();
+      return resolve();
     } );
   }
 
@@ -2095,20 +2214,24 @@ class TradeModel extends ModelBase {
     } );
   }
 
-  // TODO: (FRONTEND) Show notification.
   placeOrder( placeOptionDTO ) {
     this.optionsConnection.invoke( 'PlaceOrder', placeOptionDTO )
-                          .catch( e => console.error( e ) );
+      .catch( e => {
+        console.error( e );
+        return Notifications.errorToast( 'There was an error while placing the trade.' );
+      } );
+
+    return Notifications.successToast( 'Order successfuly placed!' );
   }
 
   checkOrder( checkOrderDTO ) {
     this.optionsConnection.invoke( 'CheckOrder', checkOrderDTO ) 
-                          .catch( e => console.error( e ) );
+      .catch( e => console.error( e ) );
   }
 
   syncOrders() {
     this.optionsConnection.invoke( 'SyncOrders' )
-                          .catch( e => console.error( e ) );
+      .catch( e => console.error( e ) );
   }
 
   /**
@@ -2134,6 +2257,7 @@ class TradeModel extends ModelBase {
         } finally {
           if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
             console.error( 'There was an error while fetching the data.', lastError );
+            Notifications.errorToast( 'There was an error while fetching the chart data.' );
             return reject( lastError );
           }
 
@@ -2165,6 +2289,7 @@ class TradeModel extends ModelBase {
         } finally {
           if ( attemptNum > FETCH_CHART_DATA_MAX_ATTEMPTS ) {
             console.error( 'There was an error while fetching the data.', lastError );
+            Notifications.errorToast( 'There was an error while fetching the chart data.' );
             return reject( lastError );
           }
 
@@ -2279,14 +2404,14 @@ class TradeController extends ControllerBase {
     await this.__injectChart();
     this.__injectTradeTools();
     this.view.updateTradingToolsFiatSymbol();
-    this.model.connectToOptionsHub();
+    await this.model.connectToOptionsHub();
   }
 
   __injectChart() {
     return new Promise( async ( resolve, reject ) => {
       this.model.currentAccountType = this.view.getCurrentAccountType();
       this.view.injectChartTemplate();
-      await this.model.getInitChartData();
+      await this.model.initChartData();
       this.model.chart = echarts.init( document.getElementById( TradeTemplates.chartElemId ) );
       this.model.chart.setOption( this.model.chartConfig );
       this.model.initEventHandlers();

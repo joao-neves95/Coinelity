@@ -9,9 +9,11 @@
  */
 
  // Docs: https://ecomfe.github.io/echarts-doc/public/en/option.html#series-candlestick
-const CHART_CONFIG = { backgroundColor: Colors.LighterGrey,// '#21202D',
+const CHART_CONFIG = {
+  backgroundColor: Colors.LighterGrey,// '#21202D',
   title: {
-    text: this.currentSymbol,
+    //text: this.currentSymbol,
+    text: '',
     left: 'center'
   },
   animation: true,
@@ -48,7 +50,7 @@ const CHART_CONFIG = { backgroundColor: Colors.LighterGrey,// '#21202D',
   },
   xAxis: {
     type: 'category',
-    data: this.chartData.categoryData,
+    data: [],
     scale: true,
     boundaryGap: false,
     axisLine: { onZero: false },
@@ -80,7 +82,7 @@ const CHART_CONFIG = { backgroundColor: Colors.LighterGrey,// '#21202D',
   series: [
     {
       type: 'candlestick',
-      data: this.chartData.values,
+      data: [],
       itemStyle: {
         // Bullish candles.
         color: Colors.BullishGreen,

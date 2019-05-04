@@ -1,0 +1,9 @@
+D:\joao9\DEV\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.deps.json
+D:\joao9\DEV\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.dll
+D:\joao9\DEV\Coinelity\Coinelity.Core\bin\Debug\netcoreapp2.1\Coinelity.Core.pdb
+D:\joao9\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.csprojAssemblyReference.cache
+D:\joao9\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.csproj.CoreCompileInputs.cache
+D:\joao9\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.AssemblyInfoInputs.cache
+D:\joao9\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.AssemblyInfo.cs
+D:\joao9\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.dll
+D:\joao9\DEV\Coinelity\Coinelity.Core\obj\Debug\netcoreapp2.1\Coinelity.Core.pdb

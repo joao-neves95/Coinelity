@@ -48,10 +48,10 @@ namespace Coinelity.AspServer
             services.AddTransient<IRoleStore<ApplicationRole>, RoleStore>();
             services.AddScoped<IPasswordHasher<ApplicationUser>, AppPasswordHasher<ApplicationUser>>();
 
-            // TODO: Alter password configuration.
+            // TODO: (SERVER) Alter password configuration.
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
-                // TODO: Configure password requirements.
+                // TODO: (SERVER) Configure password requirements.
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = Env.MinPasswordLen;
                 options.Password.RequireNonAlphanumeric = false;
@@ -145,7 +145,7 @@ namespace Coinelity.AspServer
                 OriginalHostHeaderName = "Anonymous",
             } );
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseAuthentication();
 
             app.UseSignalR( routes =>
@@ -155,6 +155,7 @@ namespace Coinelity.AspServer
                  routes.MapHub<ChatHub>( "/chat" );
              } );
 
+            // TODO: (SERVER) Pass this to Middleware.
             app.Use( async (context, _next) =>
             {
                 await _next();
@@ -177,7 +178,12 @@ namespace Coinelity.AspServer
                  await _next.Invoke();
              } );
 
-            app.UseMvc();
+            app.UseMvc( routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action=Index}/{id?}" );
+            } );
         }
     }
 }

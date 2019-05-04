@@ -30,6 +30,7 @@
 // @import '/pages/dashboard/dashboard.model'
 // @import '/pages/dashboard/dashboard.view'
 // @import '/pages/dashboard/dashboard.controller'
+// @import '/pages/tradeRoom/trade/chartConfig'
 // @import '/pages/tradeRoom/trade/trade.templates'
 // @import '/pages/tradeRoom/trade/trade.model'
 // @import '/pages/tradeRoom/trade/trade.view'

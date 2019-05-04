@@ -73,11 +73,11 @@ class TradeTemplates {
     `;
   }
 
-  static realAccountInputs {
-    return PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"') +
+  static realAccountInputs() {
+    return PageTemplates.inputNumElem( 'Investment Amount', 'investment-amount', 1, '', '1', 'class = "round-borders-1"' );
   }
   
-  static demoAccountInputs {
+  static demoAccountInputs() {
     return '';
   }
 
