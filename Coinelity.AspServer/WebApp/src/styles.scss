@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+
+app-root {
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+
+/*#region UTILITIES */
+
+.no-padding {
+  padding: 0 !important;
+}
+
+/*#endregion */

@@ -1,5 +1,15 @@
-<aside class="ui left vertical sidebar menu visible"></aside>
-<main class="pusher pushable">
-  <app-header></app-header>
-  <router-outlet></router-outlet>
-</main>
+<app-header>
+</app-header>
+
+<div class="app-wrapper ui page grid">
+
+    <app-sidenav class="three wide column no-padding">
+    </app-sidenav>
+
+    <div class="thirteen wide column">
+
+      <router-outlet>
+      </router-outlet>
+
+    </div>
+</div>
