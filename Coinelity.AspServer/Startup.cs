@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -108,6 +109,8 @@ namespace Coinelity.AspServer
                          options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                      } );
 
+            services.AddSpaStaticFiles(options => options.RootPath = "WebApp/dist" );
+
             services.AddSignalR()
                 .AddJsonProtocol( options =>
                  {
@@ -183,6 +186,19 @@ namespace Coinelity.AspServer
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}" );
+            } );
+
+            app.UseSpa( spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "WebApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseAngularCliServer( npmScript: "start" );
+                }
             } );
         }
     }

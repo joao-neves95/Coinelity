@@ -1,0 +1,3 @@
+D:\joao9\DEV\Coinelity\Coinelity.NodeServer\obj\Debug\Coinelity.NodeServer.njsprojAssemblyReference.cache
+D:\joao9\DEV\Coinelity\Coinelity.NodeServer\obj\Debug\Coinelity.NodeServer.njsproj.CoreCompileInputs.cache
+D:\joao9\DEV\Coinelity\Coinelity.NodeServer\bin\Microsoft.NodejsTools.WebRole.dll
