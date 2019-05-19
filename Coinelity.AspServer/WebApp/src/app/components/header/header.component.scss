@@ -1,7 +1,8 @@
-@import '../../constants.scss';
 
-header {
-  height: $header-height;
-  width: 100%;
-  position: relative;
+nz-header {
+
+  .balance {
+    float: right;
+  }
+
 }

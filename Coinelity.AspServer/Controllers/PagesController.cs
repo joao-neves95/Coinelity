@@ -33,17 +33,19 @@ namespace Coinelity.AspServer.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [Route("/")]
-        [Route("/home")]
-        [Route("/index.html")]
+        [Route( "/" )]
+        [Route( "/home" )]
+        [Route( "/index.html" )]
         [HttpGet]
         public IActionResult Get()
         {
+            Response.Redirect( "/webapp" );
+
             try
             {
                 Response.ContentType = "text/html";
-                string index = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html");
-                return PhysicalFile(index, "text/html");
+                string index = Path.Combine( Directory.GetCurrentDirectory(), "wwwroot", "index.html" );
+                return PhysicalFile( index, "text/html" );
             }
             catch (Exception e)
             {

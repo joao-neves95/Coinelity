@@ -6,4 +6,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
+  //#region PROPERTIES
+
+  public isCollapsed: boolean = false;
+
+  public isReverseArrow: boolean = false;
+
+  public width = 200;
+
+  //#endregion
+
 }

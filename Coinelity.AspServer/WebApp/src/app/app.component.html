@@ -1,15 +1,24 @@
-<app-header>
-</app-header>
 
-<div class="app-wrapper ui page grid">
+<nz-layout id="app-container">
 
-    <app-sidenav class="three wide column no-padding">
-    </app-sidenav>
+  <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzWidth]="width" [nzReverseArrow]="isReverseArrow">
+    <div class="logo"></div>
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'" [nzInlineCollapsed]="isCollapsed">
+      <app-sidenav>
+      </app-sidenav>
+    </ul>
+  </nz-sider>
 
-    <div class="thirteen wide column">
+  <nz-layout>
+    <app-header>
+    </app-header>
 
-      <router-outlet>
-      </router-outlet>
+    <app-pages>
+    </app-pages>
 
-    </div>
-</div>
+    <nz-footer>
+      Coinelity ©2019
+    </nz-footer>
+  </nz-layout>
+
+</nz-layout>

@@ -1,12 +1,26 @@
-@import './constants.scss';
+@import 'constants.scss';
 
-.app-wrapper {
+#app-container {
   height: 100%;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
+  width: 100%;
+}
 
-  & > div.column{
-    padding: 0;
-  }
+.logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+}
+
+app-pages {
+  padding: 24px;
+  background: #fff;
+  min-height: 360px;
+  height: calc(100% - #{$footer-height});
+  height: -webkit-calc(100% - #{$footer-height});
+  height: -moz-calc(100% - #{$footer-height});
+}
+
+nz-footer {
+  padding: 14px 50px;
+  text-align: center;
 }

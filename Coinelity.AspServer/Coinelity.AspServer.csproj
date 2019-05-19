@@ -17,11 +17,11 @@
 
   <ItemGroup>
     <None Remove="WebApp\src\app\constants.ts" />
+    <None Remove="WebApp\src\app\enums\SidenavItemLabels.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="WebApp\src\app\models\" />
-    <Folder Include="WebApp\src\app\enums\" />
     <Folder Include="WebClient\js\src\navbarPanelItems\news\" />
     <Folder Include="wwwroot\img\" />
   </ItemGroup>

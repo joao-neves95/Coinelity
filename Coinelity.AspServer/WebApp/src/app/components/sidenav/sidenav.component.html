@@ -1,24 +1,23 @@
-<!-- Example: https://www.w3schools.com/howto/howto_js_sidenav.asp -->
 
-<aside class="ui vertical menu visible">
+<li nz-submenu>
+  <span title><i nz-icon type="user"></i><span class="nav-text">User</span></span>
+  <ul>
+    <li nz-menu-item>Tom</li>
+    <li nz-menu-item>Bill</li>
+    <li nz-menu-item>Alex</li>
+  </ul>
+</li>
+<li nz-submenu>
+  <span title><i nz-icon type="team"></i><span class="nav-text">Team</span></span>
+  <ul>
+    <li nz-menu-item>Team 1</li>
+    <li nz-menu-item>Team 2</li>
+  </ul>
+</li>
+<li nz-menu-item>
+  <span><i nz-icon type="file"></i><span class="nav-text">File</span></span>
+</li>
 
-  <a class="item">
-    «
-  </a>
-  <a class="item">
-    Dashboard
-  </a>
-  <a class="item">
-    Trade Room
-  </a>
-  <a class="item">
-    News
-  </a>
-  <a class="item">
-    Chat
-  </a>
-  <a class="item">
-    Settings
-  </a>
-
-</aside>
+<li nz-menu-item *ngFor="let sidenavItem of sidenavItems">
+  <span><span class="nav-text">{{ sidenavItem.label }}</span></span>
+</li>

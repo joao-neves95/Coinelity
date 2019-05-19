@@ -145,8 +145,19 @@ namespace Coinelity.AspServer
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
                 ForwardedHostHeaderName = "Anonymous",
-                OriginalHostHeaderName = "Anonymous",
+                OriginalHostHeaderName = "Anonymous"
             } );
+
+            app.Use( async (context, _next) =>
+             {
+                 context.Response.OnStarting( () =>
+                 {
+                     context.Response.Headers.Add( "Server", "Anonymous" );
+                     return Task.FromResult( 0 );
+                 } );
+
+                 await _next.Invoke();
+             } );
 
             // app.UseHttpsRedirection();
             app.UseAuthentication();
@@ -169,17 +180,6 @@ namespace Coinelity.AspServer
                     return;
                 }
             } );
-
-            app.Use( async (context, _next) =>
-             {
-                 context.Response.OnStarting( () =>
-                 {
-                     context.Response.Headers.Add( "Server", "Anonymous" );
-                     return Task.FromResult( 0 );
-                 } );
-
-                 await _next.Invoke();
-             } );
 
             app.UseMvc( routes =>
             {
