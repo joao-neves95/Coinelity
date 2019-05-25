@@ -1,8 +1,14 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
 
-import { AppRoutingModule } from './app-routing.module';
+import { NgZorroAntdModule, NZ_I18N, en_US } from 'ng-zorro-antd';
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 import { HeaderComponent } from './components/header/header.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { SidenavPanelComponent } from './components/sidenav/sidenav-panel/sidenav-panel.component';
@@ -15,12 +21,6 @@ import { MarketsComponent } from './components/pages/trade-room/markets/markets.
 import { TradeComponent } from './components/pages/trade-room/trade/trade.component';
 import { SettingsComponent } from './components/pages/settings/settings.component';
 import { AffiliateComponent } from './components/pages/affiliate/affiliate.component';
-import { NgZorroAntdModule, NZ_I18N, en_US } from 'ng-zorro-antd';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { registerLocaleData } from '@angular/common';
-import en from '@angular/common/locales/en';
 
 registerLocaleData(en);
 

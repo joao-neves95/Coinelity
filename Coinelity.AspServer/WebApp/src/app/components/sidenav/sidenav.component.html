@@ -18,6 +18,7 @@
   <span><i nz-icon type="file"></i><span class="nav-text">File</span></span>
 </li>
 
+<!-- Starts here. -->
 <li nz-menu-item *ngFor="let sidenavItem of sidenavItems">
-  <span><span class="nav-text">{{ sidenavItem.label }}</span></span>
+  <a routerLink="{{ sidenavItem.action }}" routerLinkActive="active"><span class="nav-text">{{ sidenavItem.label }}</span></a>
 </li>
