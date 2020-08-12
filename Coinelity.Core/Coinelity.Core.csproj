@@ -9,7 +9,7 @@
     <PackageReference Include="DotNetEnv" Version="1.2.0" />
     <PackageReference Include="Isopoh.Cryptography.Argon2" Version="1.0.8" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.10" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
 </Project>
